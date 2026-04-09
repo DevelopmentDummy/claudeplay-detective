@@ -1,0 +1,297 @@
+<!-- deps: {{case_phase}} -->
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :host {
+    display: block;
+    contain: layout style;
+    overflow: hidden;
+  }
+
+  .history {
+    font-family: 'Segoe UI', sans-serif;
+    color: #e0ddd4;
+    padding: 12px 10px;
+    min-height: 100%;
+    overflow-y: auto;
+  }
+  .history::-webkit-scrollbar { width: 4px; }
+  .history::-webkit-scrollbar-track { background: #0a0e1a; }
+  .history::-webkit-scrollbar-thumb { background: #1e2a45; border-radius: 3px; }
+  .history::-webkit-scrollbar-thumb:hover { background: #c8a44e; }
+
+  .history-header {
+    font-size: 11px; font-weight: 700; color: #c8a44e;
+    letter-spacing: 1px; margin-bottom: 8px;
+    padding-bottom: 6px; border-bottom: 1px solid #1e2a45;
+  }
+
+  .empty {
+    text-align: center; padding: 30px 10px; color: #7a7a8a;
+    font-size: 12px; line-height: 1.8;
+  }
+  .empty .icon { font-size: 28px; display: block; margin-bottom: 8px; opacity: 0.4; }
+
+  /* Case selector tabs */
+  .case-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px; }
+  .case-tab {
+    font-size: 11px; padding: 4px 10px; border-radius: 4px; cursor: pointer;
+    background: #0a0e1a; border: 1px solid #1e2a45; color: #7a7a8a;
+    display: flex; align-items: center; gap: 4px;
+    transition: all 0.2s;
+  }
+  .case-tab:hover { border-color: #c8a44e; color: #e0ddd4; }
+  .case-tab.active { background: #1a2035; border-color: #c8a44e; color: #c8a44e; }
+  .rank-mini {
+    font-size: 9px; font-weight: 900; padding: 0 4px; border-radius: 2px;
+  }
+  .rank-mini.S { background: #2a2518; color: #c8a44e; }
+  .rank-mini.A { background: #1a2e2c; color: #4ecdc4; }
+  .rank-mini.B { background: #1a2540; color: #4a90d9; }
+  .rank-mini.C { background: #1e1e24; color: #7a7a8a; }
+
+  /* Report — same as 사건결과 */
+  .report {
+    max-width: 380px;
+    margin: 0 auto;
+    padding: 20px 16px;
+    background: #0d1220;
+    border-radius: 8px;
+    border: 1px solid #1e2a45;
+  }
+  .sep { border: none; border-top: 1px dashed #1e2a45; margin: 14px 0; }
+
+  .report-header { text-align: center; padding-bottom: 4px; }
+  .report-header .border-line { font-family: 'Courier New', monospace; font-size: 11px; color: #1e2a45; letter-spacing: 2px; overflow: hidden; white-space: nowrap; }
+  .report-header .title { font-size: 18px; font-weight: 900; color: #c8a44e; letter-spacing: 3px; margin: 8px 0 2px; }
+  .report-header .subtitle { font-size: 10px; color: #7a7a8a; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 8px; }
+  .report-header .case-name { font-size: 14px; font-weight: 700; color: #e0ddd4; margin-top: 10px; }
+  .report-header .case-meta { font-size: 11px; color: #7a7a8a; font-family: 'Courier New', monospace; margin-top: 4px; }
+
+  .section-title { font-size: 10px; font-weight: 700; color: #c8a44e; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+
+  .verdict-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .verdict-label { font-size: 11px; color: #7a7a8a; font-family: 'Courier New', monospace; flex-shrink: 0; min-width: 48px; }
+  .verdict-value { font-size: 11px; color: #e0ddd4; text-align: right; flex: 1; margin-left: 8px; line-height: 1.4; }
+  .verdict-value.culprit { color: #e74c3c; font-weight: 700; }
+
+  .ev-item { display: flex; align-items: flex-start; gap: 6px; font-size: 11px; margin-bottom: 3px; line-height: 1.4; }
+  .ev-item .mark { flex-shrink: 0; font-family: 'Courier New', monospace; }
+  .ev-item .mark.found { color: #4ecdc4; }
+  .ev-item .mark.missed { color: #e74c3c; }
+  .ev-item .ev-name { flex: 1; }
+  .ev-item.missed .ev-name { color: #5a5a6a; }
+
+  .progress-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .progress-label { font-size: 10px; color: #7a7a8a; font-family: 'Courier New', monospace; flex-shrink: 0; }
+  .progress-track { flex: 1; height: 8px; background: #0a0e1a; border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; }
+  .progress-fill.evidence { background: linear-gradient(90deg, #4ecdc4, #2ecc71); }
+  .progress-fill.deduction { background: linear-gradient(90deg, #c8a44e, #e8c86e); }
+  .progress-pct { font-size: 10px; color: #e0ddd4; font-weight: 700; font-family: 'Courier New', monospace; flex-shrink: 0; min-width: 36px; text-align: right; }
+
+  .ded-item { display: flex; align-items: flex-start; gap: 6px; font-size: 11px; margin-bottom: 3px; line-height: 1.4; }
+  .ded-item .mark { flex-shrink: 0; font-family: 'Courier New', monospace; }
+  .ded-item .mark.unlocked { color: #c8a44e; }
+  .ded-item .mark.locked { color: #5a5a6a; }
+  .ded-item .ded-name { flex: 1; }
+  .ded-item.locked .ded-name { color: #5a5a6a; font-style: italic; }
+
+  .stat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .stat-label { font-size: 11px; color: #7a7a8a; }
+  .stat-value { font-size: 11px; color: #e0ddd4; font-family: 'Courier New', monospace; font-weight: 600; }
+  .stat-value.good { color: #4ecdc4; }
+  .stat-value.warn { color: #e8c86e; }
+  .stat-value.bad { color: #e74c3c; }
+
+  .rank-section { text-align: center; padding: 16px 0 8px; }
+  .rank-label { font-size: 10px; color: #7a7a8a; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .rank-letter { font-size: 64px; font-weight: 900; line-height: 1; text-shadow: 0 0 30px currentColor; }
+  .rank-letter.S { color: #c8a44e; }
+  .rank-letter.A { color: #4ecdc4; }
+  .rank-letter.B { color: #4a90d9; }
+  .rank-letter.C { color: #7a7a8a; }
+  .rank-desc { font-size: 11px; margin-top: 6px; font-style: italic; }
+  .rank-desc.S { color: #c8a44e; }
+  .rank-desc.A { color: #4ecdc4; }
+  .rank-desc.B { color: #4a90d9; }
+  .rank-desc.C { color: #7a7a8a; }
+</style>
+
+<div class="history" id="historyRoot"></div>
+
+<script>
+  var d = __panelBridge.data;
+  var root = shadow.getElementById('historyRoot');
+  var cases = d['case-history'] || [];
+
+  if (cases.length === 0) {
+    root.innerHTML = '<div class="history-header">📂 사건 기록</div><div class="empty"><span class="icon">📂</span>아직 완료된 사건이 없습니다</div>';
+  } else {
+    renderHistory();
+  }
+
+  function calcRank(evPct, wp, allDed) {
+    if (evPct === 100 && wp === 0 && allDed) return { rank: 'S', desc: '완벽한 수사. 빈틈 없는 추리.' };
+    if (evPct >= 80 && wp <= 1) return { rank: 'A', desc: '우수한 수사. 뛰어난 통찰력.' };
+    if (evPct >= 60) return { rank: 'B', desc: '무난한 수사. 개선의 여지가 있다.' };
+    return { rank: 'C', desc: '수사에 많은 아쉬움이 남는다.' };
+  }
+
+  function trunc(str, len) {
+    if (!str) return '---';
+    return str.length > len ? str.substring(0, len) + '...' : str;
+  }
+
+  function renderHistory() {
+    // Build tabs
+    var tabsHtml = '<div class="history-header">📂 사건 기록</div><div class="case-tabs">';
+    for (var i = cases.length - 1; i >= 0; i--) {
+      var c = cases[i];
+      var evKeys = Object.keys(c.evidence || {});
+      var evFound = 0;
+      evKeys.forEach(function(k) { if ((c.evidence || {})[k].found) evFound++; });
+      var evPct = evKeys.length > 0 ? Math.round((evFound / evKeys.length) * 100) : 0;
+      var dedKeys = Object.keys(c.deductions || {});
+      var dedAll = dedKeys.length > 0 && dedKeys.every(function(k) { return (c.deductions || {})[k].unlocked; });
+      var r = calcRank(evPct, c.wrong_presents || 0, dedAll);
+      tabsHtml += '<div class="case-tab' + (i === cases.length - 1 ? ' active' : '') + '" data-idx="' + i + '">';
+      tabsHtml += '<span class="rank-mini ' + r.rank + '">' + r.rank + '</span> ' + (c.title || '---');
+      tabsHtml += '</div>';
+    }
+    tabsHtml += '</div><div id="reportArea"></div>';
+    root.innerHTML = tabsHtml;
+
+    // Render most recent by default
+    renderCase(cases.length - 1);
+
+    // Tab click
+    shadow.querySelectorAll('.case-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        shadow.querySelectorAll('.case-tab').forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        renderCase(parseInt(tab.dataset.idx));
+      });
+    });
+  }
+
+  function renderCase(idx) {
+    var area = shadow.getElementById('reportArea');
+    var c = cases[idx];
+    if (!c) { area.innerHTML = ''; return; }
+
+    var evidence = c.evidence || {};
+    var deductions = c.deductions || {};
+    var suspects = c.suspects || [];
+    var solution = c.solution || {};
+    var stats = c.stats || {};
+
+    var culpritName = solution.culprit || '???';
+    suspects.forEach(function(s) { if (s.id === solution.culprit) culpritName = s.name; });
+
+    var evKeys = Object.keys(evidence);
+    var foundList = [], missedList = [];
+    evKeys.forEach(function(k) {
+      if (evidence[k].found) foundList.push(evidence[k]);
+      else missedList.push(evidence[k]);
+    });
+    var evPct = evKeys.length > 0 ? Math.round((foundList.length / evKeys.length) * 100) : 0;
+
+    var dedKeys = Object.keys(deductions);
+    var dedUnlocked = [], dedLocked = [];
+    dedKeys.forEach(function(k) {
+      if (deductions[k].unlocked) dedUnlocked.push(deductions[k]);
+      else dedLocked.push(deductions[k]);
+    });
+    var dedPct = dedKeys.length > 0 ? Math.round((dedUnlocked.length / dedKeys.length) * 100) : 0;
+
+    var wp = c.wrong_presents || 0;
+    var allDed = dedKeys.length > 0 && dedLocked.length === 0;
+    var r = calcRank(evPct, wp, allDed);
+
+    var sHits = stats.search_hits || 0;
+    var sMisses = stats.search_misses || 0;
+    var sTotal = sHits + sMisses;
+    var sAcc = sTotal > 0 ? Math.round((sHits / sTotal) * 100) : 0;
+
+    var dateStr = '';
+    if (c.solvedAt) {
+      var dt = new Date(c.solvedAt);
+      dateStr = dt.getFullYear() + '.' + String(dt.getMonth() + 1).padStart(2, '0') + '.' + String(dt.getDate()).padStart(2, '0');
+    }
+
+    var html = '<div class="report">';
+
+    // Header
+    html += '<div class="report-header">';
+    html += '<div class="border-line">═══════════════════════════</div>';
+    html += '<div class="title">🔍 사건 수사 보고서</div>';
+    html += '<div class="subtitle">Case Report</div>';
+    html += '<div class="border-line">═══════════════════════════</div>';
+    html += '<div class="case-name">📁 ' + (c.title || '---') + '</div>';
+    html += '<div class="case-meta">' + dateStr + ' · Day ' + (c.day || 1) + ' · ' + (c.time || '') + ' 종료</div>';
+    html += '</div>';
+    html += '<hr class="sep">';
+
+    // Verdict
+    html += '<div class="section-title">⚖️ 수사 결과</div>';
+    html += '<div class="verdict-row"><span class="verdict-label">범인</span><span class="verdict-value culprit">' + culpritName + '</span></div>';
+    html += '<div class="verdict-row"><span class="verdict-label">동기</span><span class="verdict-value">' + trunc(solution.motive, 80) + '</span></div>';
+    html += '<div class="verdict-row"><span class="verdict-label">방법</span><span class="verdict-value">' + trunc(solution.method, 80) + '</span></div>';
+    html += '<hr class="sep">';
+
+    // Evidence
+    html += '<div class="section-title">🔍 증거 수집 현황</div>';
+    foundList.forEach(function(ev) {
+      html += '<div class="ev-item found"><span class="mark found">✓</span><span class="ev-name">' + ev.name + '</span></div>';
+    });
+    missedList.forEach(function(ev) {
+      html += '<div class="ev-item missed"><span class="mark missed">✗</span><span class="ev-name">' + ev.name + '</span></div>';
+    });
+    html += '<div class="progress-row"><span class="progress-label">수집률</span>';
+    html += '<div class="progress-track"><div class="progress-fill evidence" style="width:' + evPct + '%"></div></div>';
+    html += '<span class="progress-pct">' + evPct + '%</span></div>';
+    html += '<hr class="sep">';
+
+    // Deductions
+    html += '<div class="section-title">🔗 추리 현황</div>';
+    dedUnlocked.forEach(function(dd) {
+      html += '<div class="ded-item unlocked"><span class="mark unlocked">✓</span><span class="ded-name">' + dd.name + '</span></div>';
+    });
+    dedLocked.forEach(function(dd) {
+      html += '<div class="ded-item locked"><span class="mark locked">✗</span><span class="ded-name">???</span></div>';
+    });
+    if (dedKeys.length > 0) {
+      html += '<div class="progress-row"><span class="progress-label">달성률</span>';
+      html += '<div class="progress-track"><div class="progress-fill deduction" style="width:' + dedPct + '%"></div></div>';
+      html += '<span class="progress-pct">' + dedPct + '%</span></div>';
+    }
+    html += '<hr class="sep">';
+
+    // Stats
+    html += '<div class="section-title">📊 수사 효율</div>';
+    html += '<div class="stat-row"><span class="stat-label">탐색 허탕</span><span class="stat-value">' + sMisses + '회</span></div>';
+    html += '<div class="stat-row"><span class="stat-label">탐색 적중</span><span class="stat-value">' + sHits + '회</span></div>';
+    var accClass = sAcc >= 70 ? 'good' : (sAcc >= 40 ? 'warn' : 'bad');
+    html += '<div class="stat-row"><span class="stat-label">탐색 적중률</span><span class="stat-value ' + accClass + '">' + (sTotal > 0 ? sAcc + '%' : '-') + '</span></div>';
+    html += '<div class="stat-row"><span class="stat-label">추궁 횟수</span><span class="stat-value">' + (stats.press_count || 0) + '회</span></div>';
+    html += '<div class="stat-row"><span class="stat-label">증거 제시</span><span class="stat-value">' + (stats.present_correct || 0) + '성공 / ' + (stats.present_wrong || 0) + '실패</span></div>';
+    html += '<div class="stat-row"><span class="stat-label">추리 시도</span><span class="stat-value">' + (stats.deduce_success || 0) + '성공 / ' + (stats.deduce_fail || 0) + '실패</span></div>';
+    html += '<div class="stat-row"><span class="stat-label">잘못된 증거 제시</span><span class="stat-value' + (wp > 0 ? ' bad' : ' good') + '">' + wp + '/3</span></div>';
+    var insightClass = (c.insight || 0) >= 80 ? 'good' : ((c.insight || 0) >= 50 ? 'warn' : 'bad');
+    html += '<div class="stat-row"><span class="stat-label">최종 통찰력</span><span class="stat-value ' + insightClass + '">' + (c.insight || 0) + '/100</span></div>';
+    var trustClass = (c.trust || 0) >= 70 ? 'good' : ((c.trust || 0) >= 40 ? 'warn' : 'bad');
+    html += '<div class="stat-row"><span class="stat-label">최종 신뢰도</span><span class="stat-value ' + trustClass + '">' + (c.trust || 0) + '/100</span></div>';
+    html += '<hr class="sep">';
+
+    // Rank
+    html += '<div class="rank-section">';
+    html += '<div class="rank-label">종합 평가</div>';
+    html += '<div class="rank-letter ' + r.rank + '">' + r.rank + '</div>';
+    html += '<div class="rank-desc ' + r.rank + '">' + r.desc + '</div>';
+    html += '</div>';
+
+    html += '</div>'; // report
+    area.innerHTML = html;
+  }
+</script>

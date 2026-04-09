@@ -1,0 +1,14 @@
+{
+  "identity": "1girl, hayul, young adult, black hair, long hair, straight hair, ponytail, side bangs, purple eyes, light purple eyes, pale skin, large breasts, slim waist",
+  "accessories": "glasses, silver-framed glasses, hair tie",
+  "outfit_default": "dark blue blouse, collared shirt, pencil skirt, black pencil skirt, black pantyhose, low heels",
+  "outfit_casual": "white knit sweater, long sleeves, black jeans, sneakers",
+  "expressions": {
+    "neutral": "calm expression, slight smile, looking at viewer",
+    "thinking": "hand on chin, looking away, contemplative expression",
+    "surprised": "wide eyes, parted lips, blush",
+    "determined": "serious expression, narrowed eyes, confident",
+    "embarrassed": "heavy blush, looking down, fidgeting",
+    "eureka": "bright eyes, slight gasp, pointing finger"
+  }
+}

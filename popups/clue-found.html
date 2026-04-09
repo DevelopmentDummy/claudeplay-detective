@@ -1,0 +1,32 @@
+<style>
+  .clue-container {
+    text-align: center;
+    padding: 16px;
+  }
+  .clue-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+    animation: clueFloat 1.5s ease-in-out infinite;
+  }
+  .clue-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #c8a44e;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .clue-name {
+    font-size: 15px;
+    color: #e0ddd4;
+    opacity: 0.9;
+  }
+  @keyframes clueFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+</style>
+<div class="clue-container">
+  <div class="clue-icon">🔍</div>
+  <div class="clue-title">단서 발견</div>
+  <div class="clue-name">{{clueName}}</div>
+</div>

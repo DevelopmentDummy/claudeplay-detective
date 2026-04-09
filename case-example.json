@@ -1,0 +1,446 @@
+{
+  "id": "closed_canvas",
+  "title": "닫힌 캔버스",
+  "status": "active",
+  "summary": "을지로 갤러리 'VOID'의 큐레이터 정민소(29)가 잠긴 전시실에서 교살된 채 발견되었다. CCTV는 꺼져 있었고, 전시 예정이던 그림 '심연'이 사라졌다. 밀실, 사라진 그림, 그리고 네 명의 용의자. 이 캔버스 위에 숨겨진 진실은 무엇인가.",
+  "difficulty": "★★★",
+  "locations": {
+    "gallery_void": {
+      "name": "갤러리 VOID",
+      "type": "office",
+      "address": "중구 을지로 128, 보이드빌딩 1~2층",
+      "unlocked": true,
+      "floor_plan": {
+        "cols": 4, "rows": 3,
+        "rooms": [
+          { "id": "entrance", "name": "입구 로비", "icon": "🚪", "col": 0, "row": 0, "w": 1, "h": 1, "locked": false, "crime_scene": false },
+          { "id": "main_hall", "name": "제1전시실", "icon": "🖼️", "col": 1, "row": 0, "w": 2, "h": 1, "locked": false, "crime_scene": false },
+          { "id": "exhibition_b", "name": "제2전시실 (현장)", "icon": "⚠️", "col": 3, "row": 0, "w": 1, "h": 1, "locked": false, "crime_scene": true },
+          { "id": "office", "name": "큐레이터 사무실", "icon": "📋", "col": 0, "row": 1, "w": 1, "h": 1, "locked": false, "crime_scene": false },
+          { "id": "storage", "name": "수장고", "icon": "📦", "col": 1, "row": 1, "w": 1, "h": 1, "locked": true, "crime_scene": false },
+          { "id": "security_room", "name": "경비실", "icon": "🔒", "col": 2, "row": 1, "w": 1, "h": 1, "locked": false, "crime_scene": false },
+          { "id": "back_corridor", "name": "후문 복도", "icon": "🚶", "col": 3, "row": 1, "w": 1, "h": 1, "locked": false, "crime_scene": false },
+          { "id": "owner_office", "name": "관장실", "icon": "👔", "col": 0, "row": 2, "w": 2, "h": 1, "locked": true, "crime_scene": false },
+          { "id": "loading_dock", "name": "하역장", "icon": "🚛", "col": 2, "row": 2, "w": 2, "h": 1, "locked": false, "crime_scene": false }
+        ],
+        "doors": [
+          ["entrance", "main_hall", "right"],
+          ["entrance", "office", "bottom"],
+          ["main_hall", "exhibition_b", "right"],
+          ["main_hall", "storage", "bottom"],
+          ["exhibition_b", "back_corridor", "bottom"],
+          ["office", "owner_office", "bottom"],
+          ["storage", "security_room", "right"],
+          ["security_room", "back_corridor", "right"],
+          ["owner_office", "loading_dock", "right"],
+          ["back_corridor", "loading_dock", "bottom"]
+        ]
+      },
+      "points": {
+        "p_body_area": { "room": "exhibition_b", "name": "시신 발견 지점", "type": "physical", "found": false, "evidence_id": "e_ligature_marks" },
+        "p_paint_smear": { "room": "exhibition_b", "name": "바닥의 물감 자국", "type": "physical", "found": false, "evidence_id": "e_paint_traces" },
+        "p_window_latch": { "room": "exhibition_b", "name": "전시실 창문", "type": "physical", "found": false, "evidence_id": "e_window_lock" },
+        "p_cctv_panel": { "room": "security_room", "name": "CCTV 관제 패널", "type": "digital", "found": false, "evidence_id": "e_cctv_off_time" },
+        "p_entry_log": { "room": "security_room", "name": "출입 기록부", "type": "document", "found": false, "evidence_id": "e_entry_log" },
+        "p_guard_locker": { "room": "security_room", "name": "경비원 사물함", "type": "physical", "found": false, "evidence_id": "e_gambling_receipts" },
+        "p_minso_desk": { "room": "office", "name": "정민소 책상", "type": "document", "found": false, "evidence_id": "e_appraisal_report" },
+        "p_minso_phone": { "room": "office", "name": "정민소 업무폰", "type": "digital", "found": false, "evidence_id": "e_threatening_messages" },
+        "p_storage_crate": { "room": "storage", "name": "미개봉 운송 상자", "type": "physical", "found": false, "evidence_id": "e_forgery_materials" },
+        "p_owner_safe": { "room": "owner_office", "name": "관장실 금고", "type": "document", "found": false, "evidence_id": "e_insurance_policy" },
+        "p_owner_pc": { "room": "owner_office", "name": "관장 업무 PC", "type": "digital", "found": false, "evidence_id": "e_buyer_emails" },
+        "p_loading_camera": { "room": "loading_dock", "name": "하역장 외부 카메라", "type": "digital", "found": false, "evidence_id": "e_loading_footage" },
+        "p_back_door": { "room": "back_corridor", "name": "후문 잠금장치", "type": "physical", "found": false, "evidence_id": "e_back_door_scratch" }
+      },
+      "npcs": {
+        "yoo_chaerin": { "name": "유채린", "role": "전시 참여 화가", "room": "main_hall", "available": true, "talked": false },
+        "oh_jihyun": { "name": "오지현", "role": "갤러리 부큐레이터", "room": "office", "available": true, "talked": false },
+        "park_sungho": { "name": "박성호", "role": "야간 경비원", "room": "security_room", "available": true, "talked": false },
+        "han_doyun": { "name": "한도윤", "role": "갤러리 관장", "room": "entrance", "available": true, "talked": false }
+      }
+    },
+    "chaerin_studio": {
+      "name": "유채린 작업실",
+      "type": "apartment",
+      "address": "마포구 망원로 67, 3층",
+      "unlocked": false,
+      "floor_plan": {
+        "cols": 2, "rows": 1,
+        "rooms": [
+          { "id": "studio_main", "name": "작업 공간", "icon": "🎨", "col": 0, "row": 0, "w": 1, "h": 1, "locked": false, "crime_scene": false },
+          { "id": "studio_storage", "name": "자료실", "icon": "📁", "col": 1, "row": 0, "w": 1, "h": 1, "locked": false, "crime_scene": false }
+        ],
+        "doors": [
+          ["studio_main", "studio_storage", "right"]
+        ]
+      },
+      "points": {
+        "p_early_works": { "room": "studio_storage", "name": "초기작 보관함", "type": "physical", "found": false, "evidence_id": "e_plagiarism_evidence" },
+        "p_chaerin_phone": { "room": "studio_main", "name": "유채린 스마트폰", "type": "digital", "found": false, "evidence_id": "e_sns_metadata" }
+      },
+      "npcs": {}
+    },
+    "minso_apartment": {
+      "name": "정민소 자택",
+      "type": "apartment",
+      "address": "성동구 성수이로 22, 성수힐스 704호",
+      "unlocked": false,
+      "floor_plan": {
+        "cols": 2, "rows": 2,
+        "rooms": [
+          { "id": "living", "name": "거실", "icon": "🛋️", "col": 0, "row": 0, "w": 1, "h": 1, "locked": false, "crime_scene": false },
+          { "id": "study_room", "name": "서재", "icon": "📚", "col": 1, "row": 0, "w": 1, "h": 1, "locked": false, "crime_scene": false },
+          { "id": "bedroom", "name": "침실", "icon": "🛏️", "col": 0, "row": 1, "w": 1, "h": 1, "locked": false, "crime_scene": false },
+          { "id": "kitchen", "name": "주방", "icon": "🍳", "col": 1, "row": 1, "w": 1, "h": 1, "locked": false, "crime_scene": false }
+        ],
+        "doors": [
+          ["living", "study_room", "right"],
+          ["living", "bedroom", "bottom"],
+          ["study_room", "kitchen", "bottom"]
+        ]
+      },
+      "points": {
+        "p_minso_diary": { "room": "study_room", "name": "정민소 다이어리", "type": "document", "found": false, "evidence_id": "e_diary_entries" },
+        "p_minso_laptop": { "room": "study_room", "name": "정민소 개인 노트북", "type": "digital", "found": false, "evidence_id": "e_forgery_research" }
+      },
+      "npcs": {}
+    }
+  },
+  "evidence": {
+    "e_ligature_marks": {
+      "name": "교살 흔적 감정서",
+      "type": "physical",
+      "description": "피해자 목에 폭 3cm의 압박 흔적. 부드러운 천 재질에 의한 교살로 추정. 범행 도구는 미발견. 사망 추정 시각은 오후 10시~11시.",
+      "found": false
+    },
+    "e_paint_traces": {
+      "name": "피해자 옷의 물감 자국",
+      "type": "physical",
+      "description": "피해자 블라우스 오른쪽 어깨와 팔에 카드뮴 옐로우와 울트라마린 블루 유화 물감이 묻어 있다. 유채린이 '심연' 시리즈에 사용하는 특징적인 색조와 일치.",
+      "found": false
+    },
+    "e_window_lock": {
+      "name": "전시실 창문 잠금 상태",
+      "type": "physical",
+      "description": "제2전시실 유일한 창문은 내부에서 걸쇠가 잠겨 있다. 외부 침입 흔적 없음. 전시실 출입문도 내부 잠금 상태였으므로 완전한 밀실.",
+      "found": false
+    },
+    "e_cctv_off_time": {
+      "name": "CCTV 정지 시간 기록",
+      "type": "digital",
+      "description": "갤러리 내부 CCTV 4대가 오후 9시 42분에 일괄 정지. 경비실 콘솔에서 수동 조작된 흔적. 재가동은 다음 날 오전 8시 (발견 후 경찰 조치).",
+      "found": false
+    },
+    "e_entry_log": {
+      "name": "야간 출입 기록부",
+      "type": "document",
+      "description": "경비원 박성호의 수기 기록. 오후 9시 한도윤 관장 퇴관, 오후 9시 30분 정민소 잔류 확인, 오후 10시 박성호 본인 퇴근으로 기재. 재입장 기록 없음. 그러나 오후 9시~10시 사이 기록이 유독 간략하다.",
+      "found": false
+    },
+    "e_gambling_receipts": {
+      "name": "도박장 영수증 묶음",
+      "type": "document",
+      "description": "박성호 사물함에서 발견. 강남 소재 사설 도박장 'ACE'의 칩 교환 영수증 다수. 최근 3개월간 누적 금액 약 2,800만 원. 사건 당일 밤 10시 30분 입장 기록도 포함.",
+      "found": false
+    },
+    "e_appraisal_report": {
+      "name": "작품 감정 의뢰서",
+      "type": "document",
+      "description": "정민소가 외부 감정사에게 의뢰한 서류. '심연' 외 한도윤 소장 작품 3점에 대한 진위 감정 요청. 의뢰 날짜는 사건 일주일 전. '안료 연대 불일치 가능성' 메모 첨부.",
+      "found": false
+    },
+    "e_threatening_messages": {
+      "name": "정민소에게 온 협박 메시지",
+      "type": "digital",
+      "description": "정민소 업무폰의 카카오톡. 발신자 '오지현': '넌 왜 그렇게 매정해? 2년이 아무것도 아니었어?' (3주 전) / '내가 가만 안 있을 거야. 두고 봐.' (2주 전) / '오늘 갤러리에서 얘기하자. 피하지 마.' (사건 당일 오후 6시)",
+      "found": false
+    },
+    "e_forgery_materials": {
+      "name": "위작 제작 도구",
+      "type": "physical",
+      "description": "수장고 안쪽 미개봉으로 위장된 상자 안에 19세기 유럽산 캔버스 원단, 인위적 에이징 약품, 위조 서명 연습 종이가 가득. 상자 라벨에는 한도윤의 필체로 '별도 보관' 메모.",
+      "found": false
+    },
+    "e_insurance_policy": {
+      "name": "작품 보험 증권",
+      "type": "document",
+      "description": "한도윤 명의 고가 미술품 보험. '심연'을 포함한 소장품 5점에 대해 총 8억 원 부보. 특약: 도난 시 감정가의 120% 보상. 가입일은 사건 2개월 전.",
+      "found": false
+    },
+    "e_buyer_emails": {
+      "name": "해외 바이어 이메일",
+      "type": "digital",
+      "description": "한도윤 PC의 이메일. 홍콩 소재 미술 브로커 'Chen Wei'와의 거래 내역. '심연 포함 3점, 합의 금액 5억. 작품 반출은 사건 후 2주 내로.' 최종 메일은 사건 당일 오후 3시.",
+      "found": false
+    },
+    "e_loading_footage": {
+      "name": "하역장 외부 카메라 영상",
+      "type": "digital",
+      "description": "하역장 외부 방범 카메라(갤러리 내부 CCTV와 별도 시스템). 오후 10시 47분, 한도윤이 대형 포장물을 승합차에 싣는 모습. 오후 9시에 퇴관했다는 기록과 모순. 차량 번호 확인 가능.",
+      "found": false
+    },
+    "e_back_door_scratch": {
+      "name": "후문 자물쇠 긁힌 자국",
+      "type": "physical",
+      "description": "후문 잠금장치 주변에 최근 생긴 금속 긁힘. 열쇠가 아닌 도구로 강제 조작한 흔적. 범인이 후문으로 출입했을 가능성을 시사하나, 내부에서 잠길 수 없는 구조.",
+      "found": false
+    },
+    "e_plagiarism_evidence": {
+      "name": "유채린 초기작 원본",
+      "type": "physical",
+      "description": "유채린 작업실에 보관된 초기작 4점. 구도와 색채가 프랑스 무명 화가 'Marie Deschamps'의 2018년 작품과 거의 동일. 정민소의 다이어리에 언급된 '표절 의혹'의 실물 근거.",
+      "found": false
+    },
+    "e_sns_metadata": {
+      "name": "SNS 사진 메타데이터",
+      "type": "digital",
+      "description": "유채린의 알리바이인 사건 당일 밤 9시 55분 인스타그램 게시 사진. 메타데이터 분석 결과 촬영 시각은 오후 7시 12분. 게시 시각과 촬영 시각이 약 3시간 차이. 예약 게시 또는 제3자가 업로드한 가능성.",
+      "found": false
+    },
+    "e_diary_entries": {
+      "name": "정민소 다이어리",
+      "type": "document",
+      "description": "정민소의 수기 일지. 3주 전: '유채린 초기작에서 이상한 점 발견. Marie D.의 작품과 너무 닮았다. 확인 필요.' 2주 전: '관장님 소장품 감정 의뢰함. 안료 분석 결과가 걱정.' 3일 전: '관장님께 감정 결과 말씀드렸더니 표정이 굳으셨다. 유채린 건도 정리해야 하는데.'",
+      "found": false
+    },
+    "e_forgery_research": {
+      "name": "위작 조사 자료",
+      "type": "digital",
+      "description": "정민소 노트북의 브라우저 히스토리와 저장 파일. 미술품 위작 판별법, 안료 연대측정 논문, 한도윤이 과거 거래한 작품의 경매 기록 스크린샷. 정민소가 체계적으로 위작 의혹을 조사하고 있었던 흔적.",
+      "found": false
+    },
+    "e_scarf_fiber": {
+      "name": "현장 섬유 감정 결과",
+      "type": "physical",
+      "description": "피해자 목의 압박 흔적에서 채취한 섬유. 캐시미어 혼방, 감청색. 한도윤이 평소 착용하는 머플러의 소재 및 색상과 일치한다는 감정 소견.",
+      "found": false
+    }
+  },
+  "testimonies": {
+    "t_yoo": {
+      "witness": "yoo_chaerin",
+      "witness_name": "유채린",
+      "statements": [
+        {
+          "id": "s_yoo_1",
+          "text": "그날 밤에는 갤러리에 없었어요. 저녁에 친구들이랑 망원동 카페에 있었고, 인스타에 사진도 올렸잖아요. 확인해보세요.",
+          "pressed": false,
+          "press_result": "9시쯤... 아니 10시쯤까지 있었을 거예요. 친구가 셋이었는데, 이름이요? 김서연이랑... 아, 그날 좀 마셨거든요. 정확한 시간은 기억이 흐릿해요.",
+          "press_adds": [],
+          "contradiction": { "evidence_id": "e_sns_metadata", "reveal": "인스타그램 사진의 메타데이터를 보면 촬영 시각은 오후 7시 12분인데 게시 시각은 9시 55분이다. 약 3시간 차이. 유채린 본인이 올린 것이 아니라 친구에게 부탁했거나 예약 게시한 것이다. 9시 55분에 카페에 있었다는 증거가 되지 않는다." }
+        },
+        {
+          "id": "s_yoo_2",
+          "text": "민소 씨와는 전시 준비 때문에 자주 만났지만, 사이가 나빴던 건 아니에요. 그냥 작가와 큐레이터의 평범한 관계.",
+          "pressed": false,
+          "press_result": "...솔직히 전시 배치 문제로 좀 부딪힌 적은 있어요. 제 작품을 구석에 배치하겠다고 해서. 하지만 그건 직업적인 의견 차이지, 그 이상은 아니었어요.",
+          "press_adds": [],
+          "contradiction": { "evidence_id": "e_diary_entries", "reveal": "정민소 다이어리에 유채린의 초기작이 프랑스 화가 Marie D.의 작품과 유사하다는 메모가 있다. 단순한 배치 문제가 아니라 표절 의혹이 쟁점이었다." }
+        },
+        {
+          "id": "s_yoo_3",
+          "text": "그날 제 물감이 민소 씨 옷에 묻었다고요? 모르겠는데... 아, 오후에 작업실에서 만났을 때 우연히 묻었을 수도 있죠.",
+          "pressed": false,
+          "press_result": "네, 맞아요. 오후 4시쯤 갤러리에서 민소 씨가 제 작품 상태를 확인하러 왔었어요. 그때 팔레트가 가까이 있었으니까... 그때 묻은 거예요, 분명.",
+          "press_adds": [],
+          "contradiction": null
+        }
+      ]
+    },
+    "t_oh": {
+      "witness": "oh_jihyun",
+      "witness_name": "오지현",
+      "statements": [
+        {
+          "id": "s_oh_1",
+          "text": "민소와 저는 동료예요. 같이 전시 기획하고. 사건 당일에는 6시에 퇴근했어요. 그 뒤로 갤러리에 오지 않았습니다.",
+          "pressed": false,
+          "press_result": "퇴근하고 성수동 집에서 혼자 있었어요. 넷플릭스 보다가 잠들었는데... 증명할 방법은 없네요. 혼자 사니까.",
+          "press_adds": [],
+          "contradiction": { "evidence_id": "e_threatening_messages", "reveal": "정민소 폰에 오지현이 사건 당일 오후 6시에 보낸 메시지가 있다. '오늘 갤러리에서 얘기하자. 피하지 마.' 6시에 퇴근했다면서 같은 시각에 갤러리에서 만나자고 한 것은 모순이다. 이전 메시지의 '가만 안 있겠다'는 내용도 심상치 않다." }
+        },
+        {
+          "id": "s_oh_2",
+          "text": "민소가 마지막으로 보낸 문자요? 밤 9시쯤 '내일 전시 최종 점검하자'라고 왔어요. 평소처럼 업무 얘기.",
+          "pressed": false,
+          "press_result": "그게 마지막 연락이에요. 답장은... 했는지 안 했는지 잘 기억이 안 나요. 아마 읽고 그냥 잤을 거예요.",
+          "press_adds": [],
+          "contradiction": null
+        },
+        {
+          "id": "s_oh_3",
+          "text": "민소와 사적으로 가까운 사이였냐고요? 직장 동료 이상은 아니었어요. 왜 그런 걸 물어보시는지...",
+          "pressed": false,
+          "press_result": "...좋아요, 솔직하게 말할게요. 사귀었어요, 2년 넘게. 2개월 전에 민소가 일방적으로 끝냈어요. 이유도 제대로 안 말하고. 하지만 그게 이 사건이랑 무슨 상관인데요?",
+          "press_adds": ["e_threatening_messages"],
+          "contradiction": null
+        }
+      ]
+    },
+    "t_park": {
+      "witness": "park_sungho",
+      "witness_name": "박성호",
+      "statements": [
+        {
+          "id": "s_park_1",
+          "text": "밤 10시에 정상 퇴근했습니다. 갤러리 내부 확인하고, 정민소 씨한테 잔류 확인 받고, 문 잠그고 나왔어요.",
+          "pressed": false,
+          "press_result": "퇴근 후에는 바로 집에 갔습니다. 집에서 TV 좀 보다가 잤어요. 아내가 증인이 될 수 있습니다. 아, 잠깐... 아내한테는 안 물어봐도 되는데. 그냥 집에 갔어요.",
+          "press_adds": [],
+          "contradiction": { "evidence_id": "e_gambling_receipts", "reveal": "사물함에서 발견된 도박장 영수증에 사건 당일 밤 10시 30분 입장 기록이 있다. 집에 갔다는 말은 거짓이며, 아내에게 확인하지 말라고 한 이유가 여기 있다." }
+        },
+        {
+          "id": "s_park_2",
+          "text": "CCTV는 제가 퇴근할 때 정상 작동 중이었습니다. 누가 껐는지는 모릅니다.",
+          "pressed": false,
+          "press_result": "경비실 콘솔에서 끈 거라고요? 그건 비밀번호가 있어야 하는데... 저와 관장님만 알고 있긴 합니다만, 전 끄지 않았습니다.",
+          "press_adds": [],
+          "contradiction": { "evidence_id": "e_cctv_off_time", "reveal": "CCTV가 정지된 시각은 9시 42분. 박성호의 퇴근 시각은 10시. 박성호가 아직 근무 중일 때 CCTV가 꺼졌다. '퇴근할 때 정상 작동'이라는 증언과 모순. 본인이 끄지 않았다면 경비실에 있으면서 왜 몰랐는가?" }
+        },
+        {
+          "id": "s_park_3",
+          "text": "한도윤 관장님은 9시에 퇴관하셨어요. 기록부에 적혀 있는 대로입니다. 그 뒤로 다시 오신 적 없습니다.",
+          "pressed": false,
+          "press_result": "관장님이 가끔 늦게까지 계신 적은 있었죠. 하지만 그날은 분명히 9시에 나가셨어요. 제가 직접 확인했으니까요.",
+          "press_adds": [],
+          "contradiction": { "evidence_id": "e_loading_footage", "reveal": "하역장 외부 카메라에 10시 47분 한도윤이 포장물을 차에 싣는 모습이 찍혀 있다. 9시에 퇴관했다는 기록은 허위이며, 박성호가 의도적으로 재입장을 기록하지 않았을 가능성이 높다." }
+        }
+      ]
+    },
+    "t_han": {
+      "witness": "han_doyun",
+      "witness_name": "한도윤",
+      "statements": [
+        {
+          "id": "s_han_1",
+          "text": "정민소 씨는 유능한 큐레이터였습니다. 이런 일이 생기다니... 갤러리 문을 열기가 두렵습니다. '심연'이 사라진 것도 충격이고요.",
+          "pressed": false,
+          "press_result": "'심연'은 이번 전시의 핵심 작품이었어요. 보험 처리를 해야 할지... 아, 보험이요? 고가 작품이니 당연히 들어 있죠. 사업하는 사람으로서 기본 아닙니까.",
+          "press_adds": [],
+          "contradiction": null
+        },
+        {
+          "id": "s_han_2",
+          "text": "그날 9시에 퇴근했습니다. 집에 가서 와인 한 잔 하고 잤어요. 아침에 경찰 연락 받고 뛰어왔습니다.",
+          "pressed": false,
+          "press_result": "집에서요? 아내와 같이 있었죠. 아, 저 미혼입니다. 혼자 살아요. 증인은... 딱히 없네요. 그냥 평범한 밤이었으니까.",
+          "press_adds": [],
+          "contradiction": { "evidence_id": "e_loading_footage", "reveal": "하역장 외부 카메라에 10시 47분 한도윤이 대형 포장물을 차에 싣는 모습이 선명하게 촬영되어 있다. 9시에 퇴근했다는 증언은 완전한 거짓이다." }
+        },
+        {
+          "id": "s_han_3",
+          "text": "최근 민소 씨가 좀 예민해 보이긴 했습니다. 유채린 작가와 마찰이 있었다고 들었어요. 전시 배치 문제 이상의 뭔가가 있었던 것 같은데, 자세한 건 모릅니다.",
+          "pressed": false,
+          "press_result": "오지현 씨도 신경 쓰이긴 하더군요. 민소 씨와 헤어진 뒤로 갤러리 분위기가 좋지 않았어요. 여성 간의 감정 문제는... 저도 관여하기 어려웠습니다.",
+          "press_adds": [],
+          "contradiction": null
+        },
+        {
+          "id": "s_han_4",
+          "text": "수장고요? 거긴 작품 보관 용도입니다. 정기적으로 관리하긴 하지만, 특별한 건 없어요.",
+          "pressed": false,
+          "press_result": "수장고 열쇠는 저와 민소 씨만 가지고 있었습니다. 경비원도 못 들어가요. 보안상의 이유죠.",
+          "press_adds": [],
+          "contradiction": { "evidence_id": "e_forgery_materials", "reveal": "수장고에서 위작 제작에 사용되는 도구와 재료가 발견되었다. 상자에 한도윤의 필체로 '별도 보관' 메모가 붙어 있다. '특별한 건 없다'는 말은 거짓이다." }
+        }
+      ]
+    }
+  },
+  "deductions": {
+    "d_locked_room": {
+      "name": "밀실의 비밀",
+      "required_evidence": ["e_window_lock", "e_back_door_scratch"],
+      "unlocked": false,
+      "description": "전시실 창문은 내부 잠금, 정문도 내부 잠금. 그러나 후문에 도구 조작 흔적이 있다. 범인은 후문으로 출입한 뒤, 전시실 문을 잠그고 후문으로 빠져나갔다. 밀실은 만들어진 것이다."
+    },
+    "d_chaerin_motive": {
+      "name": "유채린의 진짜 사정",
+      "required_evidence": ["e_plagiarism_evidence", "e_diary_entries"],
+      "unlocked": false,
+      "description": "유채린의 초기작은 프랑스 무명 화가의 작품을 표절한 것이며, 정민소가 이를 발견했다. 표절이 공개되면 유채린의 경력은 끝난다. 살해 동기로 충분하지만, 동시에 유채린이 그림을 회수하러 갤러리에 갔을 이유이기도 하다."
+    },
+    "d_ohjihyun_secret": {
+      "name": "오지현의 숨겨진 방문",
+      "required_evidence": ["e_threatening_messages", "e_back_door_scratch"],
+      "unlocked": false,
+      "description": "오지현은 사건 당일 민소에게 '갤러리에서 만나자'고 보냈고, 후문에 강제 조작 흔적이 있다. 오지현이 퇴근 후 후문으로 다시 들어왔을 가능성. 그러나 그녀가 본 것은 이미 벌어진 일이었을 수도 있다."
+    },
+    "d_guard_complicity": {
+      "name": "경비원의 공모",
+      "required_evidence": ["e_gambling_receipts", "e_cctv_off_time"],
+      "unlocked": false,
+      "description": "박성호는 도박 빚에 시달리고 있었고, CCTV는 그의 근무 시간 중에 꺼졌다. 누군가(한도윤)가 빚을 빌미로 협조를 요구했을 가능성이 높다. CCTV를 끄고, 출입 기록을 조작한 공범."
+    },
+    "d_forgery_scheme": {
+      "name": "위작 스킴",
+      "required_evidence": ["e_appraisal_report", "e_forgery_materials"],
+      "unlocked": false,
+      "description": "정민소는 한도윤의 소장품이 위작임을 의심하고 외부 감정을 의뢰했다. 수장고에서는 실제로 위작 제작 도구가 발견되었다. 한도윤은 위작을 진품으로 유통하는 사기에 관여하고 있었다."
+    },
+    "d_insurance_fraud": {
+      "name": "보험 사기의 구조",
+      "required_evidence": ["e_insurance_policy", "e_buyer_emails"],
+      "unlocked": false,
+      "description": "한도윤은 '심연'에 8억 보험을 들고, 동시에 해외 바이어에게 5억에 매각을 진행했다. 그림을 빼돌린 뒤 도난 신고를 하면 보험금 + 매각금 = 이중 수익. '심연' 실종의 진짜 이유."
+    },
+    "d_culprit_identified": {
+      "name": "진범 특정",
+      "required_evidence": ["e_loading_footage", "e_scarf_fiber"],
+      "unlocked": false,
+      "description": "하역장 카메라에 한도윤이 10시 47분에 포장물을 반출하는 모습이 찍혔다. 이미 '퇴근'했다는 시각 이후다. 피해자 목의 섬유는 한도윤의 머플러와 일치한다. 한도윤이 정민소를 교살하고 '심연'을 빼돌린 것이다."
+    }
+  },
+  "suspects": [
+    {
+      "id": "yoo_chaerin",
+      "name": "유채린",
+      "motive": "정민소가 유채린의 초기작 표절을 발견하고 공개를 시사. 화가로서의 경력이 완전히 파괴될 위기",
+      "alibi": "친구들과 망원동 카페에 있었다고 주장하며 인스타그램 사진을 근거로 제시. 그러나 사진 촬영 시각과 게시 시각에 약 3시간 차이가 있음"
+    },
+    {
+      "id": "oh_jihyun",
+      "name": "오지현",
+      "motive": "정민소와 2년간 연인 관계였으나 2개월 전 일방적으로 차임. 격렬한 감정과 위협적 메시지. 분노와 배신감",
+      "alibi": "6시에 퇴근 후 집에서 혼자 넷플릭스를 봤다고 주장. 증명할 사람 없음. 사건 당일 민소에게 '갤러리에서 만나자'고 메시지를 보낸 사실과 모순"
+    },
+    {
+      "id": "park_sungho",
+      "name": "박성호",
+      "motive": "2,800만 원의 도박 빚. 한도윤이 빚 청산을 대가로 협조를 요구했을 가능성. 또는 독자적으로 갤러리 작품을 노렸을 가능성",
+      "alibi": "10시에 퇴근 후 집에 갔다고 주장하나, 도박장 영수증에 10시 30분 입장 기록. 아내에게 확인을 꺼리는 태도"
+    },
+    {
+      "id": "han_doyun",
+      "name": "한도윤",
+      "motive": "위작 유통 사업이 정민소의 감정 의뢰로 발각 직전. 보험 사기와 해외 매각의 이중 수익 구조가 무너질 위기",
+      "alibi": "9시에 퇴관했다고 주장. 혼자 살아 증인 없음. 하역장 카메라에 10시 47분 포장물 반출 장면이 촬영됨"
+    }
+  ],
+  "solution": {
+    "culprit": "han_doyun",
+    "method": "한도윤은 9시 퇴관을 기록한 뒤 후문으로 재입장. 박성호에게 CCTV 차단과 기록 조작을 시키고, 제2전시실에서 위작 발각을 추궁하는 정민소를 자신의 캐시미어 머플러로 교살. '심연'을 수장고에서 포장한 뒤 하역장을 통해 차량에 적재하고, 전시실 문을 내부에서 잠근 뒤 후문으로 빠져나왔다. 밀실은 의도적으로 조작된 것이며, 사라진 그림은 보험 사기와 해외 매각의 이중 수익을 위한 것이었다.",
+    "motive": "정민소가 한도윤의 위작 유통 사업을 발각하고 외부 감정까지 의뢰한 상태. 감정 결과가 나오면 사기 전력이 드러나 형사 처벌은 물론 갤러리 폐업이 불가피. 동시에 '심연' 도난으로 위장하여 보험금 8억 + 해외 매각 5억 = 13억을 확보하려는 계획. 정민소의 입을 막는 것이 모든 것의 전제 조건이었다.",
+    "key_evidence": ["e_loading_footage", "e_scarf_fiber", "e_forgery_materials", "e_buyer_emails", "e_insurance_policy"]
+  },
+  "unlocks": [
+    {
+      "trigger": { "type": "evidence_found", "id": "e_diary_entries" },
+      "action": { "type": "unlock_location", "location": "chaerin_studio" }
+    },
+    {
+      "trigger": { "type": "evidence_found", "id": "e_appraisal_report" },
+      "action": { "type": "unlock_room", "location": "gallery_void", "room": "storage" }
+    },
+    {
+      "trigger": { "type": "deduction_unlocked", "id": "d_forgery_scheme" },
+      "action": { "type": "unlock_room", "location": "gallery_void", "room": "owner_office" }
+    },
+    {
+      "trigger": { "type": "evidence_found", "id": "e_forgery_research" },
+      "action": { "type": "unlock_location", "location": "minso_apartment" }
+    },
+    {
+      "trigger": { "type": "contradiction_found", "id": "s_oh_1" },
+      "action": { "type": "unlock_npc", "location": "gallery_void", "npc": "oh_jihyun" }
+    }
+  ]
+}

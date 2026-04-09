@@ -1,0 +1,225 @@
+<panel-actions>
+[
+  {
+    "id": "accept_case",
+    "label": "사건 수임",
+    "description": "새 사건을 수락하고 즉시 수사를 시작한다",
+    "params": { "case_id": "사건 ID (case-seeds 배열의 id 필드)" },
+    "available_when": "case_phase === 'idle'",
+    "needs_ui": false
+  }
+]
+</panel-actions>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .dossier { font-family: 'Georgia', 'Noto Serif KR', serif; color: #e0ddd4; }
+  .dossier-header {
+    text-align: center; margin-bottom: 16px; padding-bottom: 12px;
+    border-bottom: 2px solid #c8a44e;
+  }
+  .dossier-title {
+    font-size: 18px; font-weight: 700; color: #c8a44e;
+    letter-spacing: 4px; text-transform: uppercase;
+  }
+  .dossier-sub { font-size: 11px; color: #7a7a8a; margin-top: 4px; letter-spacing: 1px; }
+
+  .case-stack { display: flex; flex-direction: column; gap: 10px; }
+  .case-folder {
+    position: relative; background: #0d1220;
+    border: 1px solid #1e2a45; border-radius: 8px;
+    padding: 14px 16px; cursor: pointer;
+    transition: all 0.3s; overflow: hidden;
+  }
+  .case-folder::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, transparent, #c8a44e, transparent);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .case-folder:hover { border-color: #c8a44e; transform: translateX(4px); }
+  .case-folder:hover::before { opacity: 1; }
+  .case-folder.active { border-color: #c8a44e; background: #121829; }
+
+  .folder-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .case-category {
+    font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 3px;
+    font-family: 'Segoe UI', sans-serif; letter-spacing: 1px;
+  }
+  .cat-murder { background: #2a1515; color: #e74c3c; }
+  .cat-missing { background: #152a2a; color: #4ecdc4; }
+  .cat-theft { background: #2a2515; color: #f1c40f; }
+  .cat-fraud { background: #1a1a2e; color: #a29bfe; }
+  .cat-cyber { background: #15202a; color: #74b9ff; }
+  .cat-arson { background: #2a1a15; color: #e67e22; }
+  .cat-stalking { background: #2a152a; color: #fd79a8; }
+  .cat-default { background: #1e2a45; color: #7a7a8a; }
+
+  .case-diff { font-size: 12px; color: #c8a44e; }
+
+  .case-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .case-meta {
+    display: flex; gap: 10px; font-size: 11px; color: #7a7a8a; margin-bottom: 6px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  .case-meta span { display: flex; align-items: center; gap: 3px; }
+  .case-summary {
+    font-size: 12px; line-height: 1.6; color: #b0b0b0; font-style: italic;
+    border-left: 2px solid #1e2a45; padding-left: 10px;
+  }
+  .accept-btn {
+    display: none; margin-top: 10px; width: 100%; padding: 8px;
+    background: linear-gradient(135deg, #c8a44e, #a8842e);
+    border: none; border-radius: 6px; color: #0a0e1a;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+    font-family: 'Segoe UI', sans-serif; letter-spacing: 1px;
+    transition: opacity 0.2s;
+  }
+  .accept-btn:hover { opacity: 0.9; }
+  .accept-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .case-folder.active .accept-btn { display: block; }
+
+  .in-progress {
+    text-align: center; padding: 30px; font-size: 13px; color: #7a7a8a;
+  }
+  .in-progress .current-case { font-size: 16px; color: #c8a44e; font-weight: 700; margin: 8px 0; }
+
+  .empty-msg {
+    text-align: center; padding: 30px; font-size: 13px; color: #7a7a8a;
+    font-style: italic;
+  }
+</style>
+
+<div class="dossier">
+  <div class="dossier-header">
+    <div class="dossier-title">의뢰함</div>
+    <div class="dossier-sub">CASE FILES</div>
+  </div>
+  <div class="case-stack" id="stack"></div>
+</div>
+
+<script>
+  var d = __panelBridge.data;
+  var seeds = d['case-seeds'];
+  if (!Array.isArray(seeds)) seeds = [];
+  var phase = d.case_phase;
+  var stackEl = shadow.getElementById('stack');
+
+  function getCatFromLocations(locations) {
+    if (!locations) return '사건';
+    var types = [];
+    var keys = Object.keys(locations);
+    for (var i = 0; i < keys.length; i++) {
+      var loc = locations[keys[i]];
+      if (loc && loc.type) types.push(loc.type);
+    }
+    return types[0] || '사건';
+  }
+
+  function getCatClass(caseObj) {
+    var s = (caseObj.summary || '') + ' ' + (caseObj.title || '');
+    if (s.indexOf('살인') >= 0 || s.indexOf('살해') >= 0 || s.indexOf('사망') >= 0 || s.indexOf('시신') >= 0) return 'cat-murder';
+    if (s.indexOf('실종') >= 0 || s.indexOf('납치') >= 0) return 'cat-missing';
+    if (s.indexOf('도난') >= 0 || s.indexOf('절도') >= 0 || s.indexOf('훔') >= 0) return 'cat-theft';
+    if (s.indexOf('사기') >= 0 || s.indexOf('횡령') >= 0) return 'cat-fraud';
+    if (s.indexOf('사이버') >= 0 || s.indexOf('해킹') >= 0 || s.indexOf('디지털') >= 0) return 'cat-cyber';
+    if (s.indexOf('방화') >= 0 || s.indexOf('화재') >= 0) return 'cat-arson';
+    if (s.indexOf('협박') >= 0 || s.indexOf('스토킹') >= 0) return 'cat-stalking';
+    return 'cat-default';
+  }
+
+  function getCatLabel(caseObj) {
+    var cls = getCatClass(caseObj);
+    var map = {
+      'cat-murder': '살인', 'cat-missing': '실종', 'cat-theft': '도난',
+      'cat-fraud': '사기', 'cat-cyber': '사이버', 'cat-arson': '방화',
+      'cat-stalking': '협박', 'cat-default': '사건'
+    };
+    return map[cls] || '사건';
+  }
+
+  function countKeys(obj) {
+    return obj ? Object.keys(obj).length : 0;
+  }
+
+  function truncate(str, len) {
+    if (!str) return '';
+    return str.length > len ? str.substring(0, len) + '...' : str;
+  }
+
+  if (phase !== 'idle') {
+    stackEl.innerHTML = '<div class="in-progress">현재 사건 진행 중입니다<div class="current-case">\uD83D\uDCC1 ' + (d.case_title || '미제 사건') + '</div>사건이 해결되면 새 의뢰를 받을 수 있습니다.</div>';
+  } else if (seeds.length === 0) {
+    stackEl.innerHTML = '<div class="empty-msg">접수된 의뢰가 없습니다.<br>새로운 사건이 들어올 때까지 기다려 주세요.</div>';
+  } else {
+    stackEl.innerHTML = seeds.map(function(c) {
+      var catCls = 'case-category ' + getCatClass(c);
+      var catLabel = getCatLabel(c);
+      var locCount = countKeys(c.locations);
+      var suspectCount = c.suspects ? c.suspects.length : 0;
+
+      return '<div class="case-folder" data-case-id="' + c.id + '">' +
+        '<div class="folder-top"><span class="' + catCls + '">' + catLabel + '</span><span class="case-diff">' + (c.difficulty || '') + '</span></div>' +
+        '<div class="case-name">' + (c.title || c.id) + '</div>' +
+        '<div class="case-meta">' +
+          '<span>\uD83D\uDCCD ' + locCount + '개 장소</span>' +
+          '<span>\uD83D\uDC64 용의자 ' + suspectCount + '명</span>' +
+        '</div>' +
+        '<div class="case-summary">' + truncate(c.summary, 100) + '</div>' +
+        '<button class="accept-btn" data-case-id="' + c.id + '">이 사건을 수임한다</button>' +
+        '</div>';
+    }).join('');
+
+    shadow.querySelectorAll('.case-folder').forEach(function(folder) {
+      folder.addEventListener('click', function(e) {
+        if (e.target.classList.contains('accept-btn')) return;
+        shadow.querySelectorAll('.case-folder').forEach(function(f) { f.classList.remove('active'); });
+        folder.classList.add('active');
+      });
+    });
+
+    shadow.querySelectorAll('.accept-btn').forEach(function(btn) {
+      btn.addEventListener('click', async function() {
+        btn.disabled = true;
+        btn.textContent = '수임 중...';
+        try {
+          await __panelBridge.executeAction('accept_case', { case_id: btn.dataset.caseId });
+          __panelBridge.sendMessage('[사건 수임]');
+        } catch(e) {
+          btn.disabled = false;
+          btn.textContent = '이 사건을 수임한다';
+          __panelBridge.showToast('수임 실패');
+        }
+      });
+    });
+  }
+
+  // Panel action — 유일한 실행 로직
+  __panelBridge.registerAction('accept_case', async function(params) {
+    var res = await __panelBridge.runTool('engine', { action: 'accept_case', case_id: params.case_id });
+    if (!res.result || !res.result.success) throw new Error(res.result?.message || '수임 실패');
+
+    await __panelBridge.queueEvent('[사건접수] case_id=' + params.case_id + ', title=' + res.result.case_title + ', difficulty=' + res.result.difficulty);
+
+    // 첫 방 탐색 포인트 초기화 이벤트 큐잉
+    if (res.result.search_init_event) {
+      await __panelBridge.queueEvent(res.result.search_init_event);
+    }
+
+    // 백그라운드: 새 케이스 생성 + 소비된 케이스 제거/아카이브
+    try {
+      await fetch('/api/sessions/' + __panelBridge.sessionId + '/fire-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: '/generate-case 스킬을 사용하라. 소비된 케이스 ID는 "' + params.case_id + '"이다. 절차: 1) case-seeds.json과 case-example.json을 읽는다. 2) 기존과 겹치지 않는 새 케이스를 생성하여 case-temp.json에 Write한다. 3) mcp__claude_play__run_tool로 case-sync 도구를 호출한다: tool="case-sync", args={ remove_id: "' + params.case_id + '" }.',
+          model: 'opus',
+          effort: 'high'
+        })
+      });
+    } catch(e) {}
+
+    __panelBridge.closeModal('의뢰함');
+    await __panelBridge.updateVariables({ _loading_type: 'case' });
+    __panelBridge.openModal('사건로딩', true);
+  });
+</script>

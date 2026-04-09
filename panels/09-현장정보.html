@@ -1,0 +1,244 @@
+<!-- deps: {{location}} {{current_room}} {{time}} {{case_phase}} {{insight}} -->
+<panel-actions>
+[
+  {
+    "id": "move_room",
+    "label": "방 이동",
+    "description": "현재 장소 내에서 다른 방으로 이동한다",
+    "params": { "room_id": "이동할 방 ID" },
+    "available_when": "case_phase === 'investigation' && location !== ''",
+    "needs_ui": false
+  },
+  {
+    "id": "talk_to",
+    "label": "대화",
+    "description": "현장의 인물과 대화하여 증언을 얻는다",
+    "params": { "npc_id": "대화할 인물 ID" },
+    "available_when": "case_phase === 'investigation' && location !== ''",
+    "needs_ui": false
+  }
+]
+</panel-actions>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .scene-info { font-family: 'Segoe UI', sans-serif; color: #e0ddd4; }
+
+  .section { margin-bottom: 10px; }
+  .section-title {
+    font-size: 10px; font-weight: 700; color: #c8a44e;
+    letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 5px; padding-bottom: 3px;
+    border-bottom: 1px solid #1e2a45;
+  }
+
+  .loc-name {
+    font-size: 14px; font-weight: 700; color: #e0ddd4;
+    margin-bottom: 2px;
+  }
+  .loc-address { font-size: 10px; color: #7a7a8a; margin-bottom: 6px; }
+
+  .room-current {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 8px; background: #1a2035; border-radius: 6px;
+    border-left: 3px solid #c8a44e; margin-bottom: 8px;
+  }
+  .room-icon { font-size: 16px; }
+  .room-label { font-size: 12px; font-weight: 600; }
+
+  .room-list { display: flex; flex-direction: column; gap: 3px; }
+  .room-item {
+    font-size: 11px; padding: 4px 8px; border-radius: 4px;
+    cursor: pointer; background: #0d1220; border: 1px solid transparent;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.2s;
+  }
+  .room-item:hover { border-color: #1e2a45; background: #121829; }
+  .room-item.current { border-color: #c8a44e; background: #1a2035; }
+  .room-item.locked { opacity: 0.35; cursor: not-allowed; }
+  .room-item .badge {
+    font-size: 9px; padding: 1px 4px; border-radius: 3px;
+    margin-left: auto;
+  }
+  .badge.points { background: #2a2518; color: #c8a44e; }
+  .badge.npc { background: #1a2540; color: #4a90d9; }
+
+  .npc-list { display: flex; flex-direction: column; gap: 3px; }
+  .npc-item {
+    font-size: 11px; padding: 4px 8px; border-radius: 4px;
+    cursor: pointer; background: #0d1220;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.2s; border: 1px solid transparent;
+  }
+  .npc-item:hover { border-color: #1e2a45; }
+  .npc-item .talked { color: #4ecdc4; font-size: 9px; }
+
+  .point-list { display: flex; flex-direction: column; gap: 2px; }
+  .point-item {
+    font-size: 11px; padding: 3px 8px; border-radius: 4px;
+    cursor: pointer; background: #0d1220;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.2s; border: 1px solid transparent;
+  }
+  .point-item:hover { border-color: #1e2a45; }
+  .point-item.found { opacity: 0.4; }
+  .point-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .point-dot.active { background: #c8a44e; animation: pulse 2s infinite; }
+  .point-dot.done { background: #4ecdc4; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .empty { font-size: 11px; color: #7a7a8a; padding: 8px 0; text-align: center; }
+
+
+  .idle-msg {
+    text-align: center; padding: 20px 8px; color: #7a7a8a; font-size: 12px;
+    line-height: 1.6;
+  }
+  .idle-msg .icon { font-size: 32px; margin-bottom: 8px; }
+
+</style>
+
+<div class="scene-info" id="root"></div>
+
+<script>
+  var d = __panelBridge.data;
+  var root = shadow.getElementById('root');
+  var caseData = d['case'] || {};
+  var locations = caseData.locations || {};
+  var loc = locations[d.location];
+  var phase = d.case_phase;
+
+  if (phase === 'idle') {
+    root.innerHTML = '<div class="idle-msg"><div class="icon">🔍</div>현재 진행 중인 사건이 없습니다.</div>';
+  } else if (!loc) {
+    // investigation 상태지만 아직 장소 이동 전 — 사무소에서 출발 대기
+    var locList = Object.entries(locations).filter(function(e) { return e[1].unlocked; });
+    var html = '<div class="section"><div class="loc-name">🏢 루멘 탐정 사무소</div><div class="loc-address">사건: ' + (d.case_title || '준비 중') + '</div></div>';
+    if (locList.length > 0) {
+      html += '<div class="section"><div class="section-title">📍 출동 가능 장소</div><div class="room-list">';
+      locList.forEach(function(e) {
+        html += '<div class="room-item" data-loc="' + e[0] + '">📍 ' + e[1].name + (e[1].address ? '<br><span style="font-size:9px;color:#7a7a8a">' + e[1].address + '</span>' : '') + '</div>';
+      });
+      html += '</div></div>';
+    } else {
+      html += '<div class="idle-msg" style="padding:12px 0"><div class="icon" style="font-size:24px">☕</div>하율과 사건 정보를 정리하는 중...<br>대화가 끝나면 장소가 표시됩니다.</div>';
+    }
+    root.innerHTML = html;
+
+    // Location click to move (with confirmation)
+    shadow.querySelectorAll('[data-loc]').forEach(function(el) {
+      el.addEventListener('click', async function() {
+        var locId = el.dataset.loc;
+        var locName = el.textContent.replace('📍 ', '').split('\n')[0].trim();
+
+        var confirmed = await __panelBridge.confirm('<span style="color:#c8a44e;font-weight:700">' + locName + '</span>(으)로<br>이동하시겠습니까?', { yesText: '이동', noText: '취소' });
+        if (!confirmed) return;
+
+        var res = await __panelBridge.runTool('engine', { action: 'move_location', location_id: locId });
+        if (res.result && res.result.success) {
+          // search_init_event is auto-queued by tool API
+          await __panelBridge.queueEvent('[이동] location=' + locId + ', name=' + res.result.location_name);
+          __panelBridge.sendMessage('*[' + res.result.location_name + '(으)로 이동한다]*');
+        }
+      });
+    });
+  } else {
+    var currentRoom = (loc.floor_plan?.rooms || []).find(function(r) { return r.id === d.current_room; });
+    var rooms = loc.floor_plan?.rooms || [];
+    var npcs = Object.entries(loc.npcs || {}).filter(function(n) { return n[1].room === d.current_room && n[1].available; });
+
+    var html = '';
+
+    // Location header
+    html += '<div class="section">';
+    html += '<div class="loc-name">📍 ' + loc.name + '</div>';
+    if (loc.address) html += '<div class="loc-address">' + loc.address + '</div>';
+    html += '</div>';
+
+    // Current room
+    if (currentRoom) {
+      html += '<div class="room-current"><span class="room-icon">' + (currentRoom.icon || '📦') + '</span><span class="room-label">' + currentRoom.name + '</span></div>';
+    }
+
+    // Room list
+    html += '<div class="section"><div class="section-title">🏠 구역</div><div class="room-list">';
+    rooms.forEach(function(r) {
+      var cls = 'room-item';
+      if (r.id === d.current_room) cls += ' current';
+      if (r.locked) cls += ' locked';
+      var rNpcs = Object.values(loc.npcs || {}).filter(function(n) { return n.room === r.id && n.available; }).length;
+      var badges = '';
+      if (rNpcs > 0) badges += '<span class="badge npc">' + rNpcs + '👤</span>';
+      html += '<div class="' + cls + '" data-room="' + r.id + '">' + (r.icon || '') + ' ' + r.name + (r.locked ? ' 🔒' : '') + badges + '</div>';
+    });
+    html += '</div></div>';
+
+    // NPCs in current room
+    if (npcs.length > 0) {
+      html += '<div class="section"><div class="section-title">👤 현장 인물</div><div class="npc-list">';
+      npcs.forEach(function(n) {
+        html += '<div class="npc-item" data-npc="' + n[0] + '">👤 ' + n[1].name + (n[1].talked ? '<span class="talked">대화함</span>' : '') + '</div>';
+      });
+      html += '</div></div>';
+    }
+
+
+    root.innerHTML = html;
+
+    // Room click (with confirmation)
+    shadow.querySelectorAll('.room-item').forEach(function(el) {
+      el.addEventListener('click', async function() {
+        if (el.classList.contains('locked')) return;
+        var rid = el.dataset.room;
+        if (rid === d.current_room) return;
+        var roomName = el.textContent.replace(/🔒|👤|\d+/g, '').trim();
+
+        var confirmed = await __panelBridge.confirm('<span style="color:#c8a44e;font-weight:700">' + roomName + '</span>(으)로<br>이동하시겠습니까?', { yesText: '이동', noText: '취소' });
+        if (!confirmed) return;
+
+        var res = await __panelBridge.runTool('engine', { action: 'move_room', room_id: rid });
+        if (res.result && res.result.success) {
+          if (res.result.needs_search_init) {
+            await __panelBridge.updateVariables({ _loading_type: 'search' });
+            __panelBridge.openModal('사건로딩', true);
+          }
+          await __panelBridge.queueEvent('[이동:방] room_id=' + rid + ', room_name=' + res.result.room_name);
+          __panelBridge.sendMessage('*[' + res.result.room_name + '(으)로 이동한다]*');
+        }
+      });
+    });
+
+    // NPC click
+    shadow.querySelectorAll('.npc-item').forEach(function(el) {
+      el.addEventListener('click', function() {
+        __panelBridge.runTool('engine', { action: 'talk_to', npc_id: el.dataset.npc }).then(function(res) {
+          if (res.result && res.result.success) {
+            __panelBridge.queueEvent('[대화] npc_id=' + el.dataset.npc + ', npc_name=' + res.result.npc_name);
+            __panelBridge.sendMessage(res.result.npc_name + '에게 말을 걸었다.');
+          }
+        });
+      });
+    });
+
+    // Open map
+  }
+
+  // Panel action registrations
+  __panelBridge.registerAction('move_room', async function(params) {
+    var res = await __panelBridge.runTool('engine', { action: 'move_room', room_id: params.room_id });
+    if (res.result && res.result.success) {
+      if (res.result.needs_search_init) {
+        await __panelBridge.updateVariables({ _loading_type: 'search' });
+        __panelBridge.openModal('사건로딩', true);
+      }
+      await __panelBridge.queueEvent('[이동:방] room_id=' + params.room_id + ', room_name=' + res.result.room_name);
+    }
+  });
+
+  __panelBridge.registerAction('talk_to', async function(params) {
+    var res = await __panelBridge.runTool('engine', { action: 'talk_to', npc_id: params.npc_id });
+    if (res.result && res.result.success) {
+      await __panelBridge.queueEvent('[대화] npc_id=' + params.npc_id + ', npc_name=' + res.result.npc_name);
+    }
+  });
+</script>

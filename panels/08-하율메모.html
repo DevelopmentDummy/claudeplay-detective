@@ -1,0 +1,77 @@
+<!-- deps: {{hayul_note}} -->
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #1e2a45; border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: #c8a44e; }
+
+  .memo {
+    font-family: 'Segoe UI', sans-serif;
+    color: #e0ddd4;
+    max-height: 100%;
+    overflow-y: auto;
+  }
+  .memo-header {
+    font-size: 10px; font-weight: 700; color: #c8a44e;
+    letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 6px; padding-bottom: 4px;
+    border-bottom: 1px solid #1e2a45;
+  }
+  .memo-summary {
+    font-size: 11px; color: #9a9aaa; font-style: italic;
+    padding: 4px 0 8px; line-height: 1.5;
+    border-bottom: 1px dashed #1e2a45;
+    margin-bottom: 6px;
+  }
+  .notes-list { display: flex; flex-direction: column; gap: 4px; }
+  .note-entry {
+    padding: 5px 8px; border-radius: 4px;
+    background: #0a0e1a; border-left: 2px solid #1e2a45;
+  }
+  .note-meta {
+    font-size: 9px; color: #5a5a6a;
+    margin-bottom: 2px; display: flex; gap: 6px;
+  }
+  .note-text {
+    font-size: 11px; line-height: 1.5; color: #b0b0b0;
+    font-family: 'Georgia', 'Noto Serif KR', serif;
+    font-style: italic;
+  }
+  .empty-notes {
+    font-size: 11px; color: #5a5a6a; text-align: center;
+    padding: 16px 8px; font-style: italic;
+  }
+</style>
+
+<div class="memo">
+  <div class="memo-header">📝 하율의 메모</div>
+  <div class="memo-summary" id="summary"></div>
+  <div class="notes-list" id="notesList"></div>
+</div>
+
+<script>
+  var d = __panelBridge.data;
+  var notesData = d['hayul-notes'] || {};
+  var notes = Array.isArray(notesData.entries) ? notesData.entries : [];
+  var summary = d.hayul_note || '';
+
+  var summaryEl = shadow.getElementById('summary');
+  var listEl = shadow.getElementById('notesList');
+
+  summaryEl.textContent = summary;
+
+  if (notes.length === 0) {
+    listEl.innerHTML = '<div class="empty-notes">아직 메모가 없습니다.</div>';
+  } else {
+    listEl.innerHTML = notes.map(function(n) {
+      var meta = [];
+      if (n.time) meta.push(n.time);
+      if (n.room) meta.push(n.room);
+      return '<div class="note-entry">' +
+        '<div class="note-meta">' + meta.join(' · ') + '</div>' +
+        '<div class="note-text">' + n.text + '</div>' +
+      '</div>';
+    }).join('');
+  }
+</script>

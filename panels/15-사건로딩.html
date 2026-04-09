@@ -1,0 +1,119 @@
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .loading-screen {
+    font-family: 'Segoe UI', sans-serif;
+    color: #e0ddd4;
+    text-align: center;
+    padding: 40px 20px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .loading-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    animation: iconPulse 2s ease-in-out infinite;
+  }
+  @keyframes iconPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+  }
+
+  .loading-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #c8a44e;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .loading-case {
+    font-size: 14px;
+    color: #e0ddd4;
+    margin-bottom: 16px;
+  }
+
+  .loading-bar-track {
+    width: 200px;
+    height: 4px;
+    background: #1e2a45;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .loading-bar-fill {
+    width: 30%;
+    height: 100%;
+    border-radius: 2px;
+    animation: barSlide 1.5s ease-in-out infinite;
+  }
+  .loading-bar-fill.case { background: linear-gradient(90deg, #c8a44e, #e8c86e); }
+  .loading-bar-fill.search { background: linear-gradient(90deg, #4ecdc4, #6ee8df); }
+  @keyframes barSlide {
+    0% { width: 10%; margin-left: 0; }
+    50% { width: 40%; margin-left: 30%; }
+    100% { width: 10%; margin-left: 90%; }
+  }
+
+  .loading-hint {
+    font-size: 11px;
+    color: #7a7a8a;
+    font-style: italic;
+    line-height: 1.5;
+  }
+</style>
+
+<div class="loading-screen">
+  <div class="loading-icon" id="icon"></div>
+  <div class="loading-title" id="title"></div>
+  <div class="loading-case" id="subtitle"></div>
+  <div class="loading-bar-track"><div class="loading-bar-fill" id="bar"></div></div>
+  <div class="loading-hint" id="hint"></div>
+</div>
+
+<script>
+  var d = __panelBridge.data;
+  var type = d._loading_type || 'case';
+
+  var icon = shadow.getElementById('icon');
+  var title = shadow.getElementById('title');
+  var subtitle = shadow.getElementById('subtitle');
+  var bar = shadow.getElementById('bar');
+  var hint = shadow.getElementById('hint');
+
+  var searchHints = [
+    '하율이 주변을 꼼꼼히 살피고 있습니다...',
+    '수상한 곳이 없는지 둘러보는 중입니다...',
+    '하율이 장갑을 끼고 준비하고 있습니다...',
+    '현장의 흔적을 읽어내는 중입니다...',
+    '단서가 숨어 있을 만한 곳을 가늠하고 있습니다...'
+  ];
+
+  var caseHints = [
+    '하율이 사건 자료를 정리하고 있습니다...',
+    '사건 개요를 검토하는 중입니다...',
+    '현장 약도를 확인하고 있습니다...'
+  ];
+
+  if (type === 'search') {
+    icon.textContent = '\uD83D\uDD26';
+    title.textContent = '현장 확인 중';
+    subtitle.textContent = d.current_room ? '' : '';
+    bar.classList.add('search');
+    hint.textContent = searchHints[Math.floor(Math.random() * searchHints.length)];
+  } else {
+    icon.textContent = '\uD83D\uDD0D';
+    title.textContent = '사건 준비 중';
+    subtitle.textContent = d.case_title ? '\uD83D\uDCC1 ' + d.case_title : '';
+    bar.classList.add('case');
+    hint.textContent = caseHints[Math.floor(Math.random() * caseHints.length)];
+  }
+
+  var off = __panelBridge.on('turnEnd', function() {
+    __panelBridge.closeModal('사건로딩');
+    off();
+  });
+</script>

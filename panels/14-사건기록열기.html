@@ -1,0 +1,14 @@
+<style>
+  .archive-btn {
+    width: 100%; padding: 6px; border: 1px solid #1e2a45; border-radius: 6px;
+    background: #121829; color: #c8a44e; font-size: 11px; cursor: pointer;
+    font-family: 'Segoe UI', sans-serif; transition: all 0.2s;
+  }
+  .archive-btn:hover { border-color: #c8a44e; background: #1a2035; }
+</style>
+<button class="archive-btn" id="openArchive">📂 사건 기록</button>
+<script>
+  shadow.getElementById('openArchive').addEventListener('click', function() {
+    __panelBridge.openModal('사건기록');
+  });
+</script>

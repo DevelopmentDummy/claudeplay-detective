@@ -1,0 +1,125 @@
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .status { font-family: 'Segoe UI', sans-serif; color: #e0ddd4; }
+  .case-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 4px 0 8px; border-bottom: 1px solid #1e2a45; margin-bottom: 8px;
+  }
+  .phase-badge {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    padding: 2px 8px; border-radius: 3px;
+    background: #1e2a45; color: #c8a44e;
+  }
+  .phase-badge.idle { color: #7a7a8a; }
+  .phase-badge.investigation { color: #4ecdc4; background: #1a2e2c; }
+  .phase-badge.confrontation { color: #e74c3c; background: #2a1a1a; }
+  .phase-badge.resolved { color: #c8a44e; background: #2a2518; }
+  .day-info { font-size: 11px; color: #7a7a8a; }
+  .case-title {
+    font-size: 12px; font-weight: 600; color: #c8a44e;
+    margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .gauge { margin-bottom: 6px; }
+  .gauge-header { display: flex; justify-content: space-between; margin-bottom: 2px; }
+  .gauge-label { font-size: 10px; color: #7a7a8a; }
+  .gauge-value { font-size: 10px; color: #e0ddd4; }
+  .gauge-bar { height: 6px; background: #0a0e1a; border-radius: 3px; overflow: hidden; }
+  .gauge-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+  .gauge-fill.trust { background: linear-gradient(90deg, #4a90d9, #6cb4ee); }
+  .gauge-fill.insight { background: linear-gradient(90deg, #c8a44e, #e8c86e); }
+  .clue-row { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+  .clue-label { font-size: 10px; color: #7a7a8a; }
+  .clue-count { font-size: 12px; font-weight: 600; color: #e0ddd4; }
+  .hearts { display: flex; gap: 3px; margin-top: 6px; }
+  .heart { font-size: 14px; opacity: 0.3; }
+  .heart.lost { opacity: 1; color: #e74c3c; filter: grayscale(1); }
+  .heart.active { opacity: 1; }
+  .action-btns { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+  .action-btn {
+    width: 100%; padding: 6px; border: 1px solid #1e2a45; border-radius: 6px;
+    background: #121829; color: #c8a44e; font-size: 11px; cursor: pointer;
+    font-family: 'Segoe UI', sans-serif; transition: all 0.2s;
+  }
+  .action-btn:hover { border-color: #c8a44e; background: #1a2035; }
+</style>
+<div class="status">
+  <div class="case-header">
+    <span class="phase-badge {{case_phase}}">
+      {{#if (eq case_phase "idle")}}대기{{/if}}
+      {{#if (eq case_phase "investigation")}}수사 중{{/if}}
+      {{#if (eq case_phase "confrontation")}}범인지목{{/if}}
+      {{#if (eq case_phase "resolved")}}해결{{/if}}
+    </span>
+    <span class="day-info">{{time}} · Day {{day}}</span>
+  </div>
+
+  {{#if (ne case_phase "idle")}}
+  <div class="case-title">📁 {{case_title}}</div>
+  {{/if}}
+
+  <div class="gauge">
+    <div class="gauge-header">
+      <span class="gauge-label">🤝 신뢰도</span>
+      <span class="gauge-value">{{trust}}/{{trust_max}}</span>
+    </div>
+    <div class="gauge-bar"><div class="gauge-fill trust" style="width:{{percentage trust trust_max}}%"></div></div>
+  </div>
+
+  <div class="gauge">
+    <div class="gauge-header">
+      <span class="gauge-label">💡 통찰력</span>
+      <span class="gauge-value">{{insight}}/{{insight_max}}</span>
+    </div>
+    <div class="gauge-bar"><div class="gauge-fill insight" style="width:{{percentage insight insight_max}}%"></div></div>
+  </div>
+
+  {{#if (ne case_phase "idle")}}
+  <div class="clue-row">
+    <span class="clue-label">🔍 단서</span>
+    <span class="clue-count">{{clues_found}} / {{clues_total}}</span>
+  </div>
+
+  <div class="hearts" id="hearts"></div>
+  {{/if}}
+
+  <div class="action-btns">
+    {{#if (eq case_phase "idle")}}
+    <button class="action-btn" data-open="의뢰함">📁 의뢰함</button>
+    {{/if}}
+    {{#if (eq case_phase "investigation")}}
+    <button class="action-btn" data-open="사건개요" style="border-color:#c8a44e33">📋 사건 개요</button>
+    <button class="action-btn" data-open="현장지도">🗺️ 현장 지도</button>
+    <button class="action-btn" data-open="증언록">🗣️ 증언록</button>
+    <button class="action-btn" data-open="인물파일">👤 인물 파일</button>
+    <button class="action-btn" data-open="추리보드">🔗 추리 보드</button>
+    {{#if (gte insight 80)}}
+    <button class="action-btn" data-open="범인지목" style="border-color:#e74c3c;color:#e74c3c">🎯 범인 지목</button>
+    {{/if}}
+    {{/if}}
+  </div>
+</div>
+
+<script>
+  var d = __panelBridge.data;
+  var max = d.wrong_presents_max || 3;
+  var used = d.wrong_presents || 0;
+  var container = shadow.getElementById('hearts');
+  if (container) {
+    var html = '';
+    for (var i = 0; i < max; i++) {
+      if (i < used) {
+        html += '<span class="heart lost">💔</span>';
+      } else {
+        html += '<span class="heart active">❤️</span>';
+      }
+    }
+    container.innerHTML = html;
+  }
+
+  // Modal open buttons
+  shadow.querySelectorAll('[data-open]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      __panelBridge.openModal(btn.dataset.open);
+    });
+  });
+</script>

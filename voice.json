@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "ttsProvider": "edge",
+  "edgeVoice": "ko-KR-SunHiNeural",
+  "edgeRate": "",
+  "edgePitch": "",
+  "referenceAudio": "",
+  "referenceText": "",
+  "design": "A calm, quiet young woman with a soft, reserved voice. Slightly breathy quality, measured and careful speech. Occasionally becomes sharper and more focused when presenting logical deductions. Gentle but intellectual tone.",
+  "language": "ko",
+  "voiceFile": "",
+  "chunkDelay": 1000,
+  "modelSize": "1.7B"
+}

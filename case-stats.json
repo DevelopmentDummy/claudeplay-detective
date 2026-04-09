@@ -1,0 +1,12 @@
+{
+  "search_attempts": 0,
+  "search_hits": 0,
+  "search_misses": 0,
+  "press_count": 0,
+  "present_attempts": 0,
+  "present_correct": 0,
+  "present_wrong": 0,
+  "deduce_attempts": 0,
+  "deduce_success": 0,
+  "deduce_fail": 0
+}

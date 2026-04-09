@@ -1,0 +1,15 @@
+chat-history.json
+memory.md
+builder-session.json
+claude-stream.log
+policy-context.json
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+.claude/
+.agents/
+.gemini/
+.codex/
+.mcp.json
+case-temp.json
+case-archive/

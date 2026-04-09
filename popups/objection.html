@@ -1,0 +1,37 @@
+<style>
+  .objection-container {
+    text-align: center;
+    padding: 20px;
+  }
+  .objection-text {
+    font-size: 42px;
+    font-weight: 900;
+    color: #c8a44e;
+    text-shadow: 0 0 20px rgba(200, 164, 78, 0.6), 0 0 40px rgba(200, 164, 78, 0.3), 2px 2px 0 #0a0e1a;
+    letter-spacing: 8px;
+    animation: objectionSlam 0.4s ease-out;
+  }
+  .objection-sub {
+    font-size: 14px;
+    color: #e0ddd4;
+    margin-top: 12px;
+    opacity: 0.8;
+    letter-spacing: 2px;
+  }
+  .objection-line {
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #c8a44e, transparent);
+    margin: 16px auto 0;
+  }
+  @keyframes objectionSlam {
+    0% { transform: scale(3); opacity: 0; }
+    60% { transform: scale(0.9); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+</style>
+<div class="objection-container">
+  <div class="objection-text">이의 있음!</div>
+  <div class="objection-sub">OBJECTION</div>
+  <div class="objection-line"></div>
+</div>

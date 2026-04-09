@@ -1,0 +1,274 @@
+<!-- deps: {{location}} {{current_room}} {{case_phase}} -->
+<panel-actions>
+[
+  {
+    "id": "move_location",
+    "label": "장소 이동",
+    "description": "다른 장소로 이동한다. 시간이 경과한다.",
+    "params": { "location_id": "이동할 장소 ID" },
+    "available_when": "case_phase === 'investigation'",
+    "needs_ui": false
+  }
+]
+</panel-actions>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .scene-map { font-family: 'Segoe UI', sans-serif; color: #e0ddd4; min-height: 400px; }
+
+  /* Location tabs */
+  .loc-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px; }
+  .loc-tab {
+    font-size: 11px; padding: 4px 10px; border-radius: 4px; cursor: pointer;
+    background: #0a0e1a; border: 1px solid #1e2a45; color: #7a7a8a;
+    transition: all 0.2s;
+  }
+  .loc-tab:hover { border-color: #c8a44e; color: #e0ddd4; }
+  .loc-tab.active { background: #1a2035; border-color: #c8a44e; color: #c8a44e; font-weight: 600; }
+  .loc-tab.locked { opacity: 0.4; cursor: not-allowed; }
+  .loc-tab.locked::after { content: ' 🔒'; font-size: 10px; }
+
+  /* Floor plan grid */
+  .floor-plan { position: relative; margin-bottom: 12px; }
+  .grid-container {
+    display: grid; gap: 0; border: 2px solid #2a3550; border-radius: 4px;
+    background: #0a0e1a;
+  }
+  .room-cell {
+    position: relative; min-height: 80px; padding: 8px;
+    border: 2px solid #2a3550; cursor: pointer;
+    background: #0d1220; transition: all 0.2s;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+  }
+  .room-cell:hover { background: #121829; }
+  .room-cell.current { background: #1a2035; border-color: #c8a44e; }
+  .room-cell.crime-scene { border-color: #e74c3c; }
+  .room-cell.locked { opacity: 0.35; cursor: not-allowed; background: #080b15; }
+  .room-icon { font-size: 20px; margin-bottom: 4px; }
+  .room-name { font-size: 11px; font-weight: 600; text-align: center; }
+  .room-lock { position: absolute; top: 4px; right: 4px; font-size: 12px; }
+
+  /* Door indicators */
+  .room-cell.door-right { border-right-style: dashed; border-right-color: #4a5a7a; }
+  .room-cell.door-bottom { border-bottom-style: dashed; border-bottom-color: #4a5a7a; }
+
+  /* Point markers */
+  .point-markers { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
+  .point-dot {
+    width: 8px; height: 8px; border-radius: 50%; cursor: pointer;
+    animation: pointPulse 2s infinite;
+  }
+  .point-dot.unfound { background: #c8a44e; }
+  .point-dot.found { background: #4ecdc4; animation: none; opacity: 0.5; }
+  @keyframes pointPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* NPC markers */
+  .npc-marker {
+    font-size: 10px; background: #1a2540; padding: 1px 5px; border-radius: 3px;
+    margin-top: 2px; cursor: pointer; border: 1px solid transparent;
+  }
+  .npc-marker:hover { border-color: #c8a44e; }
+
+  /* Room detail panel */
+  .room-detail {
+    background: #0d1220; border: 1px solid #1e2a45; border-radius: 6px;
+    padding: 10px; margin-top: 8px;
+  }
+  .detail-title { font-size: 12px; font-weight: 700; color: #c8a44e; margin-bottom: 6px; }
+  .detail-section { margin-bottom: 6px; }
+  .detail-label { font-size: 10px; color: #7a7a8a; margin-bottom: 3px; }
+  .detail-item {
+    font-size: 11px; padding: 4px 8px; background: #121829; border-radius: 4px;
+    margin-bottom: 3px; cursor: pointer; border: 1px solid #1e2a45;
+    display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+  }
+  .detail-item:hover { border-color: #c8a44e; }
+  .detail-item.done { opacity: 0.5; }
+  .detail-item .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .detail-item .dot.unfound { background: #c8a44e; }
+  .detail-item .dot.found { background: #4ecdc4; }
+
+  .empty-msg { font-size: 12px; color: #7a7a8a; text-align: center; padding: 40px 20px; }
+
+  .loading { font-size: 12px; color: #7a7a8a; text-align: center; padding: 20px; }
+</style>
+
+<div class="scene-map">
+  <div class="loc-tabs" id="locTabs"></div>
+  <div class="floor-plan" id="floorPlan"></div>
+  <div class="room-detail" id="roomDetail" style="display:none"></div>
+</div>
+
+<script>
+  var d = __panelBridge.data;
+  var caseData = d['case'] || {};
+  var locations = caseData.locations || {};
+  var currentLoc = d.location;
+  var currentRoom = d.current_room;
+
+  var locTabsEl = shadow.getElementById('locTabs');
+  var floorPlanEl = shadow.getElementById('floorPlan');
+  var detailEl = shadow.getElementById('roomDetail');
+
+  if (!caseData.id || Object.keys(locations).length === 0) {
+    floorPlanEl.innerHTML = '<div class="empty-msg">현재 진행 중인 사건이 없습니다.<br>의뢰함에서 새 사건을 선택하세요.</div>';
+  } else {
+    renderLocTabs();
+    renderFloorPlan(currentLoc);
+    if (currentRoom) renderRoomDetail(currentLoc, currentRoom);
+  }
+
+  function renderLocTabs() {
+    locTabsEl.innerHTML = Object.entries(locations).filter(function(entry) {
+      return entry[1].unlocked;
+    }).map(function(entry) {
+      var id = entry[0], loc = entry[1];
+      var cls = 'loc-tab';
+      if (id === currentLoc) cls += ' active';
+      return '<div class="' + cls + '" data-loc="' + id + '" data-unlocked="true">📍 ' + loc.name + '</div>';
+    }).join('');
+
+    shadow.querySelectorAll('.loc-tab').forEach(function(tab) {
+      tab.addEventListener('click', async function() {
+        if (tab.dataset.unlocked !== 'true') return;
+        var locId = tab.dataset.loc;
+        if (locId === currentLoc) return;
+        var locName = tab.textContent.replace('📍 ', '').trim();
+
+        var confirmed = await __panelBridge.confirm('<span style="color:#c8a44e;font-weight:700">' + locName + '</span>(으)로<br>이동하시겠습니까?', { yesText: '이동', noText: '취소' });
+        if (!confirmed) return;
+
+        var res = await __panelBridge.runTool('engine', { action: 'move_location', location_id: locId });
+        if (res.result && res.result.success) {
+          currentLoc = locId;
+          currentRoom = res.result.first_room;
+          renderLocTabs();
+          renderFloorPlan(locId);
+          renderRoomDetail(locId, currentRoom);
+          // search_init_event is auto-queued by tool API
+          await __panelBridge.queueEvent('[이동] location=' + locId + ', name=' + res.result.location_name);
+          __panelBridge.sendMessage('*[' + res.result.location_name + '(으)로 이동한다]*');
+        }
+      });
+    });
+  }
+
+  function renderFloorPlan(locId) {
+    var loc = locations[locId];
+    if (!loc || !loc.floor_plan) {
+      floorPlanEl.innerHTML = '<div class="loading">장소 데이터 로딩 중...</div>';
+      return;
+    }
+    var fp = loc.floor_plan;
+    var grid = '<div class="grid-container" style="grid-template-columns:repeat(' + fp.cols + ',1fr);grid-template-rows:repeat(' + fp.rows + ',1fr)">';
+
+    var doorSet = {};
+    (fp.doors || []).forEach(function(door) {
+      doorSet[door[0] + '-' + door[2]] = true;
+      if (door[2] === 'right') doorSet[door[1] + '-left'] = true;
+      if (door[2] === 'bottom') doorSet[door[1] + '-top'] = true;
+    });
+
+    (fp.rooms || []).forEach(function(room) {
+      var cls = 'room-cell';
+      if (room.id === currentRoom) cls += ' current';
+      if (room.crime_scene) cls += ' crime-scene';
+      if (room.locked) cls += ' locked';
+      if (doorSet[room.id + '-right']) cls += ' door-right';
+      if (doorSet[room.id + '-bottom']) cls += ' door-bottom';
+
+      var style = 'grid-column:' + (room.col + 1) + '/span ' + (room.w || 1) + ';grid-row:' + (room.row + 1) + '/span ' + (room.h || 1);
+
+      // NPC만 표시 — 탐색 포인트는 증거품탐색 패널에서 발견하는 방식
+      var npcs = Object.entries(loc.npcs || {}).filter(function(n) { return n[1].room === room.id && n[1].available; });
+
+      var npcDots = npcs.map(function(n) {
+        return '<span class="npc-marker" title="' + n[1].name + '">👤</span>';
+      }).join('');
+
+      grid += '<div class="' + cls + '" style="' + style + '" data-room="' + room.id + '">' +
+        '<span class="room-icon">' + (room.icon || '📦') + '</span>' +
+        '<span class="room-name">' + room.name + '</span>' +
+        (room.locked ? '<span class="room-lock">🔒</span>' : '') +
+        npcDots +
+        '</div>';
+    });
+
+    grid += '</div>';
+    floorPlanEl.innerHTML = grid;
+
+    shadow.querySelectorAll('.room-cell').forEach(function(cell) {
+      cell.addEventListener('click', async function() {
+        var roomId = cell.dataset.room;
+        var room = (fp.rooms || []).find(function(r) { return r.id === roomId; });
+        if (room && room.locked) return;
+
+        if (roomId !== currentRoom) {
+          var roomName = cell.querySelector('.room-name')?.textContent || roomId;
+
+          var confirmed = await __panelBridge.confirm('<span style="color:#c8a44e;font-weight:700">' + roomName + '</span>(으)로<br>이동하시겠습니까?', { yesText: '이동', noText: '취소' });
+          if (!confirmed) return;
+
+          var res = await __panelBridge.runTool('engine', { action: 'move_room', room_id: roomId });
+          if (res.result && res.result.success) {
+            currentRoom = roomId;
+            shadow.querySelectorAll('.room-cell').forEach(function(c) { c.classList.remove('current'); });
+            cell.classList.add('current');
+            renderRoomDetail(currentLoc, roomId);
+            // search_init_event is auto-queued by tool API
+            await __panelBridge.queueEvent('[이동:방] room_id=' + roomId + ', room_name=' + res.result.room_name);
+            __panelBridge.sendMessage('*[' + res.result.room_name + '(으)로 이동한다]*');
+          }
+        } else {
+          renderRoomDetail(currentLoc, roomId);
+        }
+      });
+    });
+  }
+
+  function renderRoomDetail(locId, roomId) {
+    var loc = locations[locId];
+    if (!loc) return;
+    var room = (loc.floor_plan?.rooms || []).find(function(r) { return r.id === roomId; });
+    if (!room) return;
+
+    // 탐색 포인트는 표시하지 않음 — 증거품탐색 패널에서 발견하는 방식
+    var npcs = Object.entries(loc.npcs || {}).filter(function(n) { return n[1].room === roomId && n[1].available; });
+
+    var html = '<div class="detail-title">' + (room.icon || '') + ' ' + room.name + '</div>';
+
+    if (npcs.length > 0) {
+      html += '<div class="detail-section"><div class="detail-label">👤 현장 인물</div>';
+      npcs.forEach(function(n) {
+        html += '<div class="detail-item" data-action="talk" data-npc="' + n[0] + '">' +
+          '<span>👤</span><span>' + n[1].name + (n[1].talked ? ' (대화함)' : '') + '</span></div>';
+      });
+      html += '</div>';
+    } else {
+      html += '<div style="font-size:11px;color:#7a7a8a;text-align:center;padding:8px">이 방에는 대화할 수 있는 인물이 없습니다</div>';
+    }
+
+    detailEl.innerHTML = html;
+    detailEl.style.display = 'block';
+
+    shadow.querySelectorAll('[data-action="talk"]').forEach(function(el) {
+      el.addEventListener('click', function() {
+        __panelBridge.runTool('engine', { action: 'talk_to', npc_id: el.dataset.npc }).then(function(res) {
+          if (res.result && res.result.success) {
+            __panelBridge.queueEvent('[대화] npc_id=' + el.dataset.npc + ', npc_name=' + res.result.npc_name);
+            __panelBridge.sendMessage(res.result.npc_name + '에게 말을 걸었다.');
+          }
+        });
+      });
+    });
+  }
+
+  // Panel action registration
+  __panelBridge.registerAction('move_location', async function(params) {
+    var res = await __panelBridge.runTool('engine', { action: 'move_location', location_id: params.location_id });
+    if (res.result && res.result.success) {
+      // search_init_event is auto-queued by tool API
+      await __panelBridge.queueEvent('[이동] location=' + params.location_id + ', name=' + res.result.location_name);
+    }
+  });
+</script>

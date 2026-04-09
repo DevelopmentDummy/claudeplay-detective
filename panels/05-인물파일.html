@@ -1,0 +1,131 @@
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .profiles { font-family: 'Segoe UI', sans-serif; color: #e0ddd4; }
+  .header { font-size: 13px; font-weight: 700; color: #c8a44e; margin-bottom: 10px; }
+  .person-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+  .person-card {
+    background: #0d1220; border: 1px solid #1e2a45; border-radius: 8px;
+    padding: 10px; cursor: pointer; transition: all 0.2s;
+  }
+  .person-card:hover { border-color: #c8a44e; transform: translateY(-1px); }
+  .person-card.expanded { border-color: #c8a44e; background: #121829; }
+  .person-header { display: flex; align-items: center; gap: 8px; }
+  .person-avatar { font-size: 24px; }
+  .person-info { flex: 1; }
+  .person-name { font-size: 13px; font-weight: 600; }
+  .person-role { font-size: 10px; color: #7a7a8a; }
+  .person-detail {
+    margin-top: 8px; padding-top: 8px; border-top: 1px solid #1e2a45;
+    font-size: 11px; line-height: 1.6; display: none;
+  }
+  .person-detail.show { display: block; }
+  .detail-row { display: flex; gap: 6px; margin-bottom: 3px; }
+  .detail-key { color: #7a7a8a; flex-shrink: 0; width: 50px; }
+  .detail-val { color: #e0ddd4; }
+  .suspect-badge {
+    font-size: 9px; padding: 1px 6px; border-radius: 3px;
+    background: #2a1a1a; color: #e74c3c; margin-left: auto;
+  }
+  .empty-msg { font-size: 12px; color: #7a7a8a; text-align: center; padding: 40px 20px; }
+  .accuse-btn {
+    margin-top: 6px; width: 100%; padding: 6px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border: none; border-radius: 4px; color: #fff;
+    font-size: 11px; font-weight: 700; cursor: pointer;
+    letter-spacing: 1px; transition: opacity 0.2s;
+  }
+  .accuse-btn:hover { opacity: 0.9; }
+  .accuse-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+</style>
+
+<div class="profiles">
+  <div class="header">👤 인물 파일</div>
+  <div class="person-grid" id="grid"></div>
+</div>
+
+<script>
+  var d = __panelBridge.data;
+  var caseData = d['case'] || {};
+  var suspects = caseData.suspects || [];
+  var testimonies = caseData.testimonies || {};
+  var locations = caseData.locations || {};
+  var gridEl = shadow.getElementById('grid');
+
+  // Collect only NPCs we've actually talked to
+  var talkedNpcs = {};
+  Object.values(locations).forEach(function(loc) {
+    Object.entries(loc.npcs || {}).forEach(function(n) {
+      if (n[1].talked) talkedNpcs[n[0]] = n[1];
+    });
+  });
+
+  var people = {};
+  // Only show suspects we've met
+  suspects.forEach(function(s) {
+    if (talkedNpcs[s.id]) {
+      people[s.id] = { name: s.name, role: talkedNpcs[s.id].role || '용의자', motive: s.motive, alibi: s.alibi, isSuspect: true };
+    }
+  });
+  // Add non-suspect NPCs we've talked to
+  Object.entries(talkedNpcs).forEach(function(e) {
+    if (!people[e[0]]) {
+      people[e[0]] = { name: e[1].name, role: e[1].role || '관련인물' };
+    }
+  });
+
+  var entries = Object.entries(people);
+  if (entries.length === 0) {
+    gridEl.innerHTML = '<div class="empty-msg">아직 확인된 인물이 없습니다</div>';
+  } else {
+    gridEl.innerHTML = entries.map(function(e) {
+      var id = e[0], p = e[1];
+      var badge = p.isSuspect ? '<span class="suspect-badge">용의자</span>' : '';
+      var detail = '<div class="person-detail" id="detail-' + id + '">';
+      if (p.role) detail += '<div class="detail-row"><span class="detail-key">역할</span><span class="detail-val">' + p.role + '</span></div>';
+      if (p.alibi) detail += '<div class="detail-row"><span class="detail-key">알리바이</span><span class="detail-val">' + p.alibi + '</span></div>';
+      if (p.motive) detail += '<div class="detail-row"><span class="detail-key">동기</span><span class="detail-val">' + p.motive + '</span></div>';
+      if (p.isSuspect && d.insight >= 80) {
+        detail += '<button class="accuse-btn" data-accuse="' + id + '">🎯 범인으로 지목</button>';
+      }
+      detail += '</div>';
+
+      return '<div class="person-card" data-pid="' + id + '">' +
+        '<div class="person-header"><span class="person-avatar">👤</span>' +
+        '<div class="person-info"><div class="person-name">' + p.name + '</div><div class="person-role">' + p.role + '</div></div>' +
+        badge + '</div>' + detail + '</div>';
+    }).join('');
+
+    shadow.querySelectorAll('.person-card').forEach(function(card) {
+      card.addEventListener('click', function() {
+        var detail = shadow.getElementById('detail-' + card.dataset.pid);
+        if (detail) {
+          var isShown = detail.classList.contains('show');
+          shadow.querySelectorAll('.person-detail').forEach(function(d) { d.classList.remove('show'); });
+          shadow.querySelectorAll('.person-card').forEach(function(c) { c.classList.remove('expanded'); });
+          if (!isShown) { detail.classList.add('show'); card.classList.add('expanded'); }
+        }
+      });
+    });
+
+    shadow.querySelectorAll('[data-accuse]').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        btn.disabled = true;
+        __panelBridge.runTool('engine', { action: 'accuse', suspect_id: btn.dataset.accuse }).then(function(res) {
+          if (res.result) {
+            var tag = res.result.correct ? 'correct=true' : 'correct=false';
+            __panelBridge.queueEvent('[범인지목] suspect_id=' + btn.dataset.accuse + ', ' + tag);
+            __panelBridge.sendMessage(res.result.correct ? '범인은 당신입니다!' : '이 사람이 범인이라고 생각합니다.');
+          }
+        });
+      });
+    });
+
+    if (d.insight < 80) {
+      var noteEl = document.createElement('div');
+      noteEl.style.cssText = 'font-size:10px;color:#7a7a8a;text-align:center;margin-top:8px;padding-top:6px;border-top:1px solid #1e2a45';
+      noteEl.textContent = '💡 통찰력 ' + d.insight + '/80 — 범인 지목에 충분한 통찰력이 필요합니다';
+      shadow.querySelector('.profiles').appendChild(noteEl);
+    }
+  }
+</script>

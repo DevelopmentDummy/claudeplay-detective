@@ -1,0 +1,277 @@
+<panel-actions>
+[
+  {
+    "id": "press",
+    "label": "추궁",
+    "description": "증언의 특정 발언을 추궁하여 추가 정보를 얻는다",
+    "params": { "testimony_id": "증언 ID", "statement_id": "발언 ID" },
+    "available_when": "case_phase === 'investigation'",
+    "needs_ui": true
+  },
+  {
+    "id": "present",
+    "label": "증거 제시",
+    "description": "증언의 특정 발언에 증거를 제시하여 모순을 지적한다",
+    "params": { "testimony_id": "증언 ID", "statement_id": "발언 ID", "evidence_id": "증거 ID" },
+    "available_when": "case_phase === 'investigation'",
+    "needs_ui": true
+  }
+]
+</panel-actions>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #1e2a45; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #c8a44e; }
+  .testimony { font-family: 'Segoe UI', sans-serif; color: #e0ddd4; min-height: 300px; }
+  .header { font-size: 13px; font-weight: 700; color: #c8a44e; margin-bottom: 10px; }
+  .witness-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px; }
+  .w-tab {
+    font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer;
+    background: #0a0e1a; border: 1px solid #1e2a45; color: #7a7a8a;
+  }
+  .w-tab:hover { border-color: #c8a44e; color: #e0ddd4; }
+  .w-tab.active { background: #1a2035; border-color: #c8a44e; color: #c8a44e; }
+  .stmts { display: flex; flex-direction: column; gap: 4px; }
+  .stmt-row {
+    display: flex; gap: 8px; padding: 8px; border-radius: 6px;
+    background: #0d1220; border: 1px solid #1e2a45;
+    align-items: flex-start;
+  }
+  .stmt-row.contradicted { border-color: #e74c3c; background: #1a1015; }
+  .stmt-num { font-size: 11px; color: #7a7a8a; flex-shrink: 0; width: 20px; text-align: center; padding-top: 2px; }
+  .stmt-text { flex: 1; font-size: 12px; line-height: 1.5; }
+  .stmt-text .contradiction-mark { color: #e74c3c; font-weight: 700; }
+  .stmt-actions { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+  .btn-sm {
+    font-size: 10px; padding: 3px 8px; border-radius: 4px; cursor: pointer;
+    border: 1px solid #1e2a45; background: #121829; color: #e0ddd4;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .btn-sm:hover { border-color: #c8a44e; color: #c8a44e; }
+  .btn-sm:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-sm.present { background: #1a2518; border-color: #4ecdc4; color: #4ecdc4; }
+  .btn-sm.present:hover { background: #1a3025; }
+  /* ev-select는 document.body에 직접 append되므로 여기에 스타일 불필요 */
+  .empty-msg { font-size: 12px; color: #7a7a8a; text-align: center; padding: 40px 20px; }
+  .pressed-info { font-size: 11px; color: #4ecdc4; margin-top: 4px; padding-left: 28px; }
+</style>
+
+<div class="testimony">
+  <div class="header">🗣️ 증언록</div>
+  <div class="witness-tabs" id="wTabs"></div>
+  <div class="stmts" id="stmts"></div>
+</div>
+
+<script>
+  var d = __panelBridge.data;
+  var caseData = d['case'] || {};
+  var testimonies = caseData.testimonies || {};
+  var evidence = caseData.evidence || {};
+  var locations = caseData.locations || {};
+  var wTabsEl = shadow.getElementById('wTabs');
+  var stmtsEl = shadow.getElementById('stmts');
+  var currentTestimony = null;
+  var activeDropdown = null;
+
+  // Find NPC's room from case data
+  function findNpcRoom(npcId) {
+    var result = null;
+    Object.entries(locations).forEach(function(locEntry) {
+      var locId = locEntry[0], loc = locEntry[1];
+      Object.entries(loc.npcs || {}).forEach(function(npcEntry) {
+        if (npcEntry[0] === npcId) {
+          result = { locationId: locId, locationName: loc.name, roomId: npcEntry[1].room };
+        }
+      });
+    });
+    return result;
+  }
+
+  // Move to NPC's room if not already there, handle search init
+  async function ensureAtNpcRoom(npcId) {
+    var npcRoom = findNpcRoom(npcId);
+    if (!npcRoom) return;
+
+    var currentLoc = d.location;
+    var currentRoom = d.current_room;
+    var arrivedRoom = currentRoom;
+
+    // Different location — move_location first
+    if (npcRoom.locationId !== currentLoc) {
+      var locRes = await __panelBridge.runTool('engine', { action: 'move_location', location_id: npcRoom.locationId });
+      if (locRes.result && locRes.result.success) {
+        await __panelBridge.queueEvent('[이동] location=' + npcRoom.locationId + ', name=' + npcRoom.locationName);
+        arrivedRoom = locRes.result.first_room;
+        if (locRes.result.needs_search_init) {
+          await __panelBridge.updateVariables({ _loading_type: 'search' });
+          await __panelBridge.queueEvent(locRes.result.search_init_event);
+        }
+      }
+    }
+
+    // Now at the right location — check if we need to move_room
+    if (npcRoom.roomId !== arrivedRoom) {
+      var roomRes = await __panelBridge.runTool('engine', { action: 'move_room', room_id: npcRoom.roomId });
+      if (roomRes.result && roomRes.result.success) {
+        await __panelBridge.queueEvent('[이동:방] room_id=' + npcRoom.roomId + ', room_name=' + roomRes.result.room_name);
+        if (roomRes.result.needs_search_init) {
+          await __panelBridge.updateVariables({ _loading_type: 'search' });
+          await __panelBridge.queueEvent(roomRes.result.search_init_event);
+        }
+      }
+    }
+  }
+
+  // Build talked NPC set from all locations
+  var talkedNpcs = {};
+  Object.values(locations).forEach(function(loc) {
+    Object.entries(loc.npcs || {}).forEach(function(e) {
+      if (e[1].talked) talkedNpcs[e[0]] = true;
+    });
+  });
+
+  // Only show testimonies for NPCs we've actually talked to
+  var tEntries = Object.entries(testimonies).filter(function(e) {
+    return talkedNpcs[e[1].witness];
+  });
+
+  if (tEntries.length === 0) {
+    stmtsEl.innerHTML = '<div class="empty-msg">아직 수집된 증언이 없습니다.<br>현장에서 인물과 대화하세요.</div>';
+  } else {
+    renderWitnessTabs();
+    selectTestimony(tEntries[0][0]);
+  }
+
+  function renderWitnessTabs() {
+    wTabsEl.innerHTML = tEntries.map(function(e) {
+      return '<div class="w-tab" data-tid="' + e[0] + '">👤 ' + e[1].witness_name + '</div>';
+    }).join('');
+    shadow.querySelectorAll('.w-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() { selectTestimony(tab.dataset.tid); });
+    });
+  }
+
+  function selectTestimony(tid) {
+    currentTestimony = tid;
+    shadow.querySelectorAll('.w-tab').forEach(function(t) { t.classList.remove('active'); });
+    var activeTab = shadow.querySelector('[data-tid="' + tid + '"]');
+    if (activeTab) activeTab.classList.add('active');
+
+    var t = testimonies[tid];
+    if (!t || !t.statements) { stmtsEl.innerHTML = ''; return; }
+
+    stmtsEl.innerHTML = t.statements.map(function(s, i) {
+      var cls = 'stmt-row' + (s.contradicted ? ' contradicted' : '');
+      var pressDisabled = s.pressed ? ' disabled' : '';
+      var contradictMark = s.contradicted ? '<span class="contradiction-mark"> ✖ 모순 발견</span>' : '';
+      return '<div class="' + cls + '" data-sid="' + s.id + '">' +
+        '<span class="stmt-num">' + (i + 1) + '</span>' +
+        '<div class="stmt-text">"' + s.text + '"' + contradictMark + '</div>' +
+        '<div class="stmt-actions" style="position:relative">' +
+        '<button class="btn-sm" data-press="' + s.id + '"' + pressDisabled + '>추궁</button>' +
+        (s.contradicted ? '' : '<button class="btn-sm present" data-present="' + s.id + '">증거 제시</button>') +
+        '</div></div>' +
+        (s.pressed && s.press_result ? '<div class="pressed-info">↳ ' + s.press_result + '</div>' : '');
+    }).join('');
+
+    // Press handlers
+    shadow.querySelectorAll('[data-press]').forEach(function(btn) {
+      btn.addEventListener('click', async function() {
+        if (btn.disabled) return;
+        btn.disabled = true;
+        var t = testimonies[currentTestimony];
+        await ensureAtNpcRoom(t.witness);
+        var res = await __panelBridge.runTool('engine', { action: 'press', testimony_id: currentTestimony, statement_id: btn.dataset.press });
+        if (res.result && res.result.success) {
+          await __panelBridge.queueEvent('[추궁] testimony_id=' + currentTestimony + ', statement_id=' + btn.dataset.press + ', result=' + res.result.press_result);
+          __panelBridge.closeModal('증언록');
+          __panelBridge.sendMessage('*[' + res.result.witness_name + '을(를) 추궁한다]*');
+        } else { btn.disabled = false; }
+      });
+    });
+
+    // Present handlers
+    shadow.querySelectorAll('[data-present]').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeDropdown();
+        var foundEvidence = Object.entries(evidence).filter(function(ev) { return ev[1].found; });
+        if (foundEvidence.length === 0) {
+          __panelBridge.showToast('제시할 증거가 없습니다');
+          return;
+        }
+        var typeIcons = { physical: '🧪', document: '📄', digital: '💻', weapon: '🔪', testimony: '🗣️' };
+        var dropdown = document.createElement('div');
+        dropdown.style.cssText = 'position:fixed;background:#121829;border:1px solid #c8a44e;border-radius:6px;padding:4px;z-index:99999;max-height:300px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.5);min-width:200px;font-family:"Segoe UI",sans-serif;scrollbar-width:thin;scrollbar-color:#c8a44e #121829;';
+        dropdown.innerHTML = foundEvidence.map(function(ev) {
+          var icon = typeIcons[ev[1].type] || '❓';
+          return '<div style="font-size:11px;padding:5px 8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:6px;color:#e0ddd4;" onmouseover="this.style.background=\'#1a2035\'" onmouseout="this.style.background=\'transparent\'" data-eid="' + ev[0] + '">' + icon + ' ' + ev[1].name + '</div>';
+        }).join('');
+        var rect = btn.getBoundingClientRect();
+        var spaceBelow = window.innerHeight - rect.bottom;
+        var spaceAbove = rect.top;
+        if (spaceBelow < 220 && spaceAbove > spaceBelow) {
+          dropdown.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
+          dropdown.style.maxHeight = Math.min(300, spaceAbove - 10) + 'px';
+        } else {
+          dropdown.style.top = (rect.bottom + 4) + 'px';
+          dropdown.style.maxHeight = Math.min(300, spaceBelow - 10) + 'px';
+        }
+        dropdown.style.right = Math.max(8, window.innerWidth - rect.right) + 'px';
+        document.body.appendChild(dropdown);
+        activeDropdown = dropdown;
+
+        dropdown.querySelectorAll('[data-eid]').forEach(function(opt) {
+          opt.addEventListener('click', async function() {
+            closeDropdown();
+            var t = testimonies[currentTestimony];
+            await ensureAtNpcRoom(t.witness);
+            var res = await __panelBridge.runTool('engine', {
+              action: 'present',
+              testimony_id: currentTestimony,
+              statement_id: btn.dataset.present,
+              evidence_id: opt.dataset.eid
+            });
+            if (res.result) {
+              var tag = res.result.correct ? 'correct=true, reveal=' + res.result.reveal : 'correct=false, wrong_count=' + res.result.wrong_count;
+              await __panelBridge.queueEvent('[증거제시] testimony_id=' + currentTestimony + ', statement_id=' + btn.dataset.present + ', evidence_id=' + opt.dataset.eid + ', ' + tag);
+              var evName = (evidence[opt.dataset.eid] || {}).name || opt.dataset.eid;
+              __panelBridge.closeModal('증언록');
+              __panelBridge.sendMessage('*[' + evName + '을(를) 증거로 제시한다]*');
+            }
+          });
+        });
+      });
+    });
+  }
+
+  function closeDropdown() {
+    if (activeDropdown) { activeDropdown.remove(); activeDropdown = null; }
+  }
+
+  shadow.addEventListener('click', function() { closeDropdown(); });
+  document.addEventListener('click', function() { closeDropdown(); });
+
+  // Panel action registrations
+  __panelBridge.registerAction('press', async function(params) {
+    var t = testimonies[params.testimony_id];
+    if (t) await ensureAtNpcRoom(t.witness);
+    var res = await __panelBridge.runTool('engine', { action: 'press', testimony_id: params.testimony_id, statement_id: params.statement_id });
+    if (res.result && res.result.success) {
+      await __panelBridge.queueEvent('[추궁] testimony_id=' + params.testimony_id + ', statement_id=' + params.statement_id + ', result=' + res.result.press_result);
+    }
+  });
+
+  __panelBridge.registerAction('present', async function(params) {
+    var t = testimonies[params.testimony_id];
+    if (t) await ensureAtNpcRoom(t.witness);
+    var res = await __panelBridge.runTool('engine', { action: 'present', testimony_id: params.testimony_id, statement_id: params.statement_id, evidence_id: params.evidence_id });
+    if (res.result) {
+      var tag = res.result.correct ? 'correct=true, reveal=' + res.result.reveal : 'correct=false, wrong_count=' + res.result.wrong_count;
+      await __panelBridge.queueEvent('[증거제시] testimony_id=' + params.testimony_id + ', statement_id=' + params.statement_id + ', evidence_id=' + params.evidence_id + ', ' + tag);
+    }
+  });
+</script>

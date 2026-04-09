@@ -1,0 +1,86 @@
+{
+  "actions": {
+    "press": {
+      "name": "추궁",
+      "description": "증언의 특정 발언을 추궁하여 추가 정보를 얻는다.",
+      "available_when": { "case_phase": "investigation" },
+      "params": { "testimony_id": "증언 ID", "statement_id": "발언 ID" },
+      "category": "testimony"
+    },
+    "present": {
+      "name": "증거 제시",
+      "description": "증언의 특정 발언에 증거를 제시하여 모순을 지적한다.",
+      "available_when": { "case_phase": "investigation" },
+      "params": { "testimony_id": "증언 ID", "statement_id": "발언 ID", "evidence_id": "증거 ID" },
+      "category": "testimony",
+      "choice_examples": [
+        "이 발언에 CCTV 영상을 제시 → { testimony_id: 't1', statement_id: 's2', evidence_id: 'e5' }"
+      ]
+    },
+    "deduce": {
+      "name": "추리",
+      "description": "추리보드에서 두 단서를 연결하여 새로운 추론을 도출한다.",
+      "available_when": { "case_phase": "investigation" },
+      "params": { "evidence_ids": "연결할 증거 ID 배열 [id1, id2]" },
+      "category": "deduction"
+    },
+    "accuse": {
+      "name": "범인 지목",
+      "description": "충분한 통찰력이 모이면 범인을 지목한다. insight 80 이상 필요.",
+      "available_when": { "case_phase": "investigation", "insight_gte": 80 },
+      "params": { "suspect_id": "용의자 ID" },
+      "category": "confrontation"
+    },
+    "reset_case": {
+      "name": "사건 종료",
+      "description": "사건을 마무리하고 idle 상태로 복귀한다.",
+      "available_when": { "case_phase": "resolved" },
+      "params": {},
+      "category": "case"
+    },
+    "accept_case": {
+      "name": "의뢰 수락",
+      "description": "새 사건을 수락하고 수사를 시작한다.",
+      "available_when": { "case_phase": "idle" },
+      "params": { "seed_id": "사건 시드 ID" },
+      "category": "case"
+    },
+    "search_point": {
+      "name": "탐색 포인트 조사",
+      "description": "현재 방의 탐색 포인트를 조사한다. 증거가 있을 수도, 없을 수도 있다. 증거품탐색 패널에서만 호출.",
+      "available_when": { "case_phase": "investigation" },
+      "params": { "sp_id": "탐색 포인트 ID" },
+      "category": "investigation"
+    }
+  },
+  "_query_actions": {
+    "_description": "조회 전용 액션. 상태를 변경하지 않는다. AI가 서사에 필요한 정보를 얻기 위해 호출한다.",
+    "case_overview": "사건 제목, 난이도, 요약, 용의자 이름, 장소 목록 반환. solution/motive/evidence 상세는 포함하지 않음.",
+    "room_info": "현재 방의 이름, 분위기 설명, 범죄 현장 여부, NPC 목록 반환. room_id 파라미터 선택적.",
+    "found_evidence": "현재까지 발견한(found:true) 증거만 반환. 미발견 증거는 포함하지 않음.",
+    "npc_profile": "NPC 이름, 역할, 대화 여부, 들은 증언만 반환. contradiction 정보는 절대 포함하지 않음. npc_id 파라미터 필수.",
+    "unlocked_deductions": "해금된 추리 연결만 반환. 미해금 추리는 포함하지 않음."
+  },
+  "_internal_actions": {
+    "_description": "시스템 내부에서만 호출. AI 선택지에 절대 포함 금지.",
+    "move_location": "패널 액션 현장지도.move_location으로만 호출",
+    "move_room": "패널 액션 현장정보.move_room으로만 호출",
+    "talk_to": "패널 액션 현장정보.talk_to로만 호출",
+    "investigate": "search_point로 대체됨",
+    "check_unlocks": "증거 발견/추리 완료 시 자동 해금 체크",
+    "advance_time": "시간 경과 처리 (move_location에 자동 포함)",
+    "search_point": "[STATE]의 _search_suggestions 기반으로만 선택지 포함 가능"
+  },
+  "choice_action_guide": {
+    "rules": [
+      "_internal_actions에 있는 액션은 선택지에 넣지 마라",
+      "available_when 조건을 반드시 확인할 것",
+      "case_phase가 idle일 때는 accept_case만 가능",
+      "accuse는 insight가 80 이상일 때만 선택지에 포함",
+      "search_point 액션은 [STATE]의 _search_suggestions에 제안된 포인트만 선택지에 포함 가능",
+      "investigate 액션은 더 이상 사용하지 않는다 — search_point로 대체됨",
+      "move_location, move_room, talk_to는 패널 액션으로만 호출 — tool 액션으로 넣지 마라",
+      "[STATE]의 _available_rooms, _available_npcs를 참고하여 선택지에 패널 액션 파라미터를 채워라"
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+<style>
+  .solved-container {
+    text-align: center;
+    padding: 24px;
+  }
+  .solved-icon {
+    font-size: 56px;
+    margin-bottom: 12px;
+    animation: solvedPulse 1s ease-in-out infinite;
+  }
+  .solved-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: #c8a44e;
+    text-shadow: 0 0 15px rgba(200, 164, 78, 0.4);
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+  }
+  .solved-sub {
+    font-size: 13px;
+    color: #e0ddd4;
+    opacity: 0.7;
+    letter-spacing: 1px;
+  }
+  @keyframes solvedPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+</style>
+<div class="solved-container">
+  <div class="solved-icon">⚖️</div>
+  <div class="solved-title">사건 해결</div>
+  <div class="solved-sub">CASE CLOSED</div>
+</div>

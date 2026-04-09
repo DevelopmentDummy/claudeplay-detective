@@ -1,0 +1,294 @@
+<!-- deps: {{location}} {{current_room}} -->
+<panel-actions>
+[
+  {
+    "id": "search_point",
+    "label": "탐색 포인트 조사",
+    "description": "현재 방의 탐색 포인트를 조사한다",
+    "params": { "sp_id": "탐색 포인트 ID" },
+    "available_when": "case_phase === 'investigation' && location !== ''",
+    "needs_ui": false
+  }
+]
+</panel-actions>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .search-panel {
+    font-family: 'Segoe UI', sans-serif;
+    color: #e0ddd4;
+    max-height: 100%;
+    overflow-y: auto;
+  }
+
+  /* Header */
+  .sp-header {
+    font-size: 10px; font-weight: 700; color: #c8a44e;
+    letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 8px; padding-bottom: 5px;
+    border-bottom: 1px solid #1e2a45;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .sp-header .count { font-size: 9px; color: #7a7a8a; font-weight: 400; letter-spacing: 0; text-transform: none; }
+
+  /* Empty / loading state */
+  .sp-empty {
+    text-align: center; padding: 32px 16px;
+    color: #7a7a8a; font-size: 12px; line-height: 1.6;
+  }
+  .sp-empty .icon { font-size: 28px; margin-bottom: 8px; display: block; }
+  .sp-empty .pulse-text { animation: textPulse 2.5s ease-in-out infinite; }
+  @keyframes textPulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+  /* Accordion list */
+  .sp-list { display: flex; flex-direction: column; gap: 3px; }
+
+  /* Accordion item */
+  .sp-item {
+    background: #0d1220;
+    border: 1px solid #1e2a45;
+    border-radius: 5px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .sp-item.evidence-found { border-color: #c8a44e; }
+  .sp-item.dummy-found { border-color: #1e2a45; opacity: 0.55; }
+
+  /* Accordion header (collapsed view) */
+  .sp-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .sp-head:hover { background: #121829; }
+
+  /* Status indicator */
+  .sp-status { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .sp-status.pending { background: #c8a44e; animation: dotPulse 2s infinite; }
+  .sp-status.found-evidence { background: #c8a44e; animation: none; }
+  .sp-status.found-nothing { background: #3a3a4a; animation: none; }
+  @keyframes dotPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .sp-status-icon { font-size: 10px; flex-shrink: 0; width: 14px; text-align: center; }
+
+  .sp-name {
+    font-size: 11px; font-weight: 500; flex: 1; min-width: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .sp-item.dummy-found .sp-name { color: #5a5a6a; }
+
+  /* Accordion body (expanded) */
+  .sp-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 0 10px;
+  }
+  .sp-item.open .sp-body {
+    max-height: 200px;
+    padding: 0 10px 8px 10px;
+  }
+
+  .sp-desc {
+    font-size: 11px; color: #9a9aaa; line-height: 1.5;
+    margin-bottom: 8px; padding-left: 22px;
+  }
+
+  /* Evidence found info */
+  .sp-evidence-info {
+    font-size: 11px; color: #c8a44e; font-weight: 600;
+    padding: 4px 8px; margin-bottom: 6px; margin-left: 22px;
+    background: #1a1e10; border-radius: 4px;
+    border-left: 2px solid #c8a44e;
+  }
+
+  /* Nothing found info */
+  .sp-nothing-info {
+    font-size: 11px; color: #5a5a6a; font-style: italic;
+    padding-left: 22px; margin-bottom: 6px;
+  }
+
+  /* Investigate button */
+  .sp-btn {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 10px; padding: 4px 12px;
+    margin-left: 22px;
+    border-radius: 4px; cursor: pointer;
+    background: transparent;
+    border: 1px solid #c8a44e;
+    color: #c8a44e;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .sp-btn:hover { background: #1a2035; color: #e0ddd4; }
+  .sp-btn:disabled { opacity: 0.3; cursor: not-allowed; border-color: #3a3a4a; color: #5a5a6a; }
+  .sp-btn:disabled:hover { background: transparent; color: #5a5a6a; }
+
+  /* Room label at top */
+  .sp-room-label {
+    font-size: 11px; color: #7a7a8a; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .sp-room-label .room-name { color: #e0ddd4; font-weight: 600; }
+</style>
+
+<div class="search-panel" id="spRoot"></div>
+
+<script>
+  var d = __panelBridge.data;
+  var spRoot = shadow.getElementById('spRoot');
+
+  var searchPoints = d['search-points'] || {};
+  var location = d.location || '';
+  var currentRoom = d.current_room || '';
+  var casePhase = d.case_phase || 'idle';
+  var roomKey = location + '/' + currentRoom;
+  var roomData = searchPoints[roomKey];
+
+  render();
+
+  function render() {
+    if (casePhase !== 'investigation' || !location || !currentRoom) {
+      spRoot.innerHTML = '<div class="sp-empty"><span class="icon">🔍</span><span class="pulse-text">주변을 둘러보는 중...</span></div>';
+      return;
+    }
+
+    if (!roomData || !roomData.initialized) {
+      spRoot.innerHTML = '<div class="sp-empty"><span class="icon">🔍</span><span class="pulse-text">주변을 둘러보는 중...</span></div>';
+      return;
+    }
+
+    var points = roomData.points || [];
+    if (points.length === 0) {
+      spRoot.innerHTML = '<div class="sp-empty"><span class="icon">📋</span>이 방에는 탐색할 포인트가 없습니다.</div>';
+      return;
+    }
+
+    // Get room name from case data
+    var caseData = d['case'] || {};
+    var loc = (caseData.locations || {})[location];
+    var roomInfo = null;
+    if (loc && loc.floor_plan && loc.floor_plan.rooms) {
+      roomInfo = loc.floor_plan.rooms.find(function(r) { return r.id === currentRoom; });
+    }
+
+    var investigatedCount = points.filter(function(p) { return p.investigated; }).length;
+
+    var html = '';
+
+    // Room label
+    if (roomInfo) {
+      html += '<div class="sp-room-label">' + (roomInfo.icon || '📦') + ' <span class="room-name">' + roomInfo.name + '</span></div>';
+    }
+
+    // Header
+    html += '<div class="sp-header"><span>탐색 포인트</span><span class="count">' + investigatedCount + ' / ' + points.length + '</span></div>';
+
+    // Accordion list
+    html += '<div class="sp-list">';
+    points.forEach(function(point, idx) {
+      var investigated = point.investigated;
+      var isEvidence = investigated && point.evidence_id;
+      var isDummy = investigated && !point.evidence_id;
+
+      var itemCls = 'sp-item';
+      if (isEvidence) itemCls += ' evidence-found';
+      if (isDummy) itemCls += ' dummy-found';
+
+      // Status icon/dot
+      var statusHtml = '';
+      if (!investigated) {
+        statusHtml = '<span class="sp-status pending"></span>';
+      } else if (isEvidence) {
+        statusHtml = '<span class="sp-status-icon" style="color:#c8a44e">&#10003;</span>';
+      } else {
+        statusHtml = '<span class="sp-status-icon" style="color:#5a5a6a">&#10007;</span>';
+      }
+
+      html += '<div class="' + itemCls + '" data-idx="' + idx + '" data-spid="' + point.id + '">';
+      html += '<div class="sp-head">' + statusHtml + '<span class="sp-name">' + point.name + '</span></div>';
+      html += '<div class="sp-body">';
+      html += '<div class="sp-desc">' + (point.desc || '') + '</div>';
+
+      if (isEvidence) {
+        // Find evidence name from case data
+        var evName = point.evidence_id;
+        var caseEvidence = (caseData.evidence || {})[point.evidence_id];
+        if (caseEvidence) evName = caseEvidence.name;
+        html += '<div class="sp-evidence-info">발견: ' + evName + '</div>';
+      } else if (isDummy) {
+        html += '<div class="sp-nothing-info">특별한 것은 없었다.</div>';
+      } else {
+        html += '<button class="sp-btn" data-investigate="' + point.id + '">조사하기</button>';
+      }
+
+      html += '</div></div>';
+    });
+    html += '</div>';
+
+    spRoot.innerHTML = html;
+    bindEvents();
+  }
+
+  function bindEvents() {
+    // Accordion toggle
+    shadow.querySelectorAll('.sp-head').forEach(function(head) {
+      head.addEventListener('click', function() {
+        var item = head.parentElement;
+        var wasOpen = item.classList.contains('open');
+        // Close all
+        shadow.querySelectorAll('.sp-item.open').forEach(function(el) { el.classList.remove('open'); });
+        // Toggle clicked
+        if (!wasOpen) item.classList.add('open');
+      });
+    });
+
+    // Investigate buttons
+    shadow.querySelectorAll('[data-investigate]').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var spId = btn.dataset.investigate;
+        btn.disabled = true;
+        btn.textContent = '조사 중...';
+
+        __panelBridge.runTool('engine', { action: 'search_point', sp_id: spId }).then(async function(res) {
+          if (res.result && res.result.success) {
+            if (res.result.is_evidence) {
+              var evName = res.result.evidence ? res.result.evidence.name : res.result.point_name;
+              await __panelBridge.queueEvent('[탐색:증거발견] sp_id=' + spId + ', point_name=' + res.result.point_name + ', evidence=' + evName);
+            } else {
+              await __panelBridge.queueEvent('[탐색] sp_id=' + spId + ', point_name=' + res.result.point_name + ', result=없음');
+            }
+            __panelBridge.sendMessage('*[' + res.result.point_name + '을(를) 조사한다]*');
+          } else {
+            btn.disabled = false;
+            btn.textContent = '조사하기';
+            if (res.result && res.result.message) {
+              __panelBridge.showToast(res.result.message);
+            }
+          }
+        });
+      });
+    });
+  }
+
+  // Panel action registration
+  __panelBridge.registerAction('search_point', async function(params) {
+    var res = await __panelBridge.runTool('engine', { action: 'search_point', sp_id: params.sp_id });
+    if (res.result && res.result.success) {
+      if (res.result.is_evidence) {
+        var evName = res.result.evidence ? res.result.evidence.name : res.result.point_name;
+        await __panelBridge.queueEvent('[탐색:증거발견] sp_id=' + params.sp_id + ', point_name=' + res.result.point_name + ', evidence=' + evName);
+      } else {
+        await __panelBridge.queueEvent('[탐색] sp_id=' + params.sp_id + ', point_name=' + res.result.point_name + ', result=없음');
+      }
+    }
+  });
+
+  // Delay result display until AI finishes narrating
+  __panelBridge.on('turnEnd', function() {
+    var nd = __panelBridge.data;
+    searchPoints = nd['search-points'] || {};
+    roomData = searchPoints[roomKey];
+    render();
+  });
+</script>

@@ -1,0 +1,183 @@
+<panel-actions>
+[
+  {
+    "id": "prove",
+    "label": "이의 제기",
+    "description": "범인의 저항 증언에 핵심 증거를 제시하여 반박한다",
+    "params": { "evidence_id": "증거 ID" },
+    "available_when": "case_phase === 'confrontation'",
+    "needs_ui": false
+  }
+]
+</panel-actions>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .objection-panel {
+    font-family: 'Segoe UI', sans-serif;
+    color: #e0ddd4;
+    padding: 8px 12px;
+  }
+  .obj-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px; padding-bottom: 6px;
+    border-bottom: 1px solid #1e2a45;
+  }
+  .obj-title {
+    font-size: 11px; font-weight: 700; color: #e74c3c;
+    letter-spacing: 1px;
+  }
+  .obj-score {
+    font-size: 11px; color: #7a7a8a;
+  }
+  .obj-score .hit { color: #c8a44e; font-weight: 700; }
+  .obj-score .miss { color: #e74c3c; font-weight: 700; }
+
+  .round-dots {
+    display: flex; gap: 4px; margin-bottom: 8px; justify-content: center;
+  }
+  .dot {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; color: #0a0e1a;
+  }
+  .dot.hit { background: #c8a44e; }
+  .dot.miss { background: #e74c3c; }
+  .dot.current { background: #4ecdc4; }
+  .dot.future { background: #1e2a45; color: #3a3a4a; }
+
+  .ev-grid {
+    display: flex; flex-wrap: wrap; gap: 5px;
+  }
+  .ev-chip {
+    font-size: 11px; padding: 5px 10px; border-radius: 6px; cursor: pointer;
+    background: #0d1220; border: 2px solid #1e2a45; transition: all 0.2s;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .ev-chip:hover { border-color: #c8a44e; background: #1a2035; }
+  .ev-chip.used { opacity: 0.3; cursor: not-allowed; border-color: #1e2a45; }
+  .ev-chip .chip-icon { font-size: 12px; }
+
+  .empty-msg {
+    font-size: 12px; color: #7a7a8a; text-align: center; padding: 16px;
+  }
+</style>
+
+<div class="objection-panel">
+  <div class="obj-header">
+    <span class="obj-title">⚡ 이의 제기</span>
+    <span class="obj-score" id="score"></span>
+  </div>
+  <div class="round-dots" id="dots"></div>
+  <div class="ev-grid" id="evGrid"></div>
+</div>
+
+<script>
+  var typeIcons = { physical: '🧪', document: '📄', digital: '💻', weapon: '🔪', testimony: '🗣️' };
+
+  function render() {
+    var d = __panelBridge.data;
+    var caseData = d['case'] || {};
+    var confrontation = caseData._confrontation;
+    var evidence = caseData.evidence || {};
+
+    var scoreEl = shadow.getElementById('score');
+    var dotsEl = shadow.getElementById('dots');
+    var gridEl = shadow.getElementById('evGrid');
+
+    if (!confrontation || d.case_phase !== 'confrontation') {
+      scoreEl.innerHTML = '';
+      dotsEl.innerHTML = '';
+      gridEl.innerHTML = '<div class="empty-msg">범인 지목 후 활성화됩니다.</div>';
+      return;
+    } else {
+    var round = confrontation.round || 0;
+    var hits = confrontation.hits || 0;
+    var misses = confrontation.misses || 0;
+    var maxRounds = confrontation.max_rounds || 5;
+    var presented = confrontation.presented || [];
+
+    // Score
+    scoreEl.innerHTML = '<span class="hit">HIT ' + hits + '</span> / <span class="miss">MISS ' + misses + '</span> <span style="margin-left:6px">(' + (round + 1) + '/' + maxRounds + ')</span>';
+
+    // Round dots
+    var dotsHtml = '';
+    for (var i = 0; i < maxRounds; i++) {
+      if (i < round) {
+        var wasHit = presented[i] && confrontation.required_proofs.includes(presented[i]);
+        dotsHtml += '<div class="dot ' + (wasHit ? 'hit' : 'miss') + '">' + (wasHit ? '✓' : '✗') + '</div>';
+      } else if (i === round) {
+        dotsHtml += '<div class="dot current">▶</div>';
+      } else {
+        dotsHtml += '<div class="dot future">·</div>';
+      }
+    }
+    dotsEl.innerHTML = dotsHtml;
+
+    // Evidence chips
+    var foundEvidence = Object.entries(evidence).filter(function(e) { return e[1].found; });
+    if (foundEvidence.length === 0) {
+      gridEl.innerHTML = '<div class="empty-msg">보유한 증거가 없습니다.</div>';
+    } else {
+      gridEl.innerHTML = foundEvidence.map(function(e) {
+        var used = presented.includes(e[0]);
+        var icon = typeIcons[e[1].type] || '❓';
+        return '<div class="ev-chip' + (used ? ' used' : '') + '" data-eid="' + e[0] + '" data-name="' + (e[1].name || '').replace(/"/g, '&quot;') + '" data-desc="' + (e[1].description || '').replace(/"/g, '&quot;') + '">' +
+          '<span class="chip-icon">' + icon + '</span>' + e[1].name + '</div>';
+      }).join('');
+    }
+
+    // Click handlers
+    shadow.querySelectorAll('.ev-chip:not(.used)').forEach(function(chip) {
+      chip.addEventListener('click', async function() {
+        var eid = chip.dataset.eid;
+        var evName = chip.dataset.name;
+        var evDesc = chip.dataset.desc;
+
+        var confirmed = await __panelBridge.confirm(
+          '<div style="margin-bottom:8px"><strong style="color:#c8a44e">' + evName + '</strong></div>' +
+          '<div style="font-size:11px;color:#b0b0b0;line-height:1.6;margin-bottom:12px">' + evDesc + '</div>' +
+          '<div style="font-size:12px;color:#e0ddd4">이 증거로 이의를 제기할까요?</div>',
+          { yesText: '이의 있음!', noText: '취소' }
+        );
+        if (!confirmed) return;
+
+        chip.style.opacity = '0.3';
+        chip.style.pointerEvents = 'none';
+        await __panelBridge.executeAction('prove', { evidence_id: eid });
+      });
+    });
+  }
+  } // end render
+
+  render();
+  __panelBridge.on('turnEnd', function() { render(); });
+
+  // Panel action registration
+  __panelBridge.registerAction('prove', async function(params) {
+    var res = await __panelBridge.runTool('engine', { action: 'prove', evidence_id: params.evidence_id });
+    if (!res.result) return;
+    var evName = res.result.evidence_name || params.evidence_id;
+
+    if (res.result.completed) {
+      if (res.result.won) {
+        await __panelBridge.queueEvent('[논파완료] culprit=' + (res.result.culprit_name || ''));
+        await __panelBridge.showPopup('objection', { duration: 2500 });
+        __panelBridge.sendMessage('*[모든 핵심 증거를 제시하여 범행을 입증했다]*');
+      } else {
+        await __panelBridge.queueEvent('[논파실패] 라운드 소진');
+        __panelBridge.sendMessage('*[논파에 실패했다]*');
+      }
+    } else {
+      var isHit = res.result.correct;
+      var tag = isHit ? '적중' : '빗나감';
+      var eventStr = '[이의제기: ' + evName + ' — ' + tag + '] hits=' + res.result.hits + ', misses=' + res.result.misses + ', round=' + res.result.round;
+      if (res.result.next_target_name) {
+        eventStr += '\n[다음 저항] target=' + res.result.next_target_name + ', found=' + res.result.next_target_found + ', desc=' + res.result.next_target_desc;
+      }
+      await __panelBridge.queueEvent(eventStr);
+      await __panelBridge.showPopup('objection', { duration: 2500 });
+      __panelBridge.sendMessage('*[' + evName + '을(를) 증거로 이의를 제기한다]*');
+    }
+  });
+</script>

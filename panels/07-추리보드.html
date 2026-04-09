@@ -1,0 +1,231 @@
+<panel-actions>
+[
+  {
+    "id": "deduce",
+    "label": "추리 연결",
+    "description": "두 개 이상의 증거를 연결하여 새로운 추론을 도출한다",
+    "params": { "evidence_ids": "연결할 증거 ID 배열" },
+    "available_when": "case_phase === 'investigation'",
+    "needs_ui": true
+  }
+]
+</panel-actions>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .board { font-family: 'Segoe UI', sans-serif; color: #e0ddd4; min-height: 350px; }
+  .board-header {
+    font-size: 13px; font-weight: 700; color: #c8a44e;
+    margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .deduce-btn {
+    font-size: 11px; padding: 5px 14px; border-radius: 4px; cursor: pointer;
+    background: linear-gradient(135deg, #c8a44e, #a8842e); color: #0a0e1a;
+    border: none; font-weight: 700; transition: opacity 0.2s;
+  }
+  .deduce-btn:hover { opacity: 0.9; }
+  .deduce-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .section-label { font-size: 11px; color: #7a7a8a; margin: 12px 0 6px; font-weight: 600; }
+
+  .evidence-nodes { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .ev-node {
+    font-size: 11px; padding: 5px 10px; border-radius: 6px; cursor: pointer;
+    background: #0d1220; border: 2px solid #1e2a45; transition: all 0.2s;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .ev-node:hover { border-color: #c8a44e; }
+  .ev-node.selected { border-color: #c8a44e; background: #1a2035; box-shadow: 0 0 8px rgba(200,164,78,0.3); }
+  .ev-node.sel-1 { border-color: #4ecdc4; background: #0d2028; box-shadow: 0 0 8px rgba(78,205,196,0.2); }
+  .ev-node.sel-2 { border-color: #e8915a; background: #281a0d; box-shadow: 0 0 8px rgba(232,145,90,0.2); }
+
+  /* Selected pair display */
+  .sel-pair { display: none; margin: 10px 0; gap: 8px; align-items: stretch; }
+  .sel-pair.show { display: flex; }
+  .sel-card {
+    flex: 1; padding: 10px; border-radius: 6px; background: #0d1220;
+    border: 1px solid #1e2a45; min-height: 80px;
+  }
+  .sel-card.slot-1 { border-color: #4ecdc4; }
+  .sel-card.slot-2 { border-color: #e8915a; }
+  .sel-card .card-icon { font-size: 18px; margin-bottom: 4px; }
+  .sel-card .card-name { font-size: 12px; font-weight: 700; color: #e0ddd4; margin-bottom: 4px; }
+  .sel-card .card-type { font-size: 9px; color: #7a7a8a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .sel-card .card-desc { font-size: 10px; color: #b0b0b0; line-height: 1.5; }
+  .sel-card.empty { display: flex; align-items: center; justify-content: center; }
+  .sel-card.empty .placeholder { font-size: 11px; color: #7a7a8a; }
+  .sel-connector {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: #c8a44e; flex-shrink: 0; width: 28px;
+  }
+
+  /* Deductions */
+  .deductions { display: flex; flex-direction: column; gap: 6px; }
+  .ded-card {
+    padding: 8px 10px; border-radius: 6px; border-left: 3px solid #c8a44e;
+    background: #0d1220;
+  }
+  .ded-card.locked { border-left-color: #1e2a45; opacity: 0.4; }
+  .ded-name { font-size: 12px; font-weight: 600; color: #c8a44e; margin-bottom: 2px; }
+  .ded-desc { font-size: 11px; color: #b0b0b0; line-height: 1.5; }
+  .ded-evidence { font-size: 10px; color: #7a7a8a; margin-top: 3px; }
+
+  .empty-msg { font-size: 12px; color: #7a7a8a; text-align: center; padding: 30px 20px; }
+</style>
+
+<div class="board">
+  <div class="board-header">
+    <span>🔗 추리 보드</span>
+    <button class="deduce-btn" id="deduceBtn" disabled>연결하여 추리</button>
+  </div>
+
+  <div class="sel-pair" id="selPair">
+    <div class="sel-card slot-1 empty" id="selCard1"><span class="placeholder">첫 번째 증거 선택</span></div>
+    <div class="sel-connector">⟷</div>
+    <div class="sel-card slot-2 empty" id="selCard2"><span class="placeholder">두 번째 증거 선택</span></div>
+  </div>
+
+  <div class="section-label">수집된 증거</div>
+  <div class="evidence-nodes" id="nodes"></div>
+
+  <div class="section-label">밝혀진 추리</div>
+  <div class="deductions" id="deds"></div>
+</div>
+
+<script>
+  var d = __panelBridge.data;
+  var caseData = d['case'] || {};
+  var evidence = caseData.evidence || {};
+  var deductions = caseData.deductions || {};
+  var selected = [];
+  var failedCombos = [];
+
+  var nodesEl = shadow.getElementById('nodes');
+  var dedsEl = shadow.getElementById('deds');
+  var deduceBtn = shadow.getElementById('deduceBtn');
+  var selPair = shadow.getElementById('selPair');
+  var selCard1 = shadow.getElementById('selCard1');
+  var selCard2 = shadow.getElementById('selCard2');
+
+  var typeIcons = { physical: '🧪', document: '📄', digital: '💻', weapon: '🔪', testimony: '🗣️' };
+  var typeNames = { physical: '물리적 증거', document: '문서', digital: '디지털', weapon: '무기', testimony: '증언' };
+  var foundEvidence = Object.entries(evidence).filter(function(e) { return e[1].found; });
+
+  if (foundEvidence.length === 0) {
+    nodesEl.innerHTML = '<div class="empty-msg">수집된 증거가 없습니다</div>';
+  } else {
+    nodesEl.innerHTML = foundEvidence.map(function(e) {
+      var icon = typeIcons[e[1].type] || '❓';
+      return '<div class="ev-node" data-eid="' + e[0] + '">' + icon + ' ' + e[1].name + '</div>';
+    }).join('');
+  }
+
+  function renderCard(cardEl, eid, slotClass) {
+    var ev = evidence[eid];
+    if (!ev) return;
+    var icon = typeIcons[ev.type] || '❓';
+    var typeName = typeNames[ev.type] || ev.type || '';
+    cardEl.className = 'sel-card ' + slotClass;
+    cardEl.innerHTML =
+      '<div class="card-icon">' + icon + '</div>' +
+      '<div class="card-name">' + ev.name + '</div>' +
+      '<div class="card-type">' + typeName + '</div>' +
+      '<div class="card-desc">' + (ev.description || '') + '</div>';
+  }
+
+  function clearCard(cardEl, slotClass, placeholder) {
+    cardEl.className = 'sel-card ' + slotClass + ' empty';
+    cardEl.innerHTML = '<span class="placeholder">' + placeholder + '</span>';
+  }
+
+  function updateSelectionUI() {
+    selPair.classList.toggle('show', selected.length > 0);
+    if (selected.length >= 1) {
+      renderCard(selCard1, selected[0], 'slot-1');
+    } else {
+      clearCard(selCard1, 'slot-1', '첫 번째 증거 선택');
+    }
+    if (selected.length >= 2) {
+      renderCard(selCard2, selected[1], 'slot-2');
+    } else {
+      clearCard(selCard2, 'slot-2', '두 번째 증거 선택');
+    }
+    var isFailed = selected.length >= 2 && failedCombos.indexOf([].concat(selected).sort().join('|')) >= 0;
+    deduceBtn.disabled = selected.length < 2 || isFailed;
+    deduceBtn.textContent = isFailed ? '이미 시도한 조합' : '연결하여 추리';
+
+    // Update node styles
+    shadow.querySelectorAll('.ev-node').forEach(function(n) {
+      n.classList.remove('selected', 'sel-1', 'sel-2');
+      var idx = selected.indexOf(n.dataset.eid);
+      if (idx === 0) n.classList.add('selected', 'sel-1');
+      else if (idx === 1) n.classList.add('selected', 'sel-2');
+    });
+  }
+
+  // Selection logic
+  shadow.querySelectorAll('.ev-node').forEach(function(node) {
+    node.addEventListener('click', function() {
+      var eid = node.dataset.eid;
+      var idx = selected.indexOf(eid);
+      if (idx >= 0) {
+        selected.splice(idx, 1);
+      } else {
+        if (selected.length >= 2) {
+          selected.shift();
+        }
+        selected.push(eid);
+      }
+      updateSelectionUI();
+    });
+  });
+
+  // Render deductions
+  function renderDeductions() {
+    var dedEntries = Object.entries(deductions);
+    if (dedEntries.length > 0) {
+      dedsEl.innerHTML = dedEntries.map(function(e) {
+        var dd = e[1];
+        if (dd.unlocked) {
+          var evNames = (dd.required_evidence || []).map(function(eid) { return (evidence[eid] || {}).name || eid; }).join(' + ');
+          return '<div class="ded-card"><div class="ded-name">💡 ' + dd.name + '</div><div class="ded-desc">' + dd.description + '</div><div class="ded-evidence">' + evNames + '</div></div>';
+        } else {
+          return '<div class="ded-card locked"><div class="ded-name">❓ ???</div><div class="ded-desc">증거를 연결하여 밝혀내세요</div></div>';
+        }
+      }).join('');
+    } else {
+      dedsEl.innerHTML = '<div class="empty-msg" style="padding:10px">추리 가능한 연결이 없습니다</div>';
+    }
+  }
+  renderDeductions();
+
+  // Deduce button
+  deduceBtn.addEventListener('click', function() {
+    if (selected.length < 2) return;
+    deduceBtn.disabled = true;
+    deduceBtn.textContent = '추리 중...';
+    __panelBridge.runTool('engine', { action: 'deduce', evidence_ids: selected }).then(async function(res) {
+      if (res.result && res.result.success) {
+        __panelBridge.showToast('💡 새 추리 해금: ' + res.result.deduction_name);
+        await __panelBridge.queueEvent('[추리] evidence_ids=' + selected.join(',') + ', deduction_name=' + res.result.deduction_name);
+        __panelBridge.closeModal('추리보드');
+        __panelBridge.sendMessage('*[추리 성공: ' + res.result.deduction_name + ']*');
+      } else {
+        failedCombos.push([].concat(selected).sort().join('|'));
+        deduceBtn.disabled = true;
+        deduceBtn.textContent = '이미 시도한 조합';
+        __panelBridge.showToast((res.result || {}).message || '연결 실패');
+      }
+    });
+  });
+
+  // Panel action registration
+  __panelBridge.registerAction('deduce', async function(params) {
+    var ids = Array.isArray(params.evidence_ids) ? params.evidence_ids : [params.evidence_ids];
+    var res = await __panelBridge.runTool('engine', { action: 'deduce', evidence_ids: ids });
+    if (res.result && res.result.success) {
+      await __panelBridge.queueEvent('[추리] deduction_name=' + res.result.deduction_name);
+      __panelBridge.showToast('💡 새 추리 해금: ' + res.result.deduction_name);
+    }
+  });
+</script>

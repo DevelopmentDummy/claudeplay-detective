@@ -1,0 +1,3549 @@
+[
+  {
+    "id": "poisoned_cup",
+    "title": "독배의 밤",
+    "status": "active",
+    "summary": "유명 요리사 강태준의 프라이빗 시식회에서 미식 평론가 서영민이 디저트를 먹고 쓰러져 사망했다. 같은 디저트를 먹은 다른 손님 5명은 멀쩡했다. 독은 어떻게 단 한 사람만 노렸는가. 화려한 접시 위에 감춰진 치밀한 복수극.",
+    "difficulty": "★★★",
+    "locations": {
+      "restaurant_arcana": {
+        "name": "레스토랑 '아르카나'",
+        "type": "restaurant",
+        "address": "강남구 압구정로 42길 17, 아르카나빌딩 1층",
+        "unlocked": true,
+        "floor_plan": {
+          "cols": 4,
+          "rows": 3,
+          "rooms": [
+            {
+              "id": "entrance_hall",
+              "name": "입구홀",
+              "icon": "🚪",
+              "col": 0,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "dining_hall",
+              "name": "다이닝홀",
+              "icon": "⚠️",
+              "col": 1,
+              "row": 0,
+              "w": 2,
+              "h": 1,
+              "locked": false,
+              "crime_scene": true
+            },
+            {
+              "id": "vip_lounge",
+              "name": "VIP 라운지",
+              "icon": "🥂",
+              "col": 3,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "kitchen",
+              "name": "주방",
+              "icon": "🔪",
+              "col": 0,
+              "row": 1,
+              "w": 2,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "wine_cellar",
+              "name": "와인셀러",
+              "icon": "🍷",
+              "col": 2,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "private_room",
+              "name": "개인룸",
+              "icon": "🔐",
+              "col": 3,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": true,
+              "crime_scene": false
+            },
+            {
+              "id": "staff_room",
+              "name": "직원휴게실",
+              "icon": "🚬",
+              "col": 0,
+              "row": 2,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "restroom",
+              "name": "화장실",
+              "icon": "🚻",
+              "col": 1,
+              "row": 2,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            }
+          ],
+          "doors": [
+            [
+              "entrance_hall",
+              "dining_hall",
+              "right"
+            ],
+            [
+              "dining_hall",
+              "vip_lounge",
+              "right"
+            ],
+            [
+              "entrance_hall",
+              "kitchen",
+              "bottom"
+            ],
+            [
+              "dining_hall",
+              "wine_cellar",
+              "bottom"
+            ],
+            [
+              "vip_lounge",
+              "private_room",
+              "bottom"
+            ],
+            [
+              "kitchen",
+              "staff_room",
+              "bottom"
+            ],
+            [
+              "kitchen",
+              "restroom",
+              "bottom"
+            ],
+            [
+              "wine_cellar",
+              "private_room",
+              "right"
+            ],
+            [
+              "staff_room",
+              "restroom",
+              "right"
+            ]
+          ]
+        },
+        "points": {
+          "p_victim_seat": {
+            "room": "dining_hall",
+            "name": "피해자 좌석",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_seating_chart"
+          },
+          "p_dessert_remains": {
+            "room": "dining_hall",
+            "name": "디저트 접시 잔여물",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_dessert_analysis"
+          },
+          "p_wine_glass": {
+            "room": "dining_hall",
+            "name": "피해자 와인잔",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_wine_glass_prints"
+          },
+          "p_kitchen_counter": {
+            "room": "kitchen",
+            "name": "주방 조리대",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_nut_oil_bottle"
+          },
+          "p_fridge_ingredients": {
+            "room": "kitchen",
+            "name": "냉장고 내 재료",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_ingredient_list"
+          },
+          "p_security_camera": {
+            "room": "entrance_hall",
+            "name": "경비카메라 모니터",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_cctv_footage"
+          },
+          "p_staff_locker": {
+            "room": "staff_room",
+            "name": "직원 사물함",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_minji_gloves"
+          }
+        },
+        "npcs": {
+          "kang_taejun": {
+            "name": "강태준",
+            "role": "헤드셰프 겸 오너",
+            "room": "kitchen",
+            "available": true,
+            "talked": false
+          },
+          "lee_minji": {
+            "name": "이민지",
+            "role": "서브셰프",
+            "room": "kitchen",
+            "available": true,
+            "talked": false
+          },
+          "jung_hayun": {
+            "name": "정하윤",
+            "role": "수석 소믈리에",
+            "room": "wine_cellar",
+            "available": true,
+            "talked": false
+          },
+          "kim_dohyun": {
+            "name": "김도현",
+            "role": "담당 웨이터",
+            "room": "dining_hall",
+            "available": true,
+            "talked": false
+          }
+        }
+      },
+      "victim_home": {
+        "name": "서영민 자택",
+        "type": "apartment",
+        "address": "서초구 반포대로 218, 래미안퍼스티지 1503호",
+        "unlocked": false,
+        "floor_plan": {
+          "cols": 2,
+          "rows": 2,
+          "rooms": [
+            {
+              "id": "living_room",
+              "name": "거실",
+              "icon": "🛋️",
+              "col": 0,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "study",
+              "name": "서재",
+              "icon": "📚",
+              "col": 1,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "bathroom_home",
+              "name": "욕실",
+              "icon": "🚿",
+              "col": 0,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "bedroom",
+              "name": "침실",
+              "icon": "🛏️",
+              "col": 1,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            }
+          ],
+          "doors": [
+            [
+              "living_room",
+              "study",
+              "right"
+            ],
+            [
+              "living_room",
+              "bathroom_home",
+              "bottom"
+            ],
+            [
+              "study",
+              "bedroom",
+              "bottom"
+            ]
+          ]
+        },
+        "points": {
+          "p_victim_laptop": {
+            "room": "study",
+            "name": "서영민 노트북",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_unpublished_review"
+          },
+          "p_allergy_meds": {
+            "room": "bathroom_home",
+            "name": "약병 (알레르기약)",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_allergy_prescription"
+          }
+        },
+        "npcs": {}
+      },
+      "minji_apartment": {
+        "name": "이민지 원룸",
+        "type": "apartment",
+        "address": "마포구 합정동 394-12, 3층 302호",
+        "unlocked": false,
+        "floor_plan": {
+          "cols": 1,
+          "rows": 2,
+          "rooms": [
+            {
+              "id": "minji_room",
+              "name": "거실 겸 침실",
+              "icon": "🏠",
+              "col": 0,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "minji_kitchen",
+              "name": "미니 주방",
+              "icon": "🍳",
+              "col": 0,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            }
+          ],
+          "doors": [
+            [
+              "minji_room",
+              "minji_kitchen",
+              "bottom"
+            ]
+          ]
+        },
+        "points": {
+          "p_minji_diary": {
+            "room": "minji_room",
+            "name": "이민지 일기장",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_minji_diary"
+          },
+          "p_pharmacy_receipt": {
+            "room": "minji_kitchen",
+            "name": "약국 영수증",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_pharmacy_receipt"
+          }
+        },
+        "npcs": {}
+      }
+    },
+    "evidence": {
+      "e_seating_chart": {
+        "name": "예약 좌석표",
+        "type": "document",
+        "description": "시식회 당일 좌석 배치도. 원래 서영민은 3번 테이블이었으나, 당일 오후에 수기로 7번 테이블로 변경된 흔적이 있다. 변경을 지시한 사람의 이름은 적혀 있지 않으며, 7번 테이블은 주방 출입구와 가장 가까운 자리다.",
+        "found": false
+      },
+      "e_dessert_analysis": {
+        "name": "디저트 잔여물 분석 결과",
+        "type": "physical",
+        "description": "피해자가 먹던 크림브륄레 잔여물에서 미량의 아몬드 오일(견과류 추출물)이 검출되었다. 다른 테이블에 서빙된 동일 디저트 5인분에서는 검출되지 않았다. 의도적으로 피해자의 접시에만 첨가된 것으로 추정된다.",
+        "found": false
+      },
+      "e_wine_glass_prints": {
+        "name": "피해자 와인잔 지문",
+        "type": "physical",
+        "description": "서영민의 와인잔에서 서영민 본인의 지문 외에 소믈리에 정하윤의 지문이 검출되었다. 소믈리에가 와인을 따르면서 잔에 닿는 것은 자연스러울 수 있으나, 잔의 내벽 가장자리에까지 지문이 있는 것은 이례적이다.",
+        "found": false
+      },
+      "e_nut_oil_bottle": {
+        "name": "견과류 오일 병",
+        "type": "physical",
+        "description": "주방 조리대 아래 쓰레기통에서 라벨이 벗겨진 소형 견과류 오일 병이 발견되었다. 아르카나의 메뉴에는 견과류 오일을 사용하는 요리가 없으며, 정규 식재료 목록에도 포함되어 있지 않다. 누군가 외부에서 반입한 것으로 보인다.",
+        "found": false
+      },
+      "e_ingredient_list": {
+        "name": "당일 식재료 입고 목록",
+        "type": "document",
+        "description": "시식회 당일 아침 입고된 식재료 명세서. 견과류 관련 재료는 단 하나도 포함되어 있지 않다. 강태준 셰프의 서명이 찍혀 있으며, '알레르기 유발 식재료 배제' 메모가 별도로 기재되어 있다.",
+        "found": false
+      },
+      "e_cctv_footage": {
+        "name": "경비카메라 영상",
+        "type": "digital",
+        "description": "입구홀 경비카메라 녹화분. 시식회 시작 2시간 전(오후 5시), 이민지가 개인 가방에서 작은 병을 꺼내 주방으로 가져가는 장면이 포착되었다. 다만 영상이 흐릿하여 병의 내용물까지는 식별이 어렵다. 이민지는 출근 시 개인 소지품을 사물함에 넣는 것이 원칙이다.",
+        "found": false
+      },
+      "e_minji_gloves": {
+        "name": "일회용 장갑 (라텍스)",
+        "type": "physical",
+        "description": "이민지의 사물함에서 개봉된 라텍스 장갑 한 박스가 발견되었다. 주방에서는 니트릴 장갑만 사용하는데, 이 라텍스 장갑은 이민지 개인 소지품이다. 한 쌍이 사용된 흔적이 있으며, 쓰레기통에서는 발견되지 않았다.",
+        "found": false
+      },
+      "e_victim_sns": {
+        "name": "서영민 SNS 리뷰 이력",
+        "type": "digital",
+        "description": "서영민의 블로그와 인스타그램에서 과거 5년간의 레스토랑 리뷰를 확인. 3년 전 마포구 소재 '비스트로 루미에르'에 대해 '위생 불량, 맛 이하' 악평을 게재한 후 해당 레스토랑이 6개월 내 폐업. 비스트로 루미에르의 오너셰프는 '박정수'로, 이민지의 요리 스승이었다.",
+        "found": false
+      },
+      "e_unpublished_review": {
+        "name": "미발표 악평 원고",
+        "type": "digital",
+        "description": "서영민 노트북의 블로그 임시저장함에서 아르카나에 대한 미발표 리뷰가 발견되었다. '강태준의 이름값에 기대는 게으른 요리', '서브셰프의 실력이 전체 수준을 끌어내린다'는 혹평이 담겨 있다. 작성일은 사건 3일 전이며, 시식회 후 게시할 예정이었던 것으로 보인다.",
+        "found": false
+      },
+      "e_allergy_prescription": {
+        "name": "알레르기 처방 기록",
+        "type": "document",
+        "description": "서영민의 욕실에서 발견된 에피네프린 자가주사기(에피펜)와 항히스타민제. 처방전에 '중증 견과류 알레르기 — 아나필락시스 위험'으로 명시. 서영민은 외식 시 항상 에피펜을 휴대했으나, 사건 당일에는 가방에서 발견되지 않았다.",
+        "found": false
+      },
+      "e_minji_diary": {
+        "name": "이민지 일기장",
+        "type": "document",
+        "description": "이민지의 수기 일기. 1년 전: '스승님이 돌아가셨다. 그 평론가 서영민 때문이다. 루미에르가 문을 닫고, 빚에 시달리다... 용서할 수 없다.' 3개월 전: '서영민이 아르카나 시식회에 온다. 운명인가.' 1주 전: '준비는 끝났다. 스승님, 지켜봐 주세요.'",
+        "found": false
+      },
+      "e_pharmacy_receipt": {
+        "name": "약국 영수증",
+        "type": "document",
+        "description": "이민지 원룸 주방 서랍에서 발견된 영수증. 사건 1주 전 날짜로, 마포구 소재 약국에서 '아몬드 에센셜 오일 30ml'를 구매한 기록. 식용이 아닌 아로마 테라피용 제품이지만, 고농축 견과류 성분을 함유하고 있어 중증 알레르기 환자에게는 치명적이다.",
+        "found": false
+      },
+      "e_insurance_document": {
+        "name": "강태준 보험 서류",
+        "type": "document",
+        "description": "개인룸 금고에서 발견된 사업주 배상책임보험 갱신 서류. 시식회 2주 전에 보상 한도를 기존 2억에서 10억으로 대폭 상향 조정했다. 식중독이나 알레르기 사고 발생 시의 배상에 대비한 것처럼 보이지만, 시기적으로 의심스럽다.",
+        "found": false
+      },
+      "e_hayun_wine_swap": {
+        "name": "와인 교체 기록",
+        "type": "digital",
+        "description": "정하윤의 업무 태블릿에 저장된 시식회 와인 페어링 노트. 원래 디저트 코스에 매칭된 와인은 '소테른 2018'이었으나, 당일 오후에 '아마로네 2016'으로 변경되었다. 변경 사유는 '재고 부족'으로 기재. 그러나 소테른 2018은 와인셀러에 3병이 남아 있다.",
+        "found": false
+      },
+      "e_dohyun_phone_log": {
+        "name": "김도현 통화 기록",
+        "type": "digital",
+        "description": "김도현의 휴대폰 통화 내역. 시식회 진행 중(오후 8시 15분) 외부 번호로 2분 30초간 통화한 기록. 통화 상대는 강남 소재 헤드헌팅 업체 '엘리트 서치'로 확인. 시식회 도중 자리를 비운 것은 서비스 매뉴얼 위반이다.",
+        "found": false
+      },
+      "e_epinephrine_found": {
+        "name": "에피펜 발견 장소",
+        "type": "physical",
+        "description": "사건 후 수색에서 서영민의 에피펜이 레스토랑 화장실 쓰레기통 바닥에서 발견되었다. 서영민의 핸드백에 들어 있어야 할 물건이 왜 화장실 쓰레기통에 있는지 의문. 에피펜에서 서영민과 이민지, 두 사람의 지문이 검출되었다.",
+        "found": false
+      },
+      "e_mentor_death": {
+        "name": "박정수 셰프 사망 기사",
+        "type": "document",
+        "description": "1년 전 지역 신문 기사 스크랩. '비스트로 루미에르 오너셰프 박정수(54), 자택에서 숨진 채 발견. 가게 폐업 후 채무에 시달려.' 기사에 이민지가 '제자 대표'로 조문한 사진이 실려 있다. 기사 여백에 이민지의 필체로 '반드시'라고 적혀 있다.",
+        "found": false
+      }
+    },
+    "testimonies": {
+      "t_kang": {
+        "witness": "kang_taejun",
+        "witness_name": "강태준",
+        "statements": [
+          {
+            "id": "s_kang_1",
+            "text": "시식회 메뉴는 제가 직접 구성했습니다. 알레르기 유발 식재료는 철저히 배제했어요. 견과류는 아예 주방에 들이지도 않았습니다. 이건 사고예요, 사고.",
+            "pressed": false,
+            "press_result": "서영민 씨의 알레르기를 알았냐고요? 물론 알고 있었죠. 예약 시 알레르기 정보를 필수로 받습니다. 견과류 중증 알레르기... 그래서 더 신경 썼어요. 식재료 입고 단계부터 견과류를 완전히 배제했습니다.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_insurance_document",
+              "reveal": "시식회 2주 전에 배상책임보험 한도를 2억에서 10억으로 대폭 올렸다. 알레르기 사고를 철저히 방지했다면서 왜 갑자기 보험을 올렸는가? 사고 가능성을 예상했거나, 무언가를 알고 있었을 가능성이 있다."
+            }
+          },
+          {
+            "id": "s_kang_2",
+            "text": "이민지는 3년째 함께 일하는 서브셰프입니다. 실력도 좋고 성실해요. 그 아이가 이런 일에 연루됐을 리가 없습니다. 제가 보증합니다.",
+            "pressed": false,
+            "press_result": "이민지의 과거요? 비스트로 루미에르에서 일했다는 건 알고 있었어요. 거기 오너셰프 박정수 씨가 돌아가셨다는 것도. 하지만 그게 서영민 씨 때문이라는 건... 아, 그 악평 때문에 가게가 망했다는 얘기는 들었지만, 그건 업계 얘기일 뿐이에요.",
+            "press_adds": [
+              "e_victim_sns"
+            ],
+            "contradiction": null
+          },
+          {
+            "id": "s_kang_3",
+            "text": "좌석 변경이요? 당일 오후에 VIP 고객 한 분이 추가로 오시게 되면서 좌석을 재배치했습니다. 저나 매니저 김도현이 조정했을 거예요. 별 의미 없는 변경입니다.",
+            "pressed": false,
+            "press_result": "7번 테이블이 주방 가까이 있다는 게 왜 중요합니까? 오히려 좋은 자리예요. 셰프가 직접 서비스하기 편하니까. 서영민 씨 같은 평론가에게는 셰프의 관심이 곧 대접이죠.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_seating_chart",
+              "reveal": "좌석표를 보면 변경은 서영민의 자리만 바뀌었다. VIP 추가로 인한 전체 재배치가 아니라, 서영민 한 사람만 7번 테이블로 옮긴 것이다. 주방 출입구와 가장 가까운 7번 자리는 주방에서 특정 접시를 교체하기 가장 쉬운 위치다."
+            }
+          }
+        ]
+      },
+      "t_minji": {
+        "witness": "lee_minji",
+        "witness_name": "이민지",
+        "statements": [
+          {
+            "id": "s_minji_1",
+            "text": "저는 시식회 내내 주방에서 조리만 했어요. 디저트도 6인분 동일하게 만들었고, 특정 접시에 뭘 따로 넣은 적 없습니다. 셰프님 지시대로 레시피를 따랐을 뿐이에요.",
+            "pressed": false,
+            "press_result": "디저트 플레이팅은 제가 했어요, 맞아요. 크림브륄레 위에 카라멜라이즈하고 장식 올리는 거. 6개 접시를 동시에 세팅했는데, 한 접시만 다르게 했다? 그런 건 불가능해요. 다른 사람들이 다 보고 있었으니까.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_cctv_footage",
+              "reveal": "경비카메라에 시식회 2시간 전 이민지가 개인 가방에서 작은 병을 꺼내 주방으로 가져가는 장면이 찍혀 있다. 개인 소지품은 사물함에 넣는 것이 원칙인데, 왜 별도의 병을 주방으로 가져갔는가?"
+            }
+          },
+          {
+            "id": "s_minji_2",
+            "text": "서영민이라는 분은 오늘 처음 봤어요. 평론가라고 하던데, 주방에 있는 저한테는 별 관계 없는 분이죠. 이름도 좌석표에서 처음 봤고요.",
+            "pressed": false,
+            "press_result": "비스트로 루미에르에서 일했던 건 맞아요. 거기서 요리를 배웠으니까. 하지만 그게 서영민 씨랑 무슨 관계가 있는지... 그 가게가 문을 닫은 건 여러 가지 이유가 있었어요. 한 사람 탓으로 돌릴 건 아니에요.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_minji_diary",
+              "reveal": "이민지의 일기장에 서영민에 대한 원한이 1년 이상 기록되어 있다. '그 평론가 서영민 때문이다', '용서할 수 없다', '준비는 끝났다'. 처음 봤다는 말은 완전한 거짓이다."
+            }
+          },
+          {
+            "id": "s_minji_3",
+            "text": "화장실에는 시식회 중에 한 번 갔어요. 7시 반쯤이었나. 2분 정도 다녀왔을 거예요. 그게 뭐 문제가 되나요?",
+            "pressed": false,
+            "press_result": "에피펜이요? 그게 뭔지도 모르겠는데... 아, 알레르기 주사 같은 거요? 저는 만진 적 없어요. 화장실에서 손 씻고 바로 나왔습니다. 쓰레기통 같은 건 건드리지도 않았어요.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_epinephrine_found",
+              "reveal": "화장실 쓰레기통에서 발견된 에피펜에서 이민지의 지문이 검출되었다. 만진 적 없다는 증언과 완전히 모순된다. 이민지가 서영민의 에피펜을 빼돌려 화장실에 버린 것이다. 에피펜이 없으면 알레르기 반응에 대응할 수 없다."
+            }
+          }
+        ]
+      },
+      "t_hayun": {
+        "witness": "jung_hayun",
+        "witness_name": "정하윤",
+        "statements": [
+          {
+            "id": "s_hayun_1",
+            "text": "와인 서비스는 제 담당이에요. 서영민 씨 잔에도 다른 분들과 동일한 와인을 따랐습니다. 디저트 코스에는 아마로네 2016을 페어링했고요.",
+            "pressed": false,
+            "press_result": "원래는 소테른이었냐고요? 아, 네. 처음엔 소테른 2018로 준비했었는데, 재고가... 아, 재고 확인을 다시 해봐야겠네요. 아무튼 아마로네도 크림브륄레랑 잘 어울립니다. 와인 선택이 이 사건과 무슨 상관인지 모르겠지만.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_hayun_wine_swap",
+              "reveal": "와인셀러에 소테른 2018이 3병이나 남아 있다. 재고 부족으로 변경했다는 것은 거짓이다. 와인을 의도적으로 교체한 이유가 따로 있다. 아마로네의 강한 풍미가 견과류 오일의 맛을 가리기 위한 것이었을 가능성이 있다."
+            }
+          },
+          {
+            "id": "s_hayun_2",
+            "text": "서영민 씨 와인잔에 제 지문이 있는 건 당연하죠. 와인을 따르면서 잔을 잡으니까요. 소믈리에는 늘 그렇게 합니다.",
+            "pressed": false,
+            "press_result": "잔 내벽까지요? 그건... 아마 서빙 전에 잔 상태를 확인했을 거예요. 물자국이 있으면 닦아야 하니까. 그때 안쪽에 손가락이 닿았을 수 있어요. 특별한 의미는 없습니다.",
+            "press_adds": [],
+            "contradiction": null
+          },
+          {
+            "id": "s_hayun_3",
+            "text": "이민지 씨요? 주방에서 묵묵히 일하는 타입이에요. 따로 친하지는 않지만, 일은 잘 해요. 특별히 이상한 행동을 본 적은 없습니다.",
+            "pressed": false,
+            "press_result": "지난달에 한 번 이민지 씨가 와인셀러에서 혼자 뭔가를 들여다보고 있었어요. 뭐 하냐고 물었더니 와인 공부한다고. 셰프 지망생이 와인에 관심 갖는 건 자연스러운 거니까 대수롭지 않게 넘겼죠.",
+            "press_adds": [],
+            "contradiction": null
+          }
+        ]
+      },
+      "t_dohyun": {
+        "witness": "kim_dohyun",
+        "witness_name": "김도현",
+        "statements": [
+          {
+            "id": "s_dohyun_1",
+            "text": "디저트 서빙은 제가 했어요. 주방에서 트레이에 6개 접시를 받아서 각 테이블에 놓았습니다. 접시 번호 같은 건 따로 없었고, 가까운 테이블부터 순서대로 놓았어요.",
+            "pressed": false,
+            "press_result": "접시를 바꿔놓을 수 있었냐고요? 트레이 위에 6개가 다 똑같아 보였는데, 굳이 바꿀 이유가 없잖아요. 하나씩 집어서 놓았을 뿐입니다. 그런데... 주방에서 이민지 씨가 '이건 7번'이라고 말하면서 접시 하나를 따로 건네준 건 있어요.",
+            "press_adds": [],
+            "contradiction": null
+          },
+          {
+            "id": "s_dohyun_2",
+            "text": "시식회 도중에 자리를 비운 적은 없습니다. 풀 코스 서비스니까 계속 홀에 있어야 하거든요. 처음부터 끝까지 다이닝홀에 있었어요.",
+            "pressed": false,
+            "press_result": "아... 한 번 잠깐 나간 적이 있긴 해요. 개인적인 전화가 와서. 2분 정도요. 하지만 디저트 서빙 타이밍이 아니라 메인 코스 끝나고 쉬는 시간이었어요. 별 상관없을 겁니다.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_dohyun_phone_log",
+              "reveal": "통화 상대가 헤드헌팅 업체다. 시식회 도중에 이직 상담 전화를 받은 것이다. 자리를 비운 진짜 이유를 숨긴 것이고, 이 시간 동안 다이닝홀에 서빙 스태프가 부재했다는 의미다. 누군가 그 틈에 접시나 잔에 접근할 수 있었다."
+            }
+          },
+          {
+            "id": "s_dohyun_3",
+            "text": "서영민 씨가 쓰러졌을 때 가장 먼저 달려갔어요. 가방에서 약을 찾으려 했는데 없더라고요. 에피펜이 없어서 당황했습니다. 119에 바로 전화했지만...",
+            "pressed": false,
+            "press_result": "에피펜이 가방에 없다는 걸 제가 어떻게 아냐고요? 서영민 씨 본인이 예약할 때 '혹시 모르니 에피펜이 가방에 있다'고 메모를 남겼거든요. 그래서 가방을 먼저 뒤졌는데... 없었어요. 그때 정말 무서웠습니다.",
+            "press_adds": [],
+            "contradiction": null
+          }
+        ]
+      }
+    },
+    "deductions": {
+      "d_seat_manipulation": {
+        "name": "좌석 조작의 의도",
+        "required_evidence": [
+          "e_seating_chart",
+          "e_dessert_analysis"
+        ],
+        "unlocked": false,
+        "description": "서영민의 좌석이 당일 갑자기 주방 가장 가까운 7번으로 변경되었고, 해당 좌석에 서빙된 디저트에서만 견과류 오일이 검출되었다. 좌석 변경은 '특정 인물에게만' 독을 전달하기 위한 사전 작업이었다. 범인은 서영민이 어디에 앉는지 정확히 알아야 했다."
+      },
+      "d_poison_method": {
+        "name": "독물 투입 경로",
+        "required_evidence": [
+          "e_nut_oil_bottle",
+          "e_cctv_footage"
+        ],
+        "unlocked": false,
+        "description": "주방 쓰레기통의 견과류 오일 병과 이민지가 가방에서 병을 꺼내 주방으로 가져간 CCTV 영상이 일치한다. 이민지가 외부에서 반입한 견과류 오일을 디저트 플레이팅 과정에서 피해자의 접시에만 첨가한 것이다. 소량이라 맛이나 냄새로는 감지가 어렵다."
+      },
+      "d_victim_secret": {
+        "name": "피해자의 비밀",
+        "required_evidence": [
+          "e_victim_sns",
+          "e_unpublished_review"
+        ],
+        "unlocked": false,
+        "description": "서영민은 과거에도 악평으로 레스토랑을 폐업시킨 전력이 있으며, 아르카나에 대한 혹평도 준비하고 있었다. 서영민의 리뷰는 단순한 비평이 아니라 사람의 인생을 파괴할 수 있는 무기였다. 그를 원망하는 사람이 한둘이 아닐 수 있다."
+      },
+      "d_accomplice_suspicion": {
+        "name": "공범 관계 의혹",
+        "required_evidence": [
+          "e_hayun_wine_swap",
+          "e_dessert_analysis"
+        ],
+        "unlocked": false,
+        "description": "디저트에 견과류 오일의 풍미를 감추려면 강한 맛의 와인이 필요하다. 정하윤이 소테른(달콤한 디저트 와인)을 아마로네(묵직한 풀바디)로 교체한 것은, 견과류 오일의 미세한 맛을 마스킹하기 위한 조치였을 가능성이 있다. 다만 정하윤이 의도적으로 관여했는지, 이민지에게 이용당한 것인지는 불분명하다."
+      },
+      "d_safety_net_removed": {
+        "name": "안전망 제거",
+        "required_evidence": [
+          "e_epinephrine_found",
+          "e_allergy_prescription"
+        ],
+        "unlocked": false,
+        "description": "서영민은 중증 알레르기 환자로 항상 에피펜을 소지했다. 에피펜만 있었다면 알레르기 반응이 와도 생존할 수 있었다. 그런데 에피펜이 화장실 쓰레기통에서 이민지의 지문과 함께 발견되었다. 범인은 독을 넣는 것만으로는 부족하다고 판단하고, 피해자의 유일한 안전망까지 제거했다. 치밀한 계획 살인의 증거."
+      },
+      "d_culprit_identified": {
+        "name": "진범 특정 — 이민지",
+        "required_evidence": [
+          "e_minji_diary",
+          "e_pharmacy_receipt",
+          "e_epinephrine_found"
+        ],
+        "unlocked": false,
+        "description": "이민지는 스승 박정수의 죽음을 서영민 탓으로 원한을 품었고(일기장), 아몬드 오일을 사전에 구매했으며(약국 영수증), 서영민의 에피펜을 빼돌렸다(지문 증거). 견과류 알레르기를 이용한 살인, 그리고 구명 도구까지 제거한 이중의 치밀함. 스승을 잃은 제자의 복수극이 드러난다."
+      }
+    },
+    "suspects": [
+      {
+        "id": "kang_taejun",
+        "name": "강태준",
+        "motive": "시식회 직전 배상책임보험을 대폭 인상. 미발표 악평에 따르면 서영민은 아르카나를 혹평할 예정이었다. 자신의 레스토랑을 지키기 위해 서영민을 제거했을 가능성",
+        "alibi": "시식회 내내 주방에서 직접 조리 지휘. 다수의 스태프가 목격. 다만 디저트 플레이팅 최종 단계에서 자리를 비운 시간이 있었다고 김도현이 증언"
+      },
+      {
+        "id": "lee_minji",
+        "name": "이민지",
+        "motive": "전 직장 비스트로 루미에르의 오너셰프 박정수가 서영민의 악평으로 폐업 후 자살. 이민지의 요리 스승이자 은인의 죽음에 대한 복수",
+        "alibi": "시식회 동안 주방에서 조리 담당. 시식회 중 화장실에 2분간 다녀옴. CCTV에 시식회 전 개인 가방에서 병을 꺼내는 장면이 촬영됨"
+      },
+      {
+        "id": "jung_hayun",
+        "name": "정하윤",
+        "motive": "직접적 동기는 불분명하나, 디저트 코스 와인을 이유 없이 교체한 정황이 수상. 이민지와의 공모 가능성, 또는 서영민이 과거 정하윤이 근무하던 와인바에도 악평을 남긴 적이 있을 가능성",
+        "alibi": "시식회 동안 와인셀러와 다이닝홀을 오가며 서비스. 피해자 와인잔에 지문이 내벽까지 검출된 것이 이례적"
+      },
+      {
+        "id": "kim_dohyun",
+        "name": "김도현",
+        "motive": "직접적 동기 미확인. 다만 시식회 중 헤드헌팅 업체에 전화하여 자리를 비웠고, 이 공백이 범행에 이용되었을 가능성. 외부 세력과의 연결 의혹",
+        "alibi": "시식회 동안 다이닝홀 상주. 메인 코스 후 약 2분간 자리를 비움(통화). 서영민이 쓰러졌을 때 가장 먼저 달려가 에피펜을 찾으려 했으나 발견 못함"
+      }
+    ],
+    "solution": {
+      "culprit": "lee_minji",
+      "method": "이민지는 서영민의 중증 견과류 알레르기 정보를 예약 서류에서 사전에 파악했다. 1주 전 아몬드 에센셜 오일을 구매하고, 시식회 당일 개인 가방에 숨겨 주방으로 반입했다. 좌석표를 수기로 변경해 서영민을 주방 가장 가까운 7번 테이블로 옮겨 표적 접시를 식별할 수 있게 했다. 디저트 플레이팅 과정에서 서영민의 크림브륄레에만 미량의 아몬드 오일을 첨가했다. 시식회 중 화장실에 다녀오면서 서영민의 핸드백에서 에피펜을 빼내 쓰레기통에 버려 유일한 안전망을 제거했다. 서영민은 디저트를 먹고 급성 아나필락시스가 발생했으나 에피펜 없이 구급대가 도착하기 전에 사망했다. 겉보기에는 레스토랑의 식재료 관리 실수로 인한 알레르기 사고처럼 보이도록 설계된 치밀한 범행이었다.",
+      "motive": "3년 전 서영민의 악평으로 비스트로 루미에르가 폐업했고, 이민지의 요리 스승이자 인생의 은인이었던 오너셰프 박정수가 채무에 시달리다 자살했다. 이민지에게 박정수는 단순한 직장 상사가 아니라, 고아원 출신인 자신에게 요리를 가르쳐주고 미래를 열어준 유일한 가족 같은 존재였다. 서영민이 아르카나 시식회에 참석한다는 소식을 듣고, 3개월간 복수를 준비했다. 일기장에는 '스승님, 지켜봐 주세요'라는 마지막 문장이 적혀 있었다.",
+      "key_evidence": [
+        "e_dessert_analysis",
+        "e_pharmacy_receipt",
+        "e_minji_diary",
+        "e_epinephrine_found",
+        "e_cctv_footage"
+      ]
+    },
+    "unlocks": [
+      {
+        "trigger": {
+          "type": "evidence_found",
+          "id": "e_victim_sns"
+        },
+        "action": {
+          "type": "unlock_location",
+          "location": "victim_home"
+        }
+      },
+      {
+        "trigger": {
+          "type": "evidence_found",
+          "id": "e_dessert_analysis"
+        },
+        "action": {
+          "type": "unlock_room",
+          "location": "restaurant_arcana",
+          "room": "private_room"
+        }
+      },
+      {
+        "trigger": {
+          "type": "deduction_unlocked",
+          "id": "d_poison_method"
+        },
+        "action": {
+          "type": "unlock_npc",
+          "location": "restaurant_arcana",
+          "npc": "lee_minji"
+        }
+      },
+      {
+        "trigger": {
+          "type": "deduction_unlocked",
+          "id": "d_culprit_identified"
+        },
+        "action": {
+          "type": "unlock_location",
+          "location": "minji_apartment"
+        }
+      },
+      {
+        "trigger": {
+          "type": "evidence_found",
+          "id": "e_allergy_prescription"
+        },
+        "action": {
+          "type": "unlock_room",
+          "location": "restaurant_arcana",
+          "room": "private_room"
+        }
+      },
+      {
+        "trigger": {
+          "type": "contradiction_found",
+          "id": "s_minji_2"
+        },
+        "action": {
+          "type": "unlock_location",
+          "location": "minji_apartment"
+        }
+      },
+      {
+        "trigger": {
+          "type": "evidence_found",
+          "id": "e_nut_oil_bottle"
+        },
+        "action": {
+          "type": "unlock_npc",
+          "location": "restaurant_arcana",
+          "npc": "jung_hayun"
+        }
+      }
+    ]
+  },
+  {
+    "id": "shadow_of_the_will",
+    "title": "유언장의 그림자",
+    "status": "active",
+    "summary": "가평의 대저택에서 건설재벌 윤재성 회장(72)이 서재에서 사망한 채 발견되었다. 사인은 심장약 디곡신 과다 투여. 사망 3일 전 유언장을 전면 수정한 사실이 드러나며, 장남, 차남, 딸, 가정부 — 네 명 모두가 용의선상에 올랐다. 가장 사랑받은 자식이 품은 그림자는 어디까지 드리워져 있는가.",
+    "difficulty": "★★★★",
+    "locations": {
+      "yoon_mansion": {
+        "name": "윤재성 가평 저택",
+        "type": "mansion",
+        "address": "경기도 가평군 청평면 호반로 312, 윤재성 사저",
+        "unlocked": true,
+        "floor_plan": {
+          "cols": 5,
+          "rows": 3,
+          "rooms": [
+            {
+              "id": "entrance_hall",
+              "name": "현관홀",
+              "icon": "🚪",
+              "col": 0,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "grand_living",
+              "name": "대거실",
+              "icon": "🛋️",
+              "col": 1,
+              "row": 0,
+              "w": 2,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "dining_room",
+              "name": "다이닝룸",
+              "icon": "🍽️",
+              "col": 3,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "study",
+              "name": "서재",
+              "icon": "⚠️",
+              "col": 4,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": true
+            },
+            {
+              "id": "kitchen",
+              "name": "주방",
+              "icon": "🍳",
+              "col": 0,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "wine_cellar",
+              "name": "와인저장고",
+              "icon": "🍷",
+              "col": 1,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": true,
+              "crime_scene": false
+            },
+            {
+              "id": "son1_room",
+              "name": "장남 침실",
+              "icon": "🛏️",
+              "col": 2,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "son2_room",
+              "name": "차남 침실",
+              "icon": "🛏️",
+              "col": 3,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "daughter_room",
+              "name": "딸 침실",
+              "icon": "🛏️",
+              "col": 4,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "maid_room",
+              "name": "가정부 방",
+              "icon": "🧹",
+              "col": 0,
+              "row": 2,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "garden",
+              "name": "정원",
+              "icon": "🌿",
+              "col": 1,
+              "row": 2,
+              "w": 2,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "garage",
+              "name": "차고",
+              "icon": "🚗",
+              "col": 3,
+              "row": 2,
+              "w": 2,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            }
+          ],
+          "doors": [
+            [
+              "entrance_hall",
+              "grand_living",
+              "right"
+            ],
+            [
+              "entrance_hall",
+              "kitchen",
+              "bottom"
+            ],
+            [
+              "grand_living",
+              "dining_room",
+              "right"
+            ],
+            [
+              "grand_living",
+              "wine_cellar",
+              "bottom"
+            ],
+            [
+              "grand_living",
+              "son1_room",
+              "bottom"
+            ],
+            [
+              "dining_room",
+              "study",
+              "right"
+            ],
+            [
+              "dining_room",
+              "son2_room",
+              "bottom"
+            ],
+            [
+              "study",
+              "daughter_room",
+              "bottom"
+            ],
+            [
+              "kitchen",
+              "maid_room",
+              "bottom"
+            ],
+            [
+              "wine_cellar",
+              "garden",
+              "bottom"
+            ],
+            [
+              "son1_room",
+              "garden",
+              "bottom"
+            ],
+            [
+              "son2_room",
+              "garage",
+              "bottom"
+            ],
+            [
+              "daughter_room",
+              "garage",
+              "bottom"
+            ],
+            [
+              "maid_room",
+              "garden",
+              "right"
+            ],
+            [
+              "garden",
+              "garage",
+              "right"
+            ]
+          ]
+        },
+        "points": {
+          "p_medicine_box": {
+            "room": "study",
+            "name": "피해자 약상자",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_medicine_box"
+          },
+          "p_study_desk": {
+            "room": "study",
+            "name": "서재 책상 서류",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_new_will_copy"
+          },
+          "p_wine_glass": {
+            "room": "dining_room",
+            "name": "세척된 와인잔",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_wine_residue"
+          },
+          "p_kitchen_cabinet": {
+            "room": "kitchen",
+            "name": "주방 약장",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_digoxin_access"
+          },
+          "p_cctv_recorder": {
+            "room": "entrance_hall",
+            "name": "CCTV 녹화기",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_cctv_gap"
+          },
+          "p_garden_footprints": {
+            "room": "garden",
+            "name": "정원 발자국",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_garden_footprints"
+          },
+          "p_garage_blackbox": {
+            "room": "garage",
+            "name": "차량 블랙박스",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_blackbox_footage"
+          },
+          "p_daughter_desk": {
+            "room": "daughter_room",
+            "name": "서연 화장대 서랍",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_medical_textbook"
+          },
+          "p_maid_diary": {
+            "room": "maid_room",
+            "name": "가정부 일지",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_maid_diary"
+          },
+          "p_wine_cellar_log": {
+            "room": "wine_cellar",
+            "name": "와인 반출 기록",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_wine_log"
+          },
+          "p_son1_bag": {
+            "room": "son1_room",
+            "name": "태현 서류 가방",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_debt_documents"
+          },
+          "p_son2_phone": {
+            "room": "son2_room",
+            "name": "민혁 스마트폰",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_minhyuk_messages"
+          }
+        },
+        "npcs": {
+          "yoon_taehyun": {
+            "name": "윤태현",
+            "role": "장남, 건설회사 부사장",
+            "room": "grand_living",
+            "available": true,
+            "talked": false
+          },
+          "yoon_minhyuk": {
+            "name": "윤민혁",
+            "role": "차남, 스타트업 대표",
+            "room": "son2_room",
+            "available": true,
+            "talked": false
+          },
+          "yoon_seoyeon": {
+            "name": "윤서연",
+            "role": "딸, 의대생(자칭)",
+            "room": "daughter_room",
+            "available": true,
+            "talked": false
+          },
+          "park_suni": {
+            "name": "박순이",
+            "role": "가정부 (20년 근속)",
+            "room": "kitchen",
+            "available": true,
+            "talked": false
+          }
+        }
+      },
+      "lawyer_office": {
+        "name": "오변호사 사무실",
+        "type": "office",
+        "address": "서울 서초구 법원로 18, 정의빌딩 7층",
+        "unlocked": false,
+        "floor_plan": {
+          "cols": 2,
+          "rows": 1,
+          "rooms": [
+            {
+              "id": "consultation",
+              "name": "상담실",
+              "icon": "⚖️",
+              "col": 0,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "archive",
+              "name": "자료실",
+              "icon": "📁",
+              "col": 1,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            }
+          ],
+          "doors": [
+            [
+              "consultation",
+              "archive",
+              "right"
+            ]
+          ]
+        },
+        "points": {
+          "p_old_will": {
+            "room": "archive",
+            "name": "구 유언장 원본",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_old_will"
+          },
+          "p_new_will": {
+            "room": "archive",
+            "name": "신 유언장 원본",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_new_will"
+          },
+          "p_lawyer_schedule": {
+            "room": "consultation",
+            "name": "변호사 일정표",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_lawyer_schedule"
+          },
+          "p_lawyer_calls": {
+            "room": "consultation",
+            "name": "사무실 통화기록",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_lawyer_calls"
+          }
+        },
+        "npcs": {
+          "oh_lawyer": {
+            "name": "오진수 변호사",
+            "role": "윤재성 고문 변호사",
+            "room": "consultation",
+            "available": true,
+            "talked": false
+          }
+        }
+      },
+      "taehyun_office": {
+        "name": "윤태현 강남 사무실",
+        "type": "office",
+        "address": "서울 강남구 테헤란로 421, YC건설 사옥 12층",
+        "unlocked": false,
+        "floor_plan": {
+          "cols": 2,
+          "rows": 1,
+          "rooms": [
+            {
+              "id": "ceo_office",
+              "name": "대표 집무실",
+              "icon": "💼",
+              "col": 0,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "secretary_desk",
+              "name": "비서실",
+              "icon": "🖥️",
+              "col": 1,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            }
+          ],
+          "doors": [
+            [
+              "ceo_office",
+              "secretary_desk",
+              "right"
+            ]
+          ]
+        },
+        "points": {
+          "p_financial_docs": {
+            "room": "ceo_office",
+            "name": "재무 서류",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_taehyun_debt"
+          },
+          "p_secretary_email": {
+            "room": "secretary_desk",
+            "name": "비서 PC 이메일",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_secretary_email"
+          }
+        },
+        "npcs": {}
+      }
+    },
+    "evidence": {
+      "e_medicine_box": {
+        "name": "피해자 약상자 (디곡신)",
+        "type": "physical",
+        "description": "서재 책상 위의 약상자. 디곡신 0.25mg 정제가 든 처방약 병. 2주분 30정 처방에 잔여량 12정. 복용 기록표에는 하루 1정씩 규칙적으로 복용한 것으로 기재되어 있으나, 실제 잔여량과 대조하면 마지막 5일간 하루 2~3정씩 소모된 계산이다. 누군가 약을 추가 투여하거나 빼돌렸다."
+      },
+      "e_new_will_copy": {
+        "name": "신 유언장 사본",
+        "type": "document",
+        "description": "서재 책상 서랍에서 발견된 신 유언장의 복사본. 사망 3일 전 작성. 재산 배분: 딸 윤서연 60%, 차남 윤민혁 25%, 장남 윤태현 5%, 가정부 박순이 10% + 별채 거주권. 구 유언장에서 장남 50%를 받을 예정이었던 것과 극적으로 대비된다. 여백에 피해자 자필로 '서연이만은 나를 실망시키지 않았다'라는 메모가 있다."
+      },
+      "e_wine_residue": {
+        "name": "와인잔 미량 잔여물",
+        "type": "physical",
+        "description": "다이닝룸 찬장에서 수거한 세척된 와인잔 2개 중 1개에서 극미량의 디곡신 성분이 검출되었다. 잔은 꼼꼼히 세척되었으나 잔 바닥 테두리의 미세한 홈에 성분이 잔존. 사건 당일 저녁 식사 후 와인을 마시던 중 약물이 투입된 정황. 잔을 세척한 사람은 약물 투여 사실을 알고 있었다."
+      },
+      "e_digoxin_access": {
+        "name": "주방 약장 접근 기록",
+        "type": "physical",
+        "description": "주방 약장에 피해자의 여분 디곡신이 보관되어 있었다. 원래 2병(60정)이었으나 현재 1병만 남아 있다. 약장에는 잠금장치가 없어 가족 누구나 접근 가능. 가정부 박순이의 증언에 따르면 '2주 전에 서연 아가씨가 아버지 약을 정리해드리겠다고 하여 약장을 살펴봤다'고 한다."
+      },
+      "e_cctv_gap": {
+        "name": "CCTV 녹화 시간 누락",
+        "type": "digital",
+        "description": "저택 현관 및 복도 CCTV 녹화 파일. 사건 당일 오후 8시 15분부터 10시 45분까지 약 2시간 30분의 녹화가 누락되어 있다. 녹화기 로그에는 '수동 정지' 기록이 남아 있으며, 재개 시점은 다음 날 아침 경찰 도착 직전. CCTV 조작에는 1층 서버실의 물리적 접근이 필요하다."
+      },
+      "e_garden_footprints": {
+        "name": "정원 야간 발자국",
+        "type": "physical",
+        "description": "서재 창문 아래 화단에서 발견된 발자국 2종류. 하나는 남성용 구두(260mm), 다른 하나는 여성용 슬리퍼(240mm). 남성 구두 발자국은 차남 윤민혁의 신발 사이즈와 일치하며, 여성 슬리퍼는 저택 내 공용 실내화와 동일 모델. 발자국 방향은 서재 쪽에서 차고 방향으로 향해 있다."
+      },
+      "e_blackbox_footage": {
+        "name": "차고 차량 블랙박스 영상",
+        "type": "digital",
+        "description": "차고에 주차된 윤민혁의 차량 블랙박스 주차 모드 영상. 사건 당일 밤 11시 23분, 차고를 가로지르는 인물이 포착됨. 어둡고 흐릿하지만 여성의 실루엣으로 보이며, 손에 무언가(작은 병 형태)를 들고 있다. 얼굴은 식별 불가. 정원 방향에서 와서 저택 측문으로 돌아가는 동선."
+      },
+      "e_medical_textbook": {
+        "name": "약리학 교재와 메모",
+        "type": "physical",
+        "description": "윤서연 침실 화장대 서랍 깊숙이 숨겨진 약리학 교재. '강심배당체(Cardiac Glycosides)' 챕터에 형광펜과 밑줄이 가득하다. 여백 메모: '디곡신 치사량 — 체중 대비 계산', '점진적 증량 시 자연사와 구분 어려움', '혈중 농도 반감기 36시간'. 교재는 2학년 과정의 것으로, 서연이 의대를 중퇴한 뒤에도 보관하고 있었다."
+      },
+      "e_maid_diary": {
+        "name": "가정부 근무 일지",
+        "type": "document",
+        "description": "박순이의 20년간 꼼꼼히 기록한 근무 일지 중 최근 한 달분. '2주 전: 서연 아가씨가 아버지 약 정리. 약병 하나를 자기 방으로 가져감 — 물어보니 유통기한 확인한다고.' '5일 전: 저녁 와인에 서연 아가씨가 직접 아버지 약을 타서 드림. 효도라며.' '사건 당일: 저녁 식사 후 서연 아가씨가 와인잔을 직접 정리. 이상함.' 일지 마지막에 떨리는 글씨로 '차마 말할 수 없다'라고 적혀 있다."
+      },
+      "e_wine_log": {
+        "name": "와인 저장고 반출 기록",
+        "type": "document",
+        "description": "와인 저장고의 반출 기록부. 사건 당일 오후 6시에 '샤토 마고 2015, 서연 반출'이라고 기재. 평소 와인 반출은 가정부 박순이만 담당했으나, 이날은 윤서연이 직접 가져갔다. '아버지가 좋아하시는 와인으로 함께 마시겠다'고 했다는 박순이의 부기(附記)가 있다."
+      },
+      "e_debt_documents": {
+        "name": "윤태현 부채 서류",
+        "type": "document",
+        "description": "윤태현 서류 가방에서 발견된 YC건설 관련 재무 서류. 부동산 PF(프로젝트 파이낸싱) 실패로 개인 연대보증 채무 87억 원이 발생. 3개월 내 상환하지 않으면 개인 파산 절차에 들어가야 하는 상황. 구 유언장대로면 아버지 유산(약 200억)의 50%로 충분히 갚을 수 있었으나, 신 유언장의 5%로는 턱없이 부족."
+      },
+      "e_minhyuk_messages": {
+        "name": "윤민혁 카카오톡 대화",
+        "type": "digital",
+        "description": "윤민혁 스마트폰의 카카오톡 기록. 아버지에게 보낸 메시지(사건 5일 전): '아버지, 사업 자금 5억만 투자해주시면 반드시 성공시키겠습니다.' 아버지 답장: '민혁아, 네 사업은 이번으로 세 번째다. 이번에는 직접 증명해봐라.' 사건 당일 밤 10시경 누나 윤서연에게 보낸 메시지: '누나, 아직 안 자? 아버지 서재 불이 켜져 있길래 가봤는데 잠겨 있어. 이상하다.' 서연의 답장 없음."
+      },
+      "e_old_will": {
+        "name": "구 유언장 원본",
+        "type": "document",
+        "description": "3년 전 작성된 구 유언장. 재산 배분: 장남 윤태현 50%, 차남 윤민혁 30%, 딸 윤서연 15%, 가정부 박순이 5%. 부기: '태현이가 회사를 이끌어가야 한다. 민혁이는 사업 수완이 부족하니 현금으로, 서연이는 아직 학생이니 학업 지원 명목으로.' 장남 중심의 전통적 분배."
+      },
+      "e_new_will": {
+        "name": "신 유언장 원본 (공증)",
+        "type": "document",
+        "description": "사망 3일 전 공증된 신 유언장. 재산 배분이 극적으로 변경: 딸 윤서연 60%, 차남 윤민혁 25%, 장남 윤태현 5%, 가정부 박순이 10% + 별채 평생거주권. 변경 사유 부기: '태현은 회사 자금을 개인 빚에 유용했고, 민혁은 세 번의 실패에도 반성이 없다. 서연이만이 순수하게 나를 걱정하며 곁을 지켰다. 순이는 20년간 가족이었다.' 오진수 변호사와 증인 2명 서명."
+      },
+      "e_lawyer_schedule": {
+        "name": "변호사 일정표",
+        "type": "document",
+        "description": "오진수 변호사의 업무 일정. 사건 7일 전: '윤재성 회장 — 유언장 수정 상담 (극비)'. 사건 3일 전: '유언장 공증 완료. 회장님 의지 확고. 자녀들에게 아직 알리지 말라는 지시.' 사건 당일 오후 2시: '윤태현 부사장 방문 — 아버지 유언장 관련 문의 (면담 거절)'. 태현이 유언장 수정 사실을 어떻게든 알고 찾아왔다는 기록."
+      },
+      "e_lawyer_calls": {
+        "name": "변호사 사무실 통화기록",
+        "type": "digital",
+        "description": "오진수 변호사 사무실 전화 기록. 사건 당일 오후 1시 33분 윤태현으로부터 수신(3분 42초), 오후 2시 12분 윤태현 사무실 방문(면담 거절 후 퇴거), 오후 4시 15분 윤재성에게 발신(8분 — 유언장 등본 수령 안내), 오후 7시 22분 윤서연으로부터 수신(2분 15초 — 내용 미상). 서연이 사건 당일 저녁에 변호사에게 전화한 사실이 주목된다."
+      },
+      "e_taehyun_debt": {
+        "name": "윤태현 재무 위기 전모",
+        "type": "document",
+        "description": "YC건설 내부 재무 보고서와 은행 독촉장. 부동산 PF 87억 연대보증 외에도, 회사 운영자금 23억을 개인 채무 상환에 전용한 내역이 발견됨. 이는 업무상 배임에 해당하며, 이 사실이 아버지 윤재성에게 발각된 것이 유언장 수정의 직접적 계기였다. 태현은 유산 상속이 유일한 생존 방법이었다."
+      },
+      "e_secretary_email": {
+        "name": "비서실 이메일 내역",
+        "type": "digital",
+        "description": "윤태현 비서 김미정의 업무 이메일. 사건 2일 전 태현이 비서에게 보낸 지시: '아버지 주치의 연락처 확인. 아버지가 드시는 약 목록 알아봐.' 비서의 답장에 디곡신을 포함한 약물 목록 첨부. 또한 사건 당일 오후 3시 태현이 보낸 메일: '오늘 가평 내려간다. 내일 일정 전부 취소해.' 태현은 유언장 수정 사실을 알고 급히 가평으로 향했다."
+      },
+      "e_seoyeon_dropout": {
+        "name": "윤서연 의대 중퇴 기록",
+        "type": "document",
+        "description": "오변호사가 유언장 수정 과정에서 확인한 자녀 경력 조회 결과. 윤서연은 2년 전 의과대학 2학년 1학기를 마치고 자퇴했으나, 아버지에게는 여전히 재학 중이라고 거짓말해왔다. 매 학기 등록금 명목으로 1,500만 원씩 받아 총 6,000만 원을 편취. 아버지는 이 사실을 모른 채 '유일하게 순수한 자식'으로 신뢰했다. 이 기록은 변호사 자료실 깊숙이 별도 보관되어 있었다."
+      },
+      "e_prescription_record": {
+        "name": "피해자 진료기록 (디곡신 처방)",
+        "type": "document",
+        "description": "윤재성 회장의 주치의 진료 기록. 3년 전 심방세동 진단 후 디곡신 0.25mg 1일 1회 처방. 가장 최근 진료(사건 2주 전)에서 '혈중 디곡신 농도가 평소보다 높다. 복용량을 정확히 지키고 있는지 확인 필요'라는 소견. 의사가 이미 이상을 감지했으나, 환자가 '딸이 약을 챙겨준다'며 안심하는 바람에 추가 조치를 취하지 않았다."
+      },
+      "e_insurance_policy": {
+        "name": "윤재성 생명보험 증서",
+        "type": "document",
+        "description": "윤재성 명의 생명보험 3건의 증서. 총 보험금 50억 원. 수익자가 5년 전 '장남 윤태현 단독'에서 1년 전 '자녀 3인 균등 분배'로 변경되었다. 태현이 보험금에서도 독점적 지위를 잃은 상태. 보험사 지급 조건: 자연사 또는 사고사 시 전액, 자살 시 50%, 타살 판정 시 수사 완료 후 지급."
+      },
+      "e_maid_employment": {
+        "name": "가정부 고용계약서 (특이 조항)",
+        "type": "document",
+        "description": "박순이의 고용계약서. 일반적인 가사도우미 계약이 아니라 윤재성이 직접 작성한 특별 조항 포함: '근속 20년 이상 시 별채 거주권 부여', '퇴직금 외 위로금 3억 원', '가족에 준하는 의료비 지원'. 또한 수기 추가 조항: '본인(윤재성) 유고 시 박순이의 고용 안정은 자녀들이 보장할 것.' 회장이 가정부를 가족처럼 대했다는 증거이며, 유언장의 10% 배분도 이 연장선."
+      },
+      "e_gradual_poisoning": {
+        "name": "부검 독성학 보고서",
+        "type": "weapon",
+        "description": "부검 결과 디곡신 혈중 농도 6.8ng/mL (치사 수준). 그러나 모발 분석 결과 최근 2주간 디곡신 체내 축적량이 점진적으로 증가한 패턴. 이는 한 번의 과다 투여가 아니라, 수일에 걸쳐 용량을 조금씩 올린 계획적 독살을 시사한다. 사건 당일 와인을 통해 최종 치사량이 투여된 것으로 추정. 이런 방법은 약리학 지식 없이는 불가능하다."
+      }
+    },
+    "testimonies": {
+      "t_taehyun": {
+        "witness": "yoon_taehyun",
+        "witness_name": "윤태현",
+        "statements": [
+          {
+            "id": "s_taehyun_1",
+            "text": "유언장이 바뀌었다는 건 아버지 돌아가신 뒤에 변호사한테 들었습니다. 정말이지 청천벽력이었어요. 아버지가 왜 그런 결정을 하셨는지... 이해할 수가 없습니다.",
+            "pressed": false,
+            "press_result": "...솔직히 최근 아버지와 사이가 좋지 않았던 건 맞습니다. 회사 경영 방침 차이 때문에. 하지만 유언장을 바꿀 정도였을 줄은... 아, 제가 사전에 알았냐고요? 그런 건 아닙니다. 전혀요.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_lawyer_schedule",
+              "reveal": "변호사 일정표에 사건 당일 오후 2시 '윤태현 부사장 방문 — 아버지 유언장 관련 문의 (면담 거절)' 기록이 있다. 유언장 수정을 사후에 알았다는 증언은 거짓이며, 사건 당일 이미 유언장 변경 사실을 알고 변호사를 찾아갔다."
+            }
+          },
+          {
+            "id": "s_taehyun_2",
+            "text": "사건 당일 저녁에는 서울에 있었습니다. 회사에서 야근하다가 밤 11시쯤 퇴근해서 강남 아파트로 갔어요. 비서가 증명해줄 수 있습니다.",
+            "pressed": false,
+            "press_result": "...아, 가평에요? 네, 사건 며칠 전에 갔었죠. 아버지 안부 차. 당일에는 안 갔습니다. 비서한테 물어보시면... 아, 그날 비서한테 일정 취소하라고 한 건, 그건 다른 건이에요. 개인적인 용무가 있어서.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_secretary_email",
+              "reveal": "비서 이메일에 사건 당일 오후 3시 태현이 '오늘 가평 내려간다. 내일 일정 전부 취소해'라고 지시한 기록이 있다. 서울에서 야근했다는 증언과 완전히 모순. 태현은 유언장 수정을 알고 사건 당일 가평으로 향했다."
+            }
+          },
+          {
+            "id": "s_taehyun_3",
+            "text": "회사 재정 상황이요? 건설업이 다 어렵지, 우리만 그런 건 아닙니다. 아버지 유산과는 아무 관련 없어요. 전 자수성가한 사람입니다.",
+            "pressed": false,
+            "press_result": "PF 문제는 일시적인 겁니다. 부동산 경기가 돌아오면 해결돼요. 87억? 그건 회사 채무지 제 개인 빚이 아니에요... 아니, 연대보증은 했지만 그건 형식적인...",
+            "press_adds": [
+              "e_taehyun_debt"
+            ],
+            "contradiction": null
+          },
+          {
+            "id": "s_taehyun_4",
+            "text": "서연이가 범인이라고요? 말도 안 됩니다. 그 애는 의대생이에요. 아버지를 가장 잘 모시던 애가 왜... 서연이가 아버지를 죽일 이유가 어디 있습니까. 유산도 가장 많이 받게 됐는데.",
+            "pressed": false,
+            "press_result": "...그런데 서연이가 요즘 돈을 자주 빌리더라고요. 의대가 비싸서 그런가 했는데. 졸업하면 갚겠다고. 여동생이니까 그냥 줬죠.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_seoyeon_dropout",
+              "reveal": "윤서연은 2년 전 의대를 중퇴했다. 아버지에게 여전히 재학 중이라고 거짓말하며 등록금 명목으로 6,000만 원을 편취해왔다. 아버지의 신뢰가 곧 사기의 기반이었으며, 태현이 '의대생'이라 믿고 있는 것 자체가 서연의 거짓말이 얼마나 철저했는지를 보여준다."
+            }
+          }
+        ]
+      },
+      "t_minhyuk": {
+        "witness": "yoon_minhyuk",
+        "witness_name": "윤민혁",
+        "statements": [
+          {
+            "id": "s_minhyuk_1",
+            "text": "아버지와 저는 화해한 사이였어요. 사업 자금 건으로 좀 부딪혔지만, 아버지도 결국은 제 편이셨으니까. 이번에도 분명 도와주셨을 거예요.",
+            "pressed": false,
+            "press_result": "...네, 솔직히 이번에도 거절당했어요. 세 번째 사업이라 아버지가 좀 실망하신 것 같긴 한데... 하지만 완전히 등을 돌리신 건 아니에요. 유언장에 25%를 남겨주셨잖아요.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_minhyuk_messages",
+              "reveal": "카카오톡 기록을 보면 아버지는 '이번에는 직접 증명해봐라'며 투자를 명확히 거절했다. '결국은 도와주셨을 것'이라는 주장은 희망사항일 뿐이며, 실제로는 경제적 지원이 완전히 끊긴 상태였다."
+            }
+          },
+          {
+            "id": "s_minhyuk_2",
+            "text": "사건 당일 밤에는 제 방에서 잠을 잤어요. 가평에 며칠째 머물고 있었거든요. 밤 10시쯤 서재 불이 켜져 있어서 한번 갔다가, 문이 잠겨 있길래 그냥 돌아왔습니다.",
+            "pressed": false,
+            "press_result": "노크는 했어요. 대답이 없더라고요. 아버지가 집중하시면 원래 안 여시거든요. 그래서 그냥 방으로 돌아갔습니다. 그때 서재 안에서 무슨 일이... 아, 정원을 지나갔냐고요? 네, 지름길이라서요.",
+            "press_adds": [],
+            "contradiction": null
+          },
+          {
+            "id": "s_minhyuk_3",
+            "text": "형은 사건 당일 서울에 있었을 거예요. 회사 때문에 바쁘니까. 가평에는 저랑 서연 누나, 아버지, 박순이 아주머니만 있었어요.",
+            "pressed": false,
+            "press_result": "형이 그날 왔었다고요? 저는 못 봤는데... 아, 제가 밤에 방에 일찍 들어가서 몰랐을 수도 있어요. 형이 오면 보통 시끄러운데, 그날은 조용했거든요.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_blackbox_footage",
+              "reveal": "차고의 블랙박스에 밤 11시 23분 여성 실루엣이 촬영되어 있다. 윤민혁이 밤 10시에 서재를 방문한 뒤 방으로 돌아갔다면, 그 이후에도 저택에서 누군가가 활동하고 있었다는 의미다. 민혁이 직접 목격하지 못한 진범의 행적이 블랙박스에 남은 셈이다."
+            }
+          }
+        ]
+      },
+      "t_seoyeon": {
+        "witness": "yoon_seoyeon",
+        "witness_name": "윤서연",
+        "statements": [
+          {
+            "id": "s_seoyeon_1",
+            "text": "아버지가 돌아가시다니... 아직도 믿기지 않아요. 저녁 식사 때까지만 해도 건강하셨는데. 그날 제가 아버지 좋아하시는 와인을 꺼내서 같이 마셨어요. 마지막이 될 줄은...",
+            "pressed": false,
+            "press_result": "와인은 샤토 마고 2015년산이요. 아버지가 가장 좋아하시는 거예요. 제가 직접 따라드렸죠. 식사 후에 아버지는 서재로 가셨고, 저는 제 방에서 책을 읽다가 잠들었어요. 잔은 제가 치웠어요. 원래 제가 뒤정리를 하거든요.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_wine_residue",
+              "reveal": "세척된 와인잔에서 디곡신 성분이 검출되었다. 윤서연이 직접 와인을 따르고, 잔을 직접 세척했다고 인정한 상황에서, 그 잔에 약물이 남아 있다는 것은 결정적이다. '원래 뒤정리를 한다'는 말이 사실은 증거 인멸 행위였을 가능성이 극히 높다."
+            }
+          },
+          {
+            "id": "s_seoyeon_2",
+            "text": "저는 의대 4학년이에요. 시험 기간이라 스트레스받고 있었는데, 아버지가 쉬라고 가평에 오라고 하셨어요. 그래서 일주일째 여기 있었고요.",
+            "pressed": false,
+            "press_result": "학교요? 지금은 시험 기간이라 출석이 자유로운 편이에요. 공부는 여기서도 할 수 있으니까요. 교수님한테는 양해를 구했어요. 가정사라고.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_seoyeon_dropout",
+              "reveal": "윤서연은 2년 전 의대를 자퇴했다. 현재 어떤 학교에도 재학 중이지 않다. 매 학기 등록금 1,500만 원을 받아가면서 '의대 4학년'이라고 거짓말해왔다. 이 거짓이 아버지에게 발각되면 신뢰가 무너지고, 유산의 60%도 물거품이 된다."
+            }
+          },
+          {
+            "id": "s_seoyeon_3",
+            "text": "아버지 약은 박순이 아주머니가 관리하세요. 저는 가끔 약 드셨는지 확인만 해드리는 정도. 의대생이니까 약에 대해 아는 건 있지만, 아버지 약을 제가 건드릴 이유가 없잖아요.",
+            "pressed": false,
+            "press_result": "약장에서 약을 가져간 적이요? 아, 그건 아버지 약 정리해드린 거예요. 유통기한 지난 건 없는지 확인하고. 의대에서 배운 게 그런 데 쓸모가 있더라고요. 약병을 방에 가져간 건 라벨을 자세히 보려고. 바로 돌려놨어요.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_medicine_box",
+              "reveal": "약상자의 잔여량을 계산하면 마지막 5일간 하루 2~3정씩 소모되었다. 정상 복용이라면 1정뿐인데, 누군가가 추가로 투여했다. 서연이 2주 전 약장에서 약병을 가져갔고, 5일 전부터 '직접 약을 타서 드렸다'는 가정부 일지와 정확히 일치한다."
+            }
+          },
+          {
+            "id": "s_seoyeon_4",
+            "text": "밤에 차고 근처에 갔냐고요? 아뇨, 저는 방에서 안 나왔어요. 잠들어 있었는데요. 블랙박스에 찍힌 사람이 저라고요? 어둡고 흐릿한 영상으로 어떻게 저라고 단정하세요?",
+            "pressed": false,
+            "press_result": "...그 시간에 화장실 갔을 수도 있죠. 잠결이라 기억이 잘 안 나요. 작은 병? 무슨 병이요? 전 아무것도 들고 있지 않았— 아니, 전 밖에 나간 적이 없다니까요!",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_gradual_poisoning",
+              "reveal": "부검 독성학 보고서에 따르면 디곡신 혈중 농도 6.8ng/mL로 치사 수준이며, 모발 분석 결과 2주간 점진적으로 증량된 패턴. 블랙박스의 여성이 손에 들고 있던 '작은 병'은 약병으로 추정된다. 밤 11시 23분에 아버지가 이미 쓰러진 뒤 증거(약병)를 처분하러 나간 것이다."
+            }
+          }
+        ]
+      },
+      "t_suni": {
+        "witness": "park_suni",
+        "witness_name": "박순이",
+        "statements": [
+          {
+            "id": "s_suni_1",
+            "text": "그날 저녁은 평범했어요. 회장님이 좋아하시는 갈비찜을 했고, 다 같이 식사했어요. 식사 중에 다들 화기애애했는데... 누가 이런 짓을 했는지 정말 모르겠어요.",
+            "pressed": false,
+            "press_result": "...실은 분위기가 완전히 좋지만은 않았어요. 태현 도련님이 늦게 도착하셔서 식사 중에 회장님과 좀 언성이 높아졌거든요. 뭐, 가족 간에 있을 수 있는 일이지만. 민혁 도련님은 조용히 드시고 먼저 올라가셨고요.",
+            "press_adds": [],
+            "contradiction": null
+          },
+          {
+            "id": "s_suni_2",
+            "text": "저는 밤 9시에 제 방으로 들어갔어요. 원래 그 시간이면 하루 일과가 끝나거든요. 그 뒤로는 아무것도 못 봤어요.",
+            "pressed": false,
+            "press_result": "...사실 새벽에 한 번 깬 적이 있어요. 3시쯤인가. 화장실 가려다가 복도에서 서연 아가씨 방에 불이 켜져 있는 걸 봤는데, 그건 공부하느라 그런 거겠지 싶어서 그냥 다시 잤어요.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_maid_diary",
+              "reveal": "박순이의 근무 일지에는 서연이 5일 전부터 아버지 약을 직접 타드렸다는 기록, 사건 당일 와인잔을 직접 정리했다는 기록, 그리고 마지막에 '차마 말할 수 없다'는 메모가 있다. 박순이는 밤 9시에 방에 들어갔다고 했지만, 이미 모든 정황을 목격하고도 침묵을 선택한 것이다."
+            }
+          },
+          {
+            "id": "s_suni_3",
+            "text": "서연 아가씨는 정말 착한 아이예요. 아버지를 가장 걱정하고, 약도 챙겨드리고. 이 집에서 가장 효도하는 분이에요. 서연 아가씨를 의심하시면 안 됩니다.",
+            "pressed": false,
+            "press_result": "아가씨가 약을 관리한 건... 효도예요. 의대생이니까 아는 게 많잖아요. 약 정리하고, 복용 시간 챙겨드리고. 회장님도 '서연이 덕에 약 먹는 게 편해졌다'고 좋아하셨어요... 제가 왜 이런 말을 하고 있는 건지.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_prescription_record",
+              "reveal": "주치의 진료기록에 사건 2주 전 '혈중 디곡신 농도가 평소보다 높다'는 소견이 있고, 환자는 '딸이 약을 챙겨준다'며 안심했다. 박순이가 '착한 아이'라며 보호하려 하지만, 서연이 약을 챙기기 시작한 시점부터 정확히 약물 농도가 올라간 것이다. 효도의 탈을 쓴 독살이었다."
+            }
+          },
+          {
+            "id": "s_suni_4",
+            "text": "회장님의 고용계약 특이 조항이요? 회장님은 저를 가족처럼 대해주셨어요. 20년 동안 이 집을 지켰으니까요. 유언장에 제 이름이 있다는 건 돌아가신 뒤에 알았어요.",
+            "pressed": false,
+            "press_result": "...유산 10%와 별채 거주권. 평생을 바친 대가치고는... 아니, 감사한 거예요. 감사하죠. 다만 이걸 위해서 회장님을 해칠 이유가 있겠어요? 회장님이 살아계실 때가 저한테는 더 좋았는걸요.",
+            "press_adds": [],
+            "contradiction": null
+          }
+        ]
+      }
+    },
+    "deductions": {
+      "d_time_of_death": {
+        "name": "사망 시각 특정",
+        "required_evidence": [
+          "e_cctv_gap",
+          "e_minhyuk_messages"
+        ],
+        "unlocked": false,
+        "description": "CCTV 녹화가 중단된 시간은 오후 8시 15분~10시 45분. 윤민혁이 밤 10시에 서재를 방문했을 때 이미 문이 잠겨 있었고 응답이 없었다. 이로써 사망 시각은 저녁 식사 후(약 8시)부터 밤 10시 사이로 좁혀진다. 와인을 마신 직후부터 약물이 작용하기 시작한 것으로 추정."
+      },
+      "d_drug_method": {
+        "name": "약물 투입 방법 규명",
+        "required_evidence": [
+          "e_wine_residue",
+          "e_medicine_box"
+        ],
+        "unlocked": false,
+        "description": "와인잔에서 디곡신이 검출되었고, 약상자의 잔여량은 5일간 과다 소모를 보여준다. 범인은 최소 5일 전부터 디곡신을 정상 처방량 이상으로 투여하여 체내 축적을 유도한 뒤, 사건 당일 저녁 와인에 최종 치사량을 녹여 투여했다. 점진적 독살이며, 이는 약리학 지식을 전제로 한다."
+      },
+      "d_will_change_motive": {
+        "name": "유언장 수정의 진짜 이유",
+        "required_evidence": [
+          "e_old_will",
+          "e_new_will"
+        ],
+        "unlocked": false,
+        "description": "구 유언장에서는 장남 50%였으나, 신 유언장에서는 5%로 격감. 이유는 태현의 회사 자금 유용 발각과 민혁의 반복된 사업 실패. 윤재성은 '서연이만이 순수하게 곁을 지켰다'고 믿었다. 그러나 이 판단은 서연의 철저한 거짓말에 기반한 것이었다 — 아버지의 사랑이 역설적으로 범행의 조건을 만들었다."
+      },
+      "d_drug_access": {
+        "name": "약물 접근성 분석",
+        "required_evidence": [
+          "e_digoxin_access",
+          "e_medical_textbook"
+        ],
+        "unlocked": false,
+        "description": "주방 약장에는 잠금장치가 없어 누구나 접근 가능했다. 그러나 디곡신의 치사량을 정확히 계산하고, 자연사로 위장할 수 있는 점진적 증량 방법을 아는 사람은 제한적이다. 윤서연의 침실에서 발견된 약리학 교재에는 디곡신 치사량 계산과 점진적 증량 시 자연사 위장 방법이 상세히 메모되어 있다. 의대 2년 과정의 지식이 살인 계획에 동원되었다."
+      },
+      "d_night_visitor": {
+        "name": "야간 방문자의 정체",
+        "required_evidence": [
+          "e_garden_footprints",
+          "e_blackbox_footage"
+        ],
+        "unlocked": false,
+        "description": "정원에서 남성 구두(260mm)와 여성 슬리퍼(240mm) 발자국이 발견됨. 남성 발자국은 민혁(밤 10시 서재 방문 시)의 것으로 확인. 블랙박스에 촬영된 밤 11시 23분의 여성 실루엣은 민혁이 돌아간 이후의 활동이며, 손에 작은 병 형태의 물체를 들고 차고 방향(정원)으로 이동했다. 이 여성이 증거를 처분하러 나간 진범이다."
+      },
+      "d_real_beneficiary": {
+        "name": "진짜 수혜자의 비밀",
+        "required_evidence": [
+          "e_seoyeon_dropout",
+          "e_lawyer_calls"
+        ],
+        "unlocked": false,
+        "description": "윤서연은 의대를 중퇴했으나 아버지에게 거짓말하며 등록금을 편취해왔다. 아버지가 딸을 신뢰한 것은 이 거짓말에 기반한 것이며, 유산 60%를 받더라도 중퇴 사실이 드러나면 유언장이 무효화되거나 수정될 가능성이 있었다. 사건 당일 저녁 변호사에게 전화한 것은 유언장 공증 상태와 자신의 수익 보장 여부를 확인하기 위함으로 추정된다. 아버지가 살아 있는 한, 언제든 진실이 발각될 위험이 있었다."
+      },
+      "d_culprit_identified": {
+        "name": "진범 특정 — 유언장의 그림자",
+        "required_evidence": [
+          "e_gradual_poisoning",
+          "e_maid_diary",
+          "e_wine_residue"
+        ],
+        "unlocked": false,
+        "description": "모든 증거가 윤서연을 가리킨다. 의대 2년 재학으로 약리학 지식 보유. 2주 전부터 아버지 약 관리를 자청하여 접근 확보. 5일 전부터 약을 직접 타드리며 점진적 증량. 사건 당일 직접 와인을 따르고 최종 치사량 투여. 와인잔을 세척하여 증거 인멸 시도(미량 잔존). 밤 11시 23분 약병을 처분하러 차고 방향으로 이동(블랙박스). 가정부 박순이는 모든 정황을 알면서도 '차마 말할 수 없다'며 딸을 보호하려 했다. 가장 사랑받은 자식이, 그 사랑을 이용하여 아버지를 죽인 비극."
+      }
+    },
+    "suspects": [
+      {
+        "id": "yoon_taehyun",
+        "name": "윤태현 (장남)",
+        "motive": "부동산 PF 87억 연대보증 + 회사 자금 23억 유용. 구 유언장의 50%가 5%로 격감. 유산이 유일한 생존 수단이었으며, 유언장 수정 사실을 사전에 알고 사건 당일 변호사를 찾아갔다. 가장 뻔한 동기와 가장 강한 분노를 가진 용의자.",
+        "alibi": "서울에서 야근 후 귀가했다고 주장. 그러나 비서에게 사건 당일 '가평 내려간다'고 메일을 보냈으며, 가정부 증언에 따르면 저녁 식사에 늦게 참석. 실제로 사건 당일 가평에 있었다."
+      },
+      {
+        "id": "yoon_minhyuk",
+        "name": "윤민혁 (차남)",
+        "motive": "세 번의 사업 실패로 아버지에게 자금 지원을 거절당함. 신 유언장에서 25%를 받지만, 이전 30%에서 오히려 줄었고 아버지의 신뢰를 완전히 잃은 상태. 정원 발자국과 밤 10시 서재 방문 정황이 의심스러움.",
+        "alibi": "가평 저택에 며칠째 체류 중. 밤 10시에 서재를 방문했으나 문이 잠겨 있어 돌아갔다고 주장. 정원의 남성 발자국이 그의 것과 일치."
+      },
+      {
+        "id": "yoon_seoyeon",
+        "name": "윤서연 (딸)",
+        "motive": "의대 중퇴를 숨기고 등록금을 편취해온 사실이 발각될 위험. 신 유언장에서 60%를 받지만, 아버지가 살아 있는 한 거짓이 드러나면 모든 것을 잃는다. 유산을 빨리 받아 해외로 떠나려 했다. 아이러니하게도 가장 사랑받은 자식이 가장 많은 것을 감추고 있었다.",
+        "alibi": "저녁 식사 후 방에서 책을 읽다 잠들었다고 주장. 그러나 와인을 직접 따르고 잔을 세척한 인물. 블랙박스에 밤 11시 23분 여성 실루엣이 포착됨. 침실에서 디곡신 관련 약리학 메모가 발견됨."
+      },
+      {
+        "id": "park_suni",
+        "name": "박순이 (가정부)",
+        "motive": "20년 근속, 유언장에서 10%와 별채 거주권을 받게 됨. 그러나 회장이 살아 있을 때가 오히려 안정적이었으므로 동기가 약하다. 진짜 역할은 '알면서 침묵한 자' — 서연의 행동을 목격하고도 딸처럼 키운 아이를 보호하려 했다.",
+        "alibi": "밤 9시에 자기 방으로 들어갔다고 주장. 새벽 3시에 서연 방의 불이 켜져 있는 것을 목격. 근무 일지에 핵심 정황을 기록해두었으나 직접 증언하지 않았다."
+      }
+    ],
+    "solution": {
+      "culprit": "yoon_seoyeon",
+      "method": "윤서연은 의대 2년 재학 경력으로 얻은 약리학 지식을 동원하여 계획적으로 아버지를 독살했다. 2주 전 '약 정리' 명목으로 주방 약장에서 여분의 디곡신 약병을 자기 방으로 가져갔다. 5일 전부터 아버지의 약을 '직접 챙겨드리겠다'며 일일 복용량을 정상의 2~3배로 점진적으로 증량하여 체내 축적을 유도했다. 사건 당일, 와인 저장고에서 직접 아버지가 좋아하는 샤토 마고를 꺼내 저녁 식사에서 함께 마시며 와인에 최종 치사량의 디곡신을 투여했다. 식사 후 아버지가 서재로 간 뒤, 와인잔을 꼼꼼히 세척하여 증거를 인멸하려 했으나 잔 바닥 홈에 미량이 잔존했다. 밤 11시경 아버지의 사망을 확인한 뒤, 11시 23분에 남은 약병을 처분하기 위해 차고 방향(정원)으로 이동한 것이 블랙박스에 포착되었다.",
+      "motive": "윤서연은 의대를 2년 만에 중퇴하고도 아버지에게 여전히 재학 중이라고 거짓말하며 매 학기 등록금 1,500만 원씩 총 6,000만 원을 편취해왔다. 아버지 윤재성은 세 자녀 중 서연만을 '순수하게 곁을 지킨 유일한 자식'으로 신뢰했고, 이 믿음을 바탕으로 신 유언장에서 재산의 60%를 딸에게 배분했다. 그러나 서연에게 이 사랑은 양날의 검이었다. 아버지가 살아 있는 한 중퇴 사실이 언제든 발각될 수 있었고, 발각되는 순간 유언장은 다시 수정되어 모든 것을 잃게 된다. 유산을 빨리 상속받아 해외로 떠나는 것만이 유일한 탈출구였다. 아이러니하게도 아버지의 무조건적 사랑과 신뢰가 딸에게 범행의 기회와 동기를 동시에 제공한, 가장 잔혹한 형태의 가족 비극이다.",
+      "key_evidence": [
+        "e_gradual_poisoning",
+        "e_wine_residue",
+        "e_medical_textbook",
+        "e_maid_diary",
+        "e_seoyeon_dropout"
+      ]
+    },
+    "unlocks": [
+      {
+        "trigger": {
+          "type": "evidence_found",
+          "id": "e_new_will_copy"
+        },
+        "action": {
+          "type": "unlock_location",
+          "location": "lawyer_office"
+        }
+      },
+      {
+        "trigger": {
+          "type": "evidence_found",
+          "id": "e_debt_documents"
+        },
+        "action": {
+          "type": "unlock_location",
+          "location": "taehyun_office"
+        }
+      },
+      {
+        "trigger": {
+          "type": "evidence_found",
+          "id": "e_wine_log"
+        },
+        "action": {
+          "type": "unlock_room",
+          "location": "yoon_mansion",
+          "room": "wine_cellar"
+        }
+      },
+      {
+        "trigger": {
+          "type": "deduction_unlocked",
+          "id": "d_will_change_motive"
+        },
+        "action": {
+          "type": "unlock_npc",
+          "location": "lawyer_office",
+          "npc": "oh_lawyer"
+        }
+      },
+      {
+        "trigger": {
+          "type": "contradiction_found",
+          "id": "s_taehyun_2"
+        },
+        "action": {
+          "type": "unlock_location",
+          "location": "taehyun_office"
+        }
+      },
+      {
+        "trigger": {
+          "type": "evidence_found",
+          "id": "e_maid_diary"
+        },
+        "action": {
+          "type": "unlock_room",
+          "location": "yoon_mansion",
+          "room": "wine_cellar"
+        }
+      },
+      {
+        "trigger": {
+          "type": "deduction_unlocked",
+          "id": "d_drug_access"
+        },
+        "action": {
+          "type": "unlock_npc",
+          "location": "yoon_mansion",
+          "npc": "yoon_seoyeon"
+        }
+      },
+      {
+        "trigger": {
+          "type": "contradiction_found",
+          "id": "s_suni_2"
+        },
+        "action": {
+          "type": "unlock_npc",
+          "location": "yoon_mansion",
+          "npc": "park_suni"
+        }
+      }
+    ]
+  },
+  {
+    "id": "curtainless_night",
+    "title": "커튼콜 없는 밤",
+    "status": "active",
+    "summary": "대학로 소극장 '세레나데'의 간판 배우 강서진(34)이 공연 인터미션 중 백스테이지에서 감전사한 채 발견되었다. 노후 조명 장비의 누전에 의한 사고사로 보이지만, 의도적으로 벗겨진 케이블 피복과 바닥의 물기 흔적이 다른 이야기를 말하고 있다. 막은 내렸지만, 진실은 아직 무대 위에 남아 있다.",
+    "difficulty": "★★★",
+    "locations": {
+      "theater_serenade": {
+        "name": "극장 세레나데",
+        "type": "office",
+        "address": "종로구 대학로 126, 세레나데빌딩 지하1층~1층",
+        "unlocked": true,
+        "floor_plan": {
+          "cols": 3,
+          "rows": 3,
+          "rooms": [
+            {
+              "id": "lobby",
+              "name": "로비",
+              "icon": "🚪",
+              "col": 0,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "auditorium",
+              "name": "객석",
+              "icon": "🎭",
+              "col": 1,
+              "row": 0,
+              "w": 2,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "director_office",
+              "name": "감독실",
+              "icon": "📋",
+              "col": 0,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": true,
+              "crime_scene": false
+            },
+            {
+              "id": "backstage",
+              "name": "백스테이지 (현장)",
+              "icon": "⚠️",
+              "col": 1,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": true
+            },
+            {
+              "id": "lighting_booth",
+              "name": "조명실",
+              "icon": "💡",
+              "col": 2,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "dressing_room_a",
+              "name": "1분장실 (서진)",
+              "icon": "🪞",
+              "col": 0,
+              "row": 2,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "dressing_room_b",
+              "name": "2분장실 (이유나)",
+              "icon": "💄",
+              "col": 1,
+              "row": 2,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "prop_storage",
+              "name": "소도구실",
+              "icon": "📦",
+              "col": 2,
+              "row": 2,
+              "w": 1,
+              "h": 1,
+              "locked": true,
+              "crime_scene": false
+            }
+          ],
+          "doors": [
+            [
+              "lobby",
+              "auditorium",
+              "right"
+            ],
+            [
+              "lobby",
+              "director_office",
+              "bottom"
+            ],
+            [
+              "auditorium",
+              "backstage",
+              "bottom"
+            ],
+            [
+              "auditorium",
+              "lighting_booth",
+              "bottom"
+            ],
+            [
+              "director_office",
+              "backstage",
+              "right"
+            ],
+            [
+              "director_office",
+              "dressing_room_a",
+              "bottom"
+            ],
+            [
+              "backstage",
+              "lighting_booth",
+              "right"
+            ],
+            [
+              "backstage",
+              "dressing_room_b",
+              "bottom"
+            ],
+            [
+              "lighting_booth",
+              "prop_storage",
+              "bottom"
+            ],
+            [
+              "dressing_room_a",
+              "dressing_room_b",
+              "right"
+            ]
+          ]
+        },
+        "points": {
+          "p_body_area": {
+            "room": "backstage",
+            "name": "시신 발견 지점",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_electrocution_report"
+          },
+          "p_stage_cable": {
+            "room": "backstage",
+            "name": "무대 조명 케이블",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_tampered_cable"
+          },
+          "p_floor_stain": {
+            "room": "backstage",
+            "name": "바닥 물기 자국",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_wet_floor_trace"
+          },
+          "p_switchboard": {
+            "room": "lighting_booth",
+            "name": "배전반 스위치",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_fiber_on_panel"
+          },
+          "p_cctv_recorder": {
+            "room": "lighting_booth",
+            "name": "CCTV 녹화 장치",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_cctv_gap"
+          },
+          "p_log_book": {
+            "room": "lighting_booth",
+            "name": "장비 점검 일지",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_maintenance_log"
+          },
+          "p_glove_box": {
+            "room": "prop_storage",
+            "name": "소도구 선반 뒤",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_rubber_gloves"
+          },
+          "p_shin_bag": {
+            "room": "prop_storage",
+            "name": "신동욱의 가방",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_chat_screenshots"
+          },
+          "p_director_desk": {
+            "room": "director_office",
+            "name": "감독 책상",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_insurance_policy"
+          },
+          "p_locked_cabinet": {
+            "room": "director_office",
+            "name": "잠긴 캐비닛",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_debt_records"
+          },
+          "p_cutter_tray": {
+            "room": "director_office",
+            "name": "도구 트레이",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_directors_cutter"
+          },
+          "p_sound_booth": {
+            "room": "auditorium",
+            "name": "음향 부스",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_sound_recording"
+          }
+        },
+        "npcs": {
+          "lee_yuna": {
+            "name": "이유나",
+            "role": "여배우, 서진의 상대역",
+            "room": "dressing_room_b",
+            "available": true,
+            "talked": false
+          },
+          "moon_jaehyuk": {
+            "name": "문재혁",
+            "role": "연출가 겸 극단 대표",
+            "room": "auditorium",
+            "available": true,
+            "talked": false
+          },
+          "shin_dongwook": {
+            "name": "신동욱",
+            "role": "조명 감독",
+            "room": "lighting_booth",
+            "available": true,
+            "talked": false
+          },
+          "choi_eunbi": {
+            "name": "최은비",
+            "role": "극장 매니저",
+            "room": "lobby",
+            "available": false,
+            "talked": false
+          }
+        }
+      },
+      "seojin_apartment": {
+        "name": "강서진 자택",
+        "type": "apartment",
+        "address": "마포구 연남로 45, 연남하우스 502호",
+        "unlocked": false,
+        "floor_plan": {
+          "cols": 2,
+          "rows": 2,
+          "rooms": [
+            {
+              "id": "living_room",
+              "name": "거실",
+              "icon": "🛋️",
+              "col": 0,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "study",
+              "name": "서재",
+              "icon": "📚",
+              "col": 1,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "bedroom",
+              "name": "침실",
+              "icon": "🛏️",
+              "col": 0,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "bathroom",
+              "name": "욕실",
+              "icon": "🚿",
+              "col": 1,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            }
+          ],
+          "doors": [
+            [
+              "living_room",
+              "study",
+              "right"
+            ],
+            [
+              "living_room",
+              "bedroom",
+              "bottom"
+            ],
+            [
+              "study",
+              "bathroom",
+              "bottom"
+            ]
+          ]
+        },
+        "points": {
+          "p_seojin_laptop": {
+            "room": "study",
+            "name": "서진의 노트북",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_cast_email"
+          },
+          "p_hidden_envelope": {
+            "room": "study",
+            "name": "서랍 속 봉투",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_love_letter"
+          },
+          "p_phone_charger": {
+            "room": "living_room",
+            "name": "충전 중인 태블릿",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_phone_history"
+          }
+        },
+        "npcs": {}
+      },
+      "cafe_script": {
+        "name": "카페 스크립트",
+        "type": "shop",
+        "address": "종로구 대학로 112-8, 1층",
+        "unlocked": false,
+        "floor_plan": {
+          "cols": 2,
+          "rows": 1,
+          "rooms": [
+            {
+              "id": "main_hall",
+              "name": "홀",
+              "icon": "☕",
+              "col": 0,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "back_room",
+              "name": "뒷방",
+              "icon": "🚪",
+              "col": 1,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            }
+          ],
+          "doors": [
+            [
+              "main_hall",
+              "back_room",
+              "right"
+            ]
+          ]
+        },
+        "points": {
+          "p_register_receipt": {
+            "room": "main_hall",
+            "name": "카운터 영수증 묶음",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_meeting_receipt"
+          },
+          "p_staff_table": {
+            "room": "back_room",
+            "name": "스태프 단골 테이블",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_staff_memo"
+          }
+        },
+        "npcs": {}
+      }
+    },
+    "evidence": {
+      "e_electrocution_report": {
+        "name": "감전사 감정서",
+        "type": "physical",
+        "description": "피해자 양손에 전류 진입점 화상. 사인은 전기 충격에 의한 심실세동. 사망 추정 시각은 오후 8시 15분~8시 25분. 체내 알코올이나 약물은 검출되지 않음. 피해자가 쓰러진 바닥이 젖어 있었다는 현장 보고 첨부.",
+        "found": false
+      },
+      "e_tampered_cable": {
+        "name": "조작된 조명 케이블",
+        "type": "physical",
+        "description": "백스테이지 상수(上手) 조명 타워에 연결된 전력 케이블. 피복이 약 15cm 구간에 걸쳐 벗겨져 있다. 단면이 매끄럽고 일정하여 자연 마모가 아닌 날카로운 도구로 절단한 것으로 판단. 노출된 도체에서 피부 조직 미량 검출.",
+        "found": false
+      },
+      "e_wet_floor_trace": {
+        "name": "바닥 물기 흔적",
+        "type": "physical",
+        "description": "피해자가 쓰러진 지점 주변 약 2m² 범위에 물기 자국. 무대 바닥 재질(리놀륨)에 수분이 침투한 흔적. 공연 중 물을 사용하는 연출은 없었으며, 인근에 수도 시설도 없다. 누군가 의도적으로 뿌린 것으로 추정.",
+        "found": false
+      },
+      "e_fiber_on_panel": {
+        "name": "배전반의 섬유 조각",
+        "type": "physical",
+        "description": "조명실 배전반 스위치 사이에 끼인 검정색 면직물 섬유. 분석 결과 코튼 100%, 장기간 세탁에 의한 보풀 상태. 신동욱 조명 감독이 평소 착용하는 검정 작업복의 소재 및 마모 상태와 일치.",
+        "found": false
+      },
+      "e_cctv_gap": {
+        "name": "CCTV 녹화 공백",
+        "type": "digital",
+        "description": "백스테이지 및 복도 CCTV 3대가 오후 8시 15분부터 8시 23분까지 약 8분간 녹화 중단. 조명실 내 녹화 장치에서 수동 정지 후 재개 조작 이력 확인. 정지 시각이 사망 추정 시각과 정확히 겹친다.",
+        "found": false
+      },
+      "e_maintenance_log": {
+        "name": "장비 점검 일지",
+        "type": "document",
+        "description": "신동욱이 작성하는 조명/전기 장비 점검 일지. 사건 전날 날짜로 '전 구간 케이블 점검 완료, 이상 무' 서명. 10년 경력의 전문가가 '이상 없음'으로 서명한 다음 날 갑자기 누전이 발생했다.",
+        "found": false
+      },
+      "e_rubber_gloves": {
+        "name": "소도구실의 고무장갑",
+        "type": "physical",
+        "description": "소도구 선반 뒤편에 뒤집어 놓인 상태로 발견된 산업용 고무장갑 한 쌍. 왼쪽 장갑 표면에 미세한 구리 분말과 수분 흔적. 전기 작업 시 감전 방지용으로 사용된 것으로 보이며, 소도구실 물품 목록에는 기재되지 않은 물건.",
+        "found": false
+      },
+      "e_chat_screenshots": {
+        "name": "문재혁-신동욱 대화 기록",
+        "type": "digital",
+        "description": "신동욱의 폰에 캡처된 카카오톡 대화. 사건 3일 전 신동욱: '서진이 형한테 더 이상 못 참겠습니다. 감독님이 좀 해주세요.' 문재혁: '알겠어. 좋은 방법이 있다. 내일 카페에서 얘기하자.' 사건 전날 문재혁: '내일 인터미션에 배전반 세팅 바꿔야 해. 2막 특수조명 테스트. 자세한 건 구두로.' 신동욱: '네 알겠습니다.'",
+        "found": false
+      },
+      "e_insurance_policy": {
+        "name": "극장 배우 보험 증권",
+        "type": "document",
+        "description": "문재혁 명의로 가입된 공연 배우 상해보험. 피보험자: 강서진. 사고사 또는 공연 중 사망 시 보험금 5억 원. 수익자: 극단 세레나데(대표 문재혁). 가입일은 사건 6주 전. 같은 극단의 다른 배우에게는 가입되지 않은 강서진 단독 보험.",
+        "found": false
+      },
+      "e_debt_records": {
+        "name": "문재혁 채무 기록",
+        "type": "document",
+        "description": "감독실 잠긴 캐비닛에서 발견. 부동산 투자 실패로 인한 개인 채무 3억 2천만 원. 극장 임대료 4개월 미납 독촉장. 직원 급여 3개월 미지급 내역. 사채업자의 최후통첩 문서(사건 1주일 전 날짜).",
+        "found": false
+      },
+      "e_directors_cutter": {
+        "name": "감독실 커터칼",
+        "type": "physical",
+        "description": "감독실 도구 트레이에 있던 대형 커터칼. 칼날 홈에서 PVC 피복 잔여물이 검출되었다. 조명 케이블 피복과 동일한 재질. 손잡이에서 지문은 닦인 상태이나, 칼날 교체 부위 안쪽에서 문재혁의 부분 지문 검출.",
+        "found": false
+      },
+      "e_sound_recording": {
+        "name": "공연 녹음 파일",
+        "type": "digital",
+        "description": "객석 천장 마이크로 녹음된 공연 실황. 인터미션 시작 후 오후 8시 17분, 백스테이지 방향에서 '텅' 하는 금속성 충격음이 포착된다. 배전반 커버를 여닫는 소리와 일치. 이후 8시 20분에 짧은 비명과 쿵 하는 낙하음.",
+        "found": false
+      },
+      "e_cast_email": {
+        "name": "이유나의 이적 제안 이메일",
+        "type": "digital",
+        "description": "서진의 노트북에 전달(포워딩)된 이메일. 발신자: 극단 별빛(대학로 대형 극단). 수신자: 이유나. '차기 시즌 주연 제안. 조건: 현 극단 세레나데와의 계약 해지 후 합류. 출연료 현재의 3배.' 서진에게 포워딩된 날짜는 사건 5일 전.",
+        "found": false
+      },
+      "e_love_letter": {
+        "name": "문재혁의 미발송 편지",
+        "type": "document",
+        "description": "서진의 서재 서랍 깊숙이 보관된 봉투. 문재혁의 필체로 이유나에게 쓴 편지. '유나 씨, 당신을 처음 본 오디션 날부터... 서진이가 늘 곁에 있어서 한 번도 말을 꺼내지 못했습니다.' 봉투에 우표는 붙어 있지 않다. 서진이 이 편지를 감독실에서 발견하고 가져간 것으로 추정.",
+        "found": false
+      },
+      "e_phone_history": {
+        "name": "서진의 검색 기록",
+        "type": "digital",
+        "description": "서진의 개인 태블릿 브라우저 히스토리. 사건 3일 전: '무대 안전사고 보상 기준', '공연 중 배우 부상 판례', '극장 안전 관리 의무'. 자살이나 범행 계획이 아닌, 동료 배우의 과거 무대 사고에 대한 법적 권리를 조사한 것으로 보인다.",
+        "found": false
+      },
+      "e_staff_memo": {
+        "name": "스태프 목격 메모",
+        "type": "document",
+        "description": "무대 스태프 김태호가 카페 냅킨에 쓴 메모. '인터미션 때 담배 피러 나가다가, 감독님이 로비 쪽이 아니라 백스테이지 방향으로 가는 걸 봤음. 고무장갑 같은 걸 들고 있었던 것 같은데... 확실하지 않음. 경찰한테 말해야 하나?' 날짜는 사건 당일.",
+        "found": false
+      },
+      "e_meeting_receipt": {
+        "name": "카페 야간 영수증",
+        "type": "document",
+        "description": "카페 스크립트의 폐점 직전 영수증. 사건 전날 밤 11시 47분, 문재혁 명의 카드로 아메리카노 2잔 결제. 카페 직원에 따르면 문재혁과 신동욱이 구석 테이블에서 2시간 넘게 심각하게 대화했으며, 문재혁이 종이에 무언가를 그려가며 설명했다고 한다.",
+        "found": false
+      }
+    },
+    "testimonies": {
+      "t_lee": {
+        "witness": "lee_yuna",
+        "witness_name": "이유나",
+        "statements": [
+          {
+            "id": "s_lee_1",
+            "text": "인터미션이 시작되고 분장실에서 메이크업을 고치고 있었어요. 서진 오빠가 무대 뒤쪽으로 걸어가는 걸 봤는데... 그게 마지막이었어요.",
+            "pressed": false,
+            "press_result": "비명은 못 들었어요. 분장실 문을 닫고 이어폰을 끼고 있었거든요. 스태프가 문을 두드려서 알게 됐어요. 달려갔을 때는 이미... 오빠가 바닥에 쓰러져 있었어요.",
+            "press_adds": [],
+            "contradiction": null
+          },
+          {
+            "id": "s_lee_2",
+            "text": "서진 오빠와 저는 좋은 파트너였어요. 개인적으로도 편한 사이였고요. 다른 극단 제안 같은 건 생각도 안 했어요. 세레나데가 제 자리니까요.",
+            "pressed": false,
+            "press_result": "...최근에 좀 고민이 있긴 했어요. 오빠가 제 연기를 공개적으로 비판한 적이 있거든요. '감정선이 얕다'고. 그래도 무대 위 일이니까요.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_cast_email",
+              "reveal": "서진의 노트북에서 이유나에게 온 타 극단의 주연 제안 이메일이 발견되었다. 출연료 3배, 조건은 세레나데 계약 해지. 이적을 '생각도 안 했다'는 건 거짓이며, 서진에게까지 이 이메일이 전달된 걸 보면 둘 사이에 갈등이 있었을 가능성이 높다."
+            }
+          },
+          {
+            "id": "s_lee_3",
+            "text": "문 감독님은 저한테 언제나 프로페셔널하셨어요. 연출 지시 외에 개인적인 이야기는 나눈 적 없습니다.",
+            "pressed": false,
+            "press_result": "...감독님이 가끔 늦은 시간에 연락하시긴 했는데, 다 내일 리허설 관련 이야기였어요. 이상한 생각 하지 마세요.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_love_letter",
+              "reveal": "서진의 자택에서 문재혁이 이유나에게 쓴 미발송 편지가 발견되었다. '오디션 날부터 마음을 품었다'는 내용. 서진이 이 편지를 보관하고 있었다는 건, 문재혁의 감정을 알고 있었다는 뜻이다. '프로페셔널한 관계'라는 이유나의 증언은 실상과 다르다."
+            }
+          }
+        ]
+      },
+      "t_moon": {
+        "witness": "moon_jaehyuk",
+        "witness_name": "문재혁",
+        "statements": [
+          {
+            "id": "s_moon_1",
+            "text": "인터미션이 시작되고 객석 뒷줄에 앉아서 공연 노트를 정리하고 있었습니다. 사고 소식은 매니저 은비 씨가 달려와서 알려줬어요.",
+            "pressed": false,
+            "press_result": "15분 인터미션 내내 객석에 있었냐고요? 처음 5분 정도는 객석에, 그다음엔 로비로 나가서 후원자분과 잠깐 인사를 나눴습니다. 그러다 은비 씨가 뛰어와서...",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_sound_recording",
+              "reveal": "공연 녹음에 8시 17분 백스테이지 방향에서 금속 충격음이, 8시 20분에 비명과 낙하음이 포착되어 있다. 객석에 있었다면 이 소리를 들었을 것이다. 그런데 '매니저가 알려줬다'고 했다. 8시 17분경 객석에 없었을 가능성이 높다."
+            }
+          },
+          {
+            "id": "s_moon_2",
+            "text": "보험이요? 배우 보험은 극단 운영의 기본입니다. 금액은 보험사 표준이고, 저는 세부 사항까지 관여하지 않아요.",
+            "pressed": false,
+            "press_result": "극장이 어렵다는 건 사실이에요. 하지만 서진이 없으면 공연이 성립이 안 됩니다. 서진이의 죽음은 극장에도 재앙이에요. 보험금으로 뭘 해보겠다고요? 말도 안 됩니다.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_insurance_policy",
+              "reveal": "보험 증권에 따르면 사고사 시 5억 원 보상, 수익자는 극단 세레나데(=문재혁). 가입일은 사건 불과 6주 전이며, 같은 극단의 다른 배우에게는 가입하지 않은 강서진 단독 보험이다. '세부 사항에 관여하지 않는다'는 말은 완전한 거짓."
+            }
+          },
+          {
+            "id": "s_moon_3",
+            "text": "동욱이는 10년 넘게 함께한 조명 감독이에요. 그 친구 실력을 제가 보증합니다. 장비 누전은 노후 문제일 겁니다.",
+            "pressed": false,
+            "press_result": "예산이 없어서 장비 교체를 못 한 건 사실입니다. 동욱이가 여러 번 건의했는데 제가 미뤘죠. 이 사고가 제 탓이라면... 제 탓이겠죠.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_maintenance_log",
+              "reveal": "신동욱은 전날 점검에서 '전 구간 이상 무'로 서명했다. 10년 경력의 전문가가 정상으로 확인한 장비가 하루 만에 누전될 확률은 극히 낮다. '노후 문제'라는 설명은 점검 기록과 모순된다."
+            }
+          },
+          {
+            "id": "s_moon_4",
+            "text": "서진이와 유나 사이요? 무대 위에선 완벽한 호흡이었죠. 개인 감정까지는 제가 관여할 일이 아닙니다.",
+            "pressed": false,
+            "press_result": "연출가로서 배우 간의 감정이 공연에 미치는 영향은 주시합니다. 하지만 개인 감정에 끼어드는 건 제 스타일이 아닙니다.",
+            "press_adds": [],
+            "contradiction": null
+          }
+        ]
+      },
+      "t_shin": {
+        "witness": "shin_dongwook",
+        "witness_name": "신동욱",
+        "statements": [
+          {
+            "id": "s_shin_1",
+            "text": "인터미션에 조명실에서 2막 큐 시트를 확인하고 있었습니다. 배전반은 건드리지 않았어요. 공연 시작 전에 세팅하면 끝이거든요.",
+            "pressed": false,
+            "press_result": "배전반을 왜 만져요? 인터미션에 바꿀 게 없는데. 2막 조명은 전부 프리셋으로 들어가 있어요. 확인한 건 큐 시트 순서뿐입니다.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_fiber_on_panel",
+              "reveal": "배전반 스위치 사이에 신동욱의 작업복과 일치하는 섬유가 끼어있다. '건드리지 않았다'는 증언은 물리적 증거와 정면으로 모순된다. 인터미션에 배전반을 조작한 것은 분명하다."
+            }
+          },
+          {
+            "id": "s_shin_2",
+            "text": "전날 점검에서 아무 이상 없었습니다. 서명까지 했어요. 갑자기 누전이 된 건... 장비가 워낙 오래됐으니까요.",
+            "pressed": false,
+            "press_result": "장비 교체를 몇 번이나 건의했는데 감독님이 예산이 없다고 하셨어요. 이 사고는 제 탓이 아닙니다. 관리 소홀이라면 예산을 안 준 쪽의 책임이죠.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_tampered_cable",
+              "reveal": "케이블 피복이 날카로운 도구로 절단되었다. 자연 마모나 노후가 아닌 의도적 손상. 전날 '이상 없음'으로 점검한 장비가 하루 만에 칼로 잘릴 리 없다. 그 사이에 누군가 케이블을 조작했다."
+            }
+          },
+          {
+            "id": "s_shin_3",
+            "text": "서진 씨와 갈등이요? 배우가 조명에 까다로운 건 당연한 거죠. 서진 씨가 엄격한 편이긴 했지만, 저는 프로니까요. 감정적으로 대응한 적 없습니다.",
+            "pressed": false,
+            "press_result": "...솔직히 스트레스는 받았죠. 0.5초 차이로 소리를 지르시니까. 한번은 스태프 전원 앞에서 '조명 감독 자격이 있냐'고 하신 적도 있어요. 하지만 그건 그거고 이건 이거예요.",
+            "press_adds": [
+              "e_chat_screenshots"
+            ],
+            "contradiction": null
+          }
+        ]
+      },
+      "t_choi": {
+        "witness": "choi_eunbi",
+        "witness_name": "최은비",
+        "statements": [
+          {
+            "id": "s_choi_1",
+            "text": "인터미션 때 로비에서 관객 응대하고 있었어요. VIP 음료 서비스 확인하고, 리셉션 준비 체크하러 잠깐 매니저실에 다녀왔고요. 5분도 안 걸렸어요.",
+            "pressed": false,
+            "press_result": "매니저실은 감독실 바로 옆이에요. 리셉션 준비물 체크하러 간 건데, 거기서 이상한 건 못 봤어요. 감독실에서 소리가 났는지는... 기억이 안 나네요.",
+            "press_adds": [],
+            "contradiction": null
+          },
+          {
+            "id": "s_choi_2",
+            "text": "극장 재정은 문 감독님 관할이에요. 저는 매니저일 뿐이라 자세한 건 몰라요. 밀린 월급이요? 그런 건 없어요. 잘 나오고 있습니다.",
+            "pressed": false,
+            "press_result": "...사실 3개월째 월급이 안 나오고 있어요. 감독님이 '곧 큰돈이 들어온다'고 하셔서 참고 있었는데... 다른 스태프들도 마찬가지예요. 하지만 이건 비밀로 해주세요.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_debt_records",
+              "reveal": "문재혁의 채무 기록에 극장 운영비 미지급과 임대료 4개월 미납이 명시되어 있다. '밀린 월급이 없다'는 첫 증언은 거짓이며, 추궁 후 밝힌 '곧 큰돈이 들어온다'는 문재혁의 발언은 보험금 5억을 예상한 것일 수 있다."
+            }
+          },
+          {
+            "id": "s_choi_3",
+            "text": "서진 씨는 재능 있는 분이었어요. 다만 성격이 좀 까다로우셨죠. 스태프들이 힘들어했어요, 특히 동욱 씨요.",
+            "pressed": false,
+            "press_result": "동욱 씨가 한번은 울면서 나간 적도 있어요. 서진 씨가 모두 앞에서 '조명 감독 자격이 있냐'고 하셨거든요. 감독님이 중재하셨는데, 그 뒤로 동욱 씨 표정이 좀 달라졌어요. 어둡다고 해야 하나...",
+            "press_adds": [],
+            "contradiction": null
+          }
+        ]
+      }
+    },
+    "deductions": {
+      "d_deliberate_sabotage": {
+        "name": "사고가 아닌 살인",
+        "required_evidence": [
+          "e_tampered_cable",
+          "e_wet_floor_trace"
+        ],
+        "unlocked": false,
+        "description": "케이블 피복이 날카로운 도구로 의도적으로 벗겨졌고, 바닥에는 출처 불명의 물이 뿌려져 있었다. 물은 인체의 전기 저항을 낮춰 감전 효과를 극대화한다. 이것은 노후 장비에 의한 사고가 아니라, 치밀하게 계획된 살인이다."
+      },
+      "d_shin_involvement": {
+        "name": "조명 감독의 관여",
+        "required_evidence": [
+          "e_fiber_on_panel",
+          "e_maintenance_log"
+        ],
+        "unlocked": false,
+        "description": "전날 '이상 없음'으로 점검한 장비에서 하루 만에 누전이 발생했고, 배전반에는 신동욱의 작업복 섬유가 끼어 있다. 인터미션에 배전반을 만지지 않았다는 증언은 거짓이다. 신동욱이 범행에 관여했거나, 최소한 당일 배전반을 조작한 것은 확실하다."
+      },
+      "d_crime_preparation": {
+        "name": "사전 준비의 흔적들",
+        "required_evidence": [
+          "e_rubber_gloves",
+          "e_directors_cutter"
+        ],
+        "unlocked": false,
+        "description": "소도구실에서 발견된 고무장갑에는 구리 분말과 수분 흔적이, 감독실 커터칼에는 케이블 피복 잔여물이 남아 있다. 누군가 감전 위험을 인지하면서 고무장갑을 끼고 물을 뿌렸고, 사전에 커터칼로 케이블을 손상시켰다. 범인은 감독실에 접근할 수 있는 사람이다."
+      },
+      "d_surveillance_blackout": {
+        "name": "차단된 감시 체계",
+        "required_evidence": [
+          "e_cctv_gap",
+          "e_sound_recording"
+        ],
+        "unlocked": false,
+        "description": "CCTV가 정확히 사망 추정 시각에 맞춰 8분간 정지되었다. 같은 시각 공연 녹음에는 금속 충격음(배전반 조작)과 비명이 잡혀 있다. 범인은 CCTV를 끄는 방법을 알고 있었고, 증거 인멸까지 계획했다. 즉흥적 범행이 아닌 체계적 준비의 증거."
+      },
+      "d_financial_motive": {
+        "name": "감독의 재정적 동기",
+        "required_evidence": [
+          "e_debt_records",
+          "e_insurance_policy"
+        ],
+        "unlocked": false,
+        "description": "문재혁은 3억 2천만 원의 채무와 극장 운영비 미납으로 파산 직전이다. 그런데 사건 6주 전, 강서진 한 명에게만 사고사 시 5억 보험을 들었다. 서진이 죽으면 보험금으로 빚을 갚고도 1억 8천이 남는다. 재정적 동기는 명백하다."
+      },
+      "d_love_triangle": {
+        "name": "무대 뒤의 삼각관계",
+        "required_evidence": [
+          "e_love_letter",
+          "e_cast_email"
+        ],
+        "unlocked": false,
+        "description": "문재혁은 이유나에게 연심을 품고 있었고, 서진은 이 사실을 알고 편지를 보관하고 있었다. 동시에 이유나는 이적을 고려할 만큼 현 극단에 불만이 있었고, 이 이메일도 서진에게 전달되었다. 서진은 문재혁의 감정과 이유나의 이적 계획을 모두 쥐고 있었다. 서진의 존재가 문재혁에게 위협이 된 또 하나의 이유."
+      },
+      "d_culprit_identified": {
+        "name": "진범 특정",
+        "required_evidence": [
+          "e_chat_screenshots",
+          "e_directors_cutter"
+        ],
+        "unlocked": false,
+        "description": "문재혁이 신동욱에게 '좋은 방법이 있다'며 인터미션에 배전반 조작을 지시한 대화 기록. 그리고 감독실에서 발견된 커터칼에 케이블 피복 잔여물과 문재혁의 지문. 문재혁이 직접 케이블을 손상시키고, 신동욱을 이용해 배전반을 조작하게 만들었다. 계획의 설계자이자 실행자는 문재혁이다."
+      }
+    },
+    "suspects": [
+      {
+        "id": "lee_yuna",
+        "name": "이유나",
+        "motive": "서진이 자신의 연기를 공개 비판하고, 이적 이메일까지 포워딩받아 압박. 극단을 떠나면 위약금 문제가 발생하며, 문재혁과의 관계도 복잡하게 얽힘",
+        "alibi": "분장실에서 메이크업 수정 중이었다고 주장. 이어폰을 끼고 있어서 비명을 못 들었다고 함. 스태프가 확인했으나 분장실에서 나온 정확한 시각은 불명확"
+      },
+      {
+        "id": "moon_jaehyuk",
+        "name": "문재혁",
+        "motive": "3억 2천만 채무에 극장 운영 불가능 상태. 서진의 사고사 시 5억 보험금 수령 가능. 이유나에 대한 감정과 서진이 이를 알고 있었다는 사실도 동기를 강화",
+        "alibi": "객석에서 공연 노트 정리 후 로비에서 후원자와 인사했다고 주장. 그러나 녹음된 소음 시각에 객석에 있었다면 소리를 들었을 것이며, 후원자와의 인사 시각도 특정되지 않음"
+      },
+      {
+        "id": "shin_dongwook",
+        "name": "신동욱",
+        "motive": "서진의 지속적인 모욕과 공개적 망신에 대한 분노. 10년 경력 조명 감독의 자존심이 반복적으로 훼손됨",
+        "alibi": "조명실에서 2막 큐 시트 확인 중이었다고 주장. 배전반은 건드리지 않았다고 했으나, 배전반에서 그의 작업복 섬유가 검출됨"
+      },
+      {
+        "id": "choi_eunbi",
+        "name": "최은비",
+        "motive": "3개월 밀린 월급에 대한 불만. 그러나 직접적인 살해 동기로는 약함. 문재혁의 '곧 큰돈이 들어온다'는 발언을 알고 있었을 가능성",
+        "alibi": "로비에서 관객 응대 후 매니저실에 잠깐 다녀왔다고 주장. VIP 관객 수 명이 로비에서 그녀를 봤다고 증언하나, 매니저실에 간 동안의 공백이 존재"
+      }
+    ],
+    "solution": {
+      "culprit": "moon_jaehyuk",
+      "method": "문재혁은 사건 전날 밤 혼자 극장에 남아 감독실의 커터칼로 백스테이지 조명 케이블 피복을 벗겨놓았다. 당일 공연 중 신동욱에게 '2막 특수조명 테스트를 위해 인터미션에 배전반 세팅을 변경하라'고 지시했다. 인터미션이 시작되자 객석을 빠져나와 조명실에서 CCTV를 정지시킨 뒤, 고무장갑을 끼고 백스테이지 바닥에 물을 뿌렸다. 서진이 매 인터미션마다 조명 위치를 확인하는 습관을 이용한 것이다. 서진이 젖은 바닥에 선 채로 노출된 전선에 접촉하여 감전사. 문재혁은 고무장갑을 소도구실에 숨기고 로비로 돌아가 후원자와 인사하는 것으로 알리바이를 조작했다. 신동욱은 배전반 조작이 '테스트'라고 믿었으며, 사후에 자신이 이용당했음을 깨달았으나 공범이 될까 두려워 침묵했다.",
+      "motive": "3억 2천만 원 채무로 극장 운영이 파탄 직전. 서진의 사고사로 5억 보험금을 받으면 빚을 청산하고 극장을 유지할 수 있다. 여기에 이유나를 향한 감정, 그리고 서진이 자신의 편지를 발견하여 약점을 쥐고 있다는 위기감이 범행을 촉진했다. 서진의 제거로 재정 위기 해소, 감정적 장애물 제거, 약점 소멸이라는 세 가지 문제를 동시에 해결하려 한 것이다.",
+      "key_evidence": [
+        "e_directors_cutter",
+        "e_chat_screenshots",
+        "e_insurance_policy",
+        "e_sound_recording",
+        "e_staff_memo"
+      ]
+    },
+    "unlocks": [
+      {
+        "trigger": {
+          "type": "evidence_found",
+          "id": "e_electrocution_report"
+        },
+        "action": {
+          "type": "unlock_room",
+          "location": "theater_serenade",
+          "room": "director_office"
+        }
+      },
+      {
+        "trigger": {
+          "type": "evidence_found",
+          "id": "e_maintenance_log"
+        },
+        "action": {
+          "type": "unlock_room",
+          "location": "theater_serenade",
+          "room": "prop_storage"
+        }
+      },
+      {
+        "trigger": {
+          "type": "evidence_found",
+          "id": "e_insurance_policy"
+        },
+        "action": {
+          "type": "unlock_location",
+          "location": "seojin_apartment"
+        }
+      },
+      {
+        "trigger": {
+          "type": "deduction_unlocked",
+          "id": "d_shin_involvement"
+        },
+        "action": {
+          "type": "unlock_location",
+          "location": "cafe_script"
+        }
+      },
+      {
+        "trigger": {
+          "type": "contradiction_found",
+          "id": "s_shin_1"
+        },
+        "action": {
+          "type": "unlock_npc",
+          "location": "theater_serenade",
+          "npc": "choi_eunbi"
+        }
+      }
+    ]
+  },
+  {
+    "id": "ignition_point",
+    "title": "연소점",
+    "status": "active",
+    "summary": "서울 관악구 S대학교 자연과학대학 화학과 실험실에서 심야 화재가 발생했다. 잔해 속에서 박사후연구원 정은채(31)의 시신이 발견되었고, 소방당국은 시약 관리 부주의에 의한 사고로 초동 판단을 내렸다. 그러나 부검 결과 두개골 후부에 화재 이전의 둔기 외상이 확인되었다. 누군가 그녀를 먼저 때리고, 불로 덮은 것이다. 차세대 배터리 기술의 특허를 둘러싼 탐욕과 학문의 이름으로 자행된 착취. 재 속에 묻힌 공식이 말하는 진실은.",
+    "difficulty": "★★★",
+    "locations": {
+      "science_building": {
+        "name": "S대학교 자연과학관",
+        "type": "office",
+        "address": "관악구 관악로 1, S대학교 자연과학대학 302동",
+        "unlocked": true,
+        "floor_plan": {
+          "cols": 4,
+          "rows": 3,
+          "rooms": [
+            {
+              "id": "entrance",
+              "name": "건물 입구",
+              "icon": "🚪",
+              "col": 0,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "corridor",
+              "name": "2층 복도",
+              "icon": "🏛️",
+              "col": 1,
+              "row": 0,
+              "w": 2,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "professor_office",
+              "name": "교수 사무실",
+              "icon": "👔",
+              "col": 3,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": true,
+              "crime_scene": false
+            },
+            {
+              "id": "security_room",
+              "name": "관제실",
+              "icon": "🔒",
+              "col": 0,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "lab_a",
+              "name": "화학실험실 A (현장)",
+              "icon": "⚠️",
+              "col": 1,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": true
+            },
+            {
+              "id": "reagent_room",
+              "name": "시약 보관실",
+              "icon": "⚗️",
+              "col": 2,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": true,
+              "crime_scene": false
+            },
+            {
+              "id": "research_lab",
+              "name": "유기화학 연구실",
+              "icon": "🔬",
+              "col": 3,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "lounge",
+              "name": "대학원생 라운지",
+              "icon": "💻",
+              "col": 0,
+              "row": 2,
+              "w": 2,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "instrument_room",
+              "name": "기기분석실",
+              "icon": "🖥️",
+              "col": 2,
+              "row": 2,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "back_exit",
+              "name": "후문",
+              "icon": "🚶",
+              "col": 3,
+              "row": 2,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            }
+          ],
+          "doors": [
+            [
+              "entrance",
+              "corridor",
+              "right"
+            ],
+            [
+              "entrance",
+              "security_room",
+              "bottom"
+            ],
+            [
+              "corridor",
+              "professor_office",
+              "right"
+            ],
+            [
+              "corridor",
+              "lab_a",
+              "bottom"
+            ],
+            [
+              "corridor",
+              "reagent_room",
+              "bottom"
+            ],
+            [
+              "professor_office",
+              "research_lab",
+              "bottom"
+            ],
+            [
+              "security_room",
+              "lounge",
+              "bottom"
+            ],
+            [
+              "lab_a",
+              "reagent_room",
+              "right"
+            ],
+            [
+              "lab_a",
+              "lounge",
+              "bottom"
+            ],
+            [
+              "reagent_room",
+              "instrument_room",
+              "bottom"
+            ],
+            [
+              "research_lab",
+              "back_exit",
+              "bottom"
+            ],
+            [
+              "lounge",
+              "instrument_room",
+              "right"
+            ],
+            [
+              "instrument_room",
+              "back_exit",
+              "right"
+            ]
+          ]
+        },
+        "points": {
+          "p_burn_origin": {
+            "room": "lab_a",
+            "name": "화재 발생 지점",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_burn_pattern"
+          },
+          "p_victim_body": {
+            "room": "lab_a",
+            "name": "시신 발견 지점",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_autopsy_report"
+          },
+          "p_broken_glass": {
+            "room": "lab_a",
+            "name": "깨진 시약병 파편",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_accelerant_residue"
+          },
+          "p_cctv_console": {
+            "room": "security_room",
+            "name": "CCTV 모니터",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_cctv_footage"
+          },
+          "p_entry_log": {
+            "room": "security_room",
+            "name": "전자 출입 기록",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_entry_log"
+          },
+          "p_guard_phone": {
+            "room": "security_room",
+            "name": "경비원 휴대폰",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_guard_alibi"
+          },
+          "p_research_desk": {
+            "room": "research_lab",
+            "name": "정은채 연구 데스크",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_research_notes"
+          },
+          "p_lab_notebook": {
+            "room": "research_lab",
+            "name": "공용 실험 노트",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_lab_notebook"
+          },
+          "p_professor_pc": {
+            "room": "professor_office",
+            "name": "윤진하 교수 PC",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_patent_draft"
+          },
+          "p_professor_drawer": {
+            "room": "professor_office",
+            "name": "교수 서랍 금고",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_confidential_contract"
+          },
+          "p_reagent_log": {
+            "room": "reagent_room",
+            "name": "시약 반출 기록부",
+            "type": "document",
+            "found": false,
+            "evidence_id": "e_reagent_log"
+          },
+          "p_lounge_trash": {
+            "room": "lounge",
+            "name": "라운지 쓰레기통",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_threatening_note"
+          },
+          "p_dogeon_laptop": {
+            "room": "lounge",
+            "name": "이도건 노트북",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_dogeon_message"
+          },
+          "p_instrument_data": {
+            "room": "instrument_room",
+            "name": "NMR 장비 로그",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_analysis_log"
+          },
+          "p_back_exit_cam": {
+            "room": "back_exit",
+            "name": "후문 방범 카메라",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_back_door_footage"
+          }
+        },
+        "npcs": {
+          "yoon_jinha": {
+            "name": "윤진하",
+            "role": "유기화학 교수 (지도교수)",
+            "room": "corridor",
+            "available": true,
+            "talked": false
+          },
+          "lee_dogeon": {
+            "name": "이도건",
+            "role": "석박통합과정 대학원생",
+            "room": "lounge",
+            "available": true,
+            "talked": false
+          },
+          "han_soyul": {
+            "name": "한소율",
+            "role": "선배 박사후연구원",
+            "room": "research_lab",
+            "available": false,
+            "talked": false
+          },
+          "park_gunwoo": {
+            "name": "박건우",
+            "role": "야간 건물 경비원",
+            "room": "security_room",
+            "available": true,
+            "talked": false
+          }
+        }
+      },
+      "eunchae_apartment": {
+        "name": "정은채 오피스텔",
+        "type": "apartment",
+        "address": "관악구 신림동 1621-3, 학사빌 502호",
+        "unlocked": false,
+        "floor_plan": {
+          "cols": 2,
+          "rows": 1,
+          "rooms": [
+            {
+              "id": "living",
+              "name": "거실 겸 침실",
+              "icon": "🛋️",
+              "col": 0,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "study_area",
+              "name": "작업 공간",
+              "icon": "💻",
+              "col": 1,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            }
+          ],
+          "doors": [
+            [
+              "living",
+              "study_area",
+              "right"
+            ]
+          ]
+        },
+        "points": {
+          "p_eunchae_phone": {
+            "room": "living",
+            "name": "정은채 스마트폰",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_eunchae_phone"
+          },
+          "p_eunchae_diary": {
+            "room": "study_area",
+            "name": "태블릿 PC",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_eunchae_diary"
+          }
+        },
+        "npcs": {}
+      },
+      "professor_home": {
+        "name": "윤진하 교수 자택",
+        "type": "apartment",
+        "address": "서초구 방배동 482-7, 교수아파트 301호",
+        "unlocked": false,
+        "floor_plan": {
+          "cols": 2,
+          "rows": 2,
+          "rooms": [
+            {
+              "id": "prof_living",
+              "name": "거실",
+              "icon": "🛋️",
+              "col": 0,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "prof_study",
+              "name": "서재",
+              "icon": "📚",
+              "col": 1,
+              "row": 0,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "prof_bedroom",
+              "name": "침실",
+              "icon": "🛏️",
+              "col": 0,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            },
+            {
+              "id": "prof_garage",
+              "name": "지하 주차장",
+              "icon": "🚗",
+              "col": 1,
+              "row": 1,
+              "w": 1,
+              "h": 1,
+              "locked": false,
+              "crime_scene": false
+            }
+          ],
+          "doors": [
+            [
+              "prof_living",
+              "prof_study",
+              "right"
+            ],
+            [
+              "prof_living",
+              "prof_bedroom",
+              "bottom"
+            ],
+            [
+              "prof_study",
+              "prof_garage",
+              "bottom"
+            ]
+          ]
+        },
+        "points": {
+          "p_prof_clothes": {
+            "room": "prof_bedroom",
+            "name": "세탁기 안 의류",
+            "type": "physical",
+            "found": false,
+            "evidence_id": "e_smoke_clothes"
+          },
+          "p_prof_car": {
+            "room": "prof_garage",
+            "name": "교수 차량 내비게이션",
+            "type": "digital",
+            "found": false,
+            "evidence_id": "e_prof_car_log"
+          }
+        },
+        "npcs": {}
+      }
+    },
+    "evidence": {
+      "e_autopsy_report": {
+        "name": "부검 보고서",
+        "type": "physical",
+        "description": "정은채의 두개골 후부(후두부)에 지름 약 6cm의 함몰 골절. 타격 방향과 힘의 크기로 보아 원통형 둔기에 의한 가격으로 추정되며, 사인은 두부 외상에 의한 급성 경막하출혈이다. 체내 일산화탄소 농도(COHb)는 3%로, 화재 시 생존 상태에서 연기를 흡입한 수치치고는 극히 낮다. 피해자는 화재가 시작되기 전에 이미 사망했다.",
+        "found": false
+      },
+      "e_burn_pattern": {
+        "name": "화재 감식 보고서",
+        "type": "document",
+        "description": "소방서 화재 감식반의 보고서. 발화 지점이 실험 벤치가 아닌 바닥 중앙부에서 시작되었으며, 불길이 원형으로 퍼진 전형적인 가연물 살포 패턴이 확인됨. 실험 사고(시약병 전도, 전기 합선 등)에서 나타나는 국소적 연소와는 전혀 다른 양상. '의도적 방화 가능성 매우 높음'이라는 감식관 소견이 첨부되어 있다.",
+        "found": false
+      },
+      "e_accelerant_residue": {
+        "name": "잔류 가연물 분석 결과",
+        "type": "physical",
+        "description": "실험실 바닥 잔해에서 아세톤과 에탄올이 비정상적으로 넓은 범위(약 12㎡)에 걸쳐 검출되었다. 일반적인 시약병 파손 사고로는 이 면적을 설명할 수 없으며, 최소 5L 이상의 유기 용매가 의도적으로 살포된 것으로 추정된다. 바닥의 타일 이음새에서 채취한 미연소 잔류물의 성분 비율이 시약 보관실 재고의 아세톤·에탄올 비율과 일치한다.",
+        "found": false
+      },
+      "e_cctv_footage": {
+        "name": "건물 CCTV 영상",
+        "type": "digital",
+        "description": "건물 정문 CCTV 기록. 23:23 정은채 입관. 23:47 이도건 입관. 01:15 이도건 퇴관. 02:03 출입증으로 입관한 인물 — 검은 패딩에 야구모자를 깊이 눌러 쓰고 있어 얼굴 식별 불가. 체격은 중년 남성으로 추정. 03:21 화재 경보 발동. 문제의 02:03 인물의 퇴관 기록은 정문 CCTV에 없다.",
+        "found": false
+      },
+      "e_entry_log": {
+        "name": "전자 출입 카드 기록",
+        "type": "digital",
+        "description": "건물 전자 출입 시스템 로그. 23:23 정은채(학생증), 23:47 이도건(학생증), 01:15 이도건(퇴관). 02:03에 '윤진하' 명의 교수 출입카드로 입관 기록. 그러나 윤진하 교수는 당일 밤 자택에서 잠들어 있었다고 주장하며, 카드를 3일 전에 분실했다고 진술. 분실 신고 기록은 존재하지 않는다.",
+        "found": false
+      },
+      "e_guard_alibi": {
+        "name": "경비원 위치 추적 데이터",
+        "type": "digital",
+        "description": "경비원 박건우의 스마트폰 GPS 기록. 01:30~02:30 사이 건물에서 약 500m 떨어진 편의점(GS25 관악점)에 위치한 것으로 나타난다. 편의점 내부 CCTV에도 해당 시간 박건우가 라면을 조리하여 먹는 장면이 선명하게 촬영됨. '건물 내 순찰 중이었다'는 증언과 완전히 모순된다.",
+        "found": false
+      },
+      "e_research_notes": {
+        "name": "정은채 연구 노트",
+        "type": "document",
+        "description": "정은채의 개인 연구 노트. 차세대 리튬-황 배터리용 유기 촉매 합성법에 관한 3개월간의 실험 기록. 최종 페이지에 빨간 펜으로 적힌 메모: '이 데이터를 교수님께 절대 보여드리면 안 된다. 논문 제출과 특허 출원을 내 이름으로 먼저 진행해야 한다. 도건 오빠한테 상의할 것.' 연구의 소유권에 대한 심각한 갈등이 있었음을 시사한다.",
+        "found": false
+      },
+      "e_lab_notebook": {
+        "name": "공용 실험 노트 (훼손)",
+        "type": "document",
+        "description": "연구실 공용 실험 노트. 23~28페이지가 깔끔하게 찢겨 나가 있다. 찢긴 흔적은 최근의 것이며, 목차에 따르면 해당 페이지는 정은채의 촉매 합성 핵심 프로세스 — 정확한 온도, 촉매 비율, 반응 시간 — 가 기록된 부분이었다. 누군가 의도적으로 핵심 데이터를 제거한 것이다.",
+        "found": false
+      },
+      "e_patent_draft": {
+        "name": "특허 출원 초안",
+        "type": "digital",
+        "description": "윤진하 교수 PC의 '특허' 폴더에서 발견된 파일. 제목: '리튬-황 배터리용 신규 유기 촉매 합성법 및 이를 이용한 전지 제조방법'. 발명자란에 '윤진하' 단독 기재. 내용은 정은채의 연구 노트와 완전히 동일한 데이터와 공정이며, 심지어 그래프의 축 라벨까지 일치한다. 파일 생성일은 사건 2주 전, 출원 예정일은 사건 3일 후로 메모되어 있다. 정은채의 이름은 어디에도 없다.",
+        "found": false
+      },
+      "e_confidential_contract": {
+        "name": "기업 기술이전 계약서",
+        "type": "document",
+        "description": "윤진하 교수 서랍 금고에서 발견된 기밀 문서. 대기업 'K에너지' 기술연구소와의 기술이전 계약서 초안. 해당 촉매 기술의 독점 실시권을 K에너지에 양도하는 조건으로, 개인 자문료 15억 원과 향후 로열티 3%가 약정되어 있다. 계약 전제 조건: '해당 기술에 대한 제3자의 권리 주장이 없을 것'. 정은채가 이의를 제기하면 계약 자체가 성립 불가능한 구조다.",
+        "found": false
+      },
+      "e_reagent_log": {
+        "name": "시약 반출 기록부",
+        "type": "document",
+        "description": "시약 보관실의 수기 반출 기록. 사건 당일 오후 5시 12분, 아세톤 5L·에탄올 3L가 '실험용'이라는 사유로 반출 기재. 서명란의 필체가 흘려 쓴 것이나, 필체 감정 결과 윤진하 교수의 서명 습관(특히 'ㅎ'의 꺾임과 'ㅈ'의 각도)과 높은 유사도를 보인다. 해당 용량의 시약이 당일 실험에 사용된 기록은 어디에도 없다.",
+        "found": false
+      },
+      "e_threatening_note": {
+        "name": "익명 경고 메모",
+        "type": "physical",
+        "description": "대학원생 라운지 쓰레기통에서 발견된 구겨진 메모지. '은채야, 네 연구가 온전히 네 것이라고 확신하지 마. 이 바닥이 어떻게 돌아가는지 알잖아. 조용히 있는 게 나을 수도 있어.' 종이는 연구실 공용 메모지이며, 필체 감정 결과 한소율의 것과 높은 유사도.",
+        "found": false
+      },
+      "e_dogeon_message": {
+        "name": "이도건 삭제된 메시지 복원",
+        "type": "digital",
+        "description": "이도건 노트북의 카카오톡 백업에서 삭제 메시지 복원. 사건 당일 밤 23:52 정은채에게: '은채야 실험실에서 봤는데 왜 전화 안 받아?' 00:03: '교수님 차가 주차장에 있어. 이 시간에 교수님이 왜 와 있지? 조심해.' 00:45: '문 잠겨있어. 은채야 대답 좀.' 01:10: '포기. 내일 아침에 보자.' 이도건은 교수의 심야 방문을 감지했으나, 실험실에 접근하지 못한 채 돌아갔다.",
+        "found": false
+      },
+      "e_analysis_log": {
+        "name": "NMR 장비 사용 로그",
+        "type": "digital",
+        "description": "기기분석실 NMR(핵자기공명) 스펙트로미터의 자동 기록 로그. 사건 당일 저녁 21:08에 'yoon_jh' 계정으로 분석 세션 개시, 21:43 종료. 분석 시료의 라벨이 정은채의 촉매 샘플('JEC-Cat-07')과 동일하다. 교수가 밤 9시에 학생의 시료를 직접 단독 분석한 것은 매우 이례적이며, 특허 출원을 위한 추가 데이터 확보 시도로 보인다.",
+        "found": false
+      },
+      "e_back_door_footage": {
+        "name": "후문 방범 카메라 영상",
+        "type": "digital",
+        "description": "건물 후문 외부 방범 카메라(정문 CCTV와 별도 관할). 02:51에 검은 패딩을 입은 인물이 후문을 열고 나오는 장면이 촬영됨. 문을 나선 뒤 한 번 뒤돌아 건물 2층(실험실 위치)을 올려다본 뒤 빠른 걸음으로 후문 주차장 방향으로 사라진다. 체격, 보행 패턴, 패딩의 형태가 윤진하 교수의 평소 착장과 유사하다. 약 30분 뒤 화재 경보가 울렸다.",
+        "found": false
+      },
+      "e_eunchae_phone": {
+        "name": "정은채 통화·메시지 기록",
+        "type": "digital",
+        "description": "정은채 스마트폰의 통화 및 메시지 이력. 사건 당일 20:00 윤진하 교수에게 발신(통화 12분 18초). 21:12 이도건에게 메시지: '오빠, 나 교수님이랑 통화했는데 안 되겠어. 내일 연구윤리위원회에 정식으로 이의 제기하려고. 오늘 밤에 자료 정리해놓으려고 실험실 갈 거야.' 23:15 한소율에게 메시지: '언니, 혹시 교수님 특허 출원 건 알고 있었어?' (한소율의 답장 없음)",
+        "found": false
+      },
+      "e_eunchae_diary": {
+        "name": "정은채 디지털 일기",
+        "type": "digital",
+        "description": "정은채 태블릿에 저장된 일기 앱 기록. 3개월 전: '촉매 실험 드디어 성공했다. 효율이 기존 대비 340%. 이건 내 인생의 연구가 될 거야.' 1개월 전: '교수님이 데이터를 자꾸 요구하신다. 전에는 이렇게까지 안 하셨는데. 뭔가 이상하다.' 2주 전: '교수님 PC에서 특허 출원서 초안을 봤다. 내 이름이 없었다. 발명자가 윤진하 단독. 이건 도둑질이다.' 3일 전: '한소율 언니도 알고 있었을까? 왜 아무도 말해주지 않았을까.' 사건 당일: '내일 학교 연구윤리위원회에 제출한다. 오후에 교수님이 전화로 \"다시 생각해봐라, 은채야. 네 미래가 달린 문제다\"라고 하셨다. 위협인가. 그래도 멈출 수 없다.'",
+        "found": false
+      },
+      "e_smoke_clothes": {
+        "name": "연기 냄새 잔류 의류",
+        "type": "physical",
+        "description": "윤진하 교수 침실 세탁기에서 발견된 검은색 패딩 점퍼와 면바지. 이미 세탁 완료 상태였으나, 과학수사대의 섬유 분석 결과 패딩 안감의 충전재에서 미량의 탄화 입자와 아세톤 분해 잔류물이 검출됨. 후문 CCTV에 찍힌 인물의 패딩과 동일한 제조사·모델(노스페이스 눕시 700, 블랙). 교수가 화재 현장 근처에 있었다는 물적 증거.",
+        "found": false
+      },
+      "e_prof_car_log": {
+        "name": "교수 차량 이동 기록",
+        "type": "digital",
+        "description": "윤진하 교수의 차량 내비게이션 주행 기록과 고속도로 하이패스 통과 이력. 사건 당일 새벽 01:35 자택(방배동) 부근 출발. 01:48 남부순환로 경유. 01:52 대학 인근(관악로) 도착. 03:08 대학 인근 출발. 03:24 자택 도착. '자택에서 잠들어 있었다'는 증언을 완전히 부정하는 결정적 물적 증거. 대학 도착 시간(01:52)과 건물 출입 기록(02:03)이 11분 차이로 일치한다.",
+        "found": false
+      }
+    },
+    "testimonies": {
+      "t_yoon": {
+        "witness": "yoon_jinha",
+        "witness_name": "윤진하",
+        "statements": [
+          {
+            "id": "s_yoon_1",
+            "text": "정은채 연구원의 죽음이라니... 제가 10년간 지도한 학생 중 가장 뛰어난 인재였습니다. 화재 원인은 아마 시약 관리 부주의일 겁니다. 은채가 밤늦게 혼자 실험할 때 가끔 안전 수칙을 소홀히 하는 경향이 있었거든요.",
+            "pressed": false,
+            "press_result": "은채는 꼼꼼한 편이었어요, 맞습니다. 하지만 요즘 연구 압박이 상당했으니까. 연구자라면 다들 그렇잖아요. 한 번쯤 실수할 수 있죠. 비극적인 사고예요, 사고.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_burn_pattern",
+              "reveal": "화재 감식 보고서에 따르면 발화 지점은 실험 벤치가 아닌 바닥 중앙부이며, 가연물이 넓게 살포된 전형적인 방화 패턴이 확인되었다. '시약 관리 부주의'로 설명할 수 없는 연소 양상이다. 이 화재는 사고가 아니라 의도적 방화다."
+            }
+          },
+          {
+            "id": "s_yoon_2",
+            "text": "사건 당일 밤에는 집에 있었습니다. 방배동 자택에서 11시쯤 잠들었어요. 아침 7시에 학과 사무실에서 연락 받고 부랴부랴 달려왔습니다. 출입카드가 제 것으로 기록되어 있다고요? 그 카드, 3일 전에 잃어버렸는데요.",
+            "pressed": false,
+            "press_result": "분실 신고를 안 한 건 제 실수입니다. 바빠서 미루다 보니... 누가 제 카드를 주워서 쓴 건지. 아무튼 저는 그 시간에 자고 있었어요.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_entry_log",
+              "reveal": "'분실했다'는 카드로 새벽 02:03에 건물에 진입한 기록이 있다. 분실 신고 기록은 존재하지 않는다. 해당 시간은 정은채가 혼자 실험실에 있던 시간대이며, 이도건이 퇴관(01:15)한 뒤 건물에 정은채와 경비원뿐이던 시간이다. 카드가 '우연히' 그 시간에 사용된 것이라는 설명은 극히 비현실적이다."
+            }
+          },
+          {
+            "id": "s_yoon_3",
+            "text": "은채의 연구요? 리튬-황 배터리 촉매. 유망한 연구였죠. 제 지도 아래서 진행된 거니까 당연히 공동 연구입니다. 특허 출원이요? 아직 그 단계는 아닙니다만, 준비가 되면 공동 명의로 진행할 생각이었어요.",
+            "pressed": false,
+            "press_result": "연구 성과의 기여도 분배는 학계에서 늘 있는 논의예요. 은채와 이 문제로 마찰이 있었느냐고요? 건강한 토론 정도. 지도교수와 학생 사이에 자연스러운 과정이죠.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_patent_draft",
+              "reveal": "교수 PC에서 발견된 특허 출원서 초안은 '윤진하' 단독 명의다. 정은채의 이름은 어디에도 없으며, 내용은 정은채의 연구 노트와 그래프 축 라벨까지 완벽히 일치한다. 출원 예정일은 사건 3일 후. '공동 명의'라는 말도, '아직 그 단계가 아니다'라는 말도 완전한 거짓이다."
+            }
+          },
+          {
+            "id": "s_yoon_4",
+            "text": "시약 보관실은 교수와 박사후연구원만 열쇠가 있습니다. 최근에 제가 시약을 반출한 적은 없어요. 시약 관리는 한소율 연구원 담당이니, 반출 기록은 그쪽에 물어보시는 게 맞을 겁니다.",
+            "pressed": false,
+            "press_result": "아세톤 5리터가 반출되었다고요? 그건 모르는 일인데. 실험에 쓸 양이 아니잖아요. 한소율 씨가 실험용으로 가져간 거 아닌가요? 아니면 은채가 직접...",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_reagent_log",
+              "reveal": "시약 반출 기록의 서명 필체가 윤진하 교수의 것과 일치한다는 감정 결과가 나왔다. '반출한 적 없다'는 증언은 거짓이며, 방화에 사용된 가연물의 출처가 교수 본인임이 드러난다. 아세톤 5L와 에탄올 3L — 실험이 아닌 방화를 위한 양이다."
+            }
+          }
+        ]
+      },
+      "t_lee": {
+        "witness": "lee_dogeon",
+        "witness_name": "이도건",
+        "statements": [
+          {
+            "id": "s_lee_1",
+            "text": "그날 밤 실험실에 갔어요. 은채 누나한테 줄 논문 자료가 있었거든요. 11시 47분에 들어갔는데, 실험실 불이 켜져 있었어요. 문을 두드렸는데 안 열어주더라고요. 그래서 한 시간쯤 라운지에서 기다리다가 포기하고 1시 15분에 나왔습니다.",
+            "pressed": false,
+            "press_result": "은채 누나가 실험에 집중하면 원래 문 안 열어요. 이어폰 끼고 작업하니까 노크 소리도 못 듣는 경우가 많아서. 대수롭지 않게 생각했는데... 그때 안에서 무슨 일이 있었을까 생각하면 아직도 잠이 안 와요.",
+            "press_adds": [],
+            "contradiction": null
+          },
+          {
+            "id": "s_lee_2",
+            "text": "교수님과 은채 누나 사이가요? 글쎄요, 지도교수와 학생 사이에 의견 차이가 있는 건 자연스러운 거 아닌가요. 연구 방향 정도? 제가 알 바가 아닙니다. 전 졸업에만 집중하고 싶어요.",
+            "pressed": false,
+            "press_result": "...솔직히 교수님이 은채 누나한테 데이터를 자꾸 넘기라고 압박하시는 건 봤어요. 근데 지도교수가 학생 데이터를 관리하는 건 당연한 거잖아요? 전 그냥... 관여하고 싶지 않았어요. 졸업 안 시켜주시면 제 인생이 끝나는 거니까.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_dogeon_message",
+              "reveal": "이도건이 삭제한 카카오톡 메시지에 '교수님 차가 주차장에 있어. 이 시간에 교수님이 왜 와 있지? 조심해.'라고 보냈다. 교수와 정은채의 갈등을 알고 있었을 뿐 아니라, 교수의 심야 방문이 위험하다는 것까지 인지하고 있었다. '알 바 아니다'라는 태도는 거짓이며, 위험을 경고하면서도 직접 행동하지 못한 자신의 무력감을 숨기고 있었다."
+            }
+          },
+          {
+            "id": "s_lee_3",
+            "text": "은채 누나를 좋아했냐고요? ...네, 좋아했어요. 3개월 전에 고백했다가 거절당했습니다. 하지만 그 때문에 뭔가를 할 사람이 아닙니다. 저는요.",
+            "pressed": false,
+            "press_result": "거절당하고 나서 오히려 은채 누나 연구를 도와주고 싶었어요. 마음이라도 전하고 싶으니까. 그날 밤에 자료 가져간 것도 그래서예요. 그런데... 그게 마지막이 될 줄은 몰랐잖아요.",
+            "press_adds": [],
+            "contradiction": null
+          }
+        ]
+      },
+      "t_han": {
+        "witness": "han_soyul",
+        "witness_name": "한소율",
+        "statements": [
+          {
+            "id": "s_han_1",
+            "text": "은채와는 선후배 사이예요. 같은 연구실에서 5년째 함께하고 있죠. 경쟁이요? 학자 사이에 자극을 주고받는 건 자연스러운 거예요. 사이가 나빴다는 건 오해입니다.",
+            "pressed": false,
+            "press_result": "...솔직히 최근에 연구비 배분 문제로 좀 불편했어요. 교수님이 은채 쪽 연구에만 예산을 집중하시니까. 제 과제는 축소되고. 하지만 은채 연구가 좋은 건 인정해요. 그게 더 억울한 거지만.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_threatening_note",
+              "reveal": "라운지 쓰레기통에서 한소율 필체의 메모가 발견되었다. '네 연구가 온전히 네 것이라고 확신하지 마. 조용히 있는 게 나을 수도 있어.' 건강한 경쟁이라면서 이런 내용의 메모를 썼다는 것은 모순이다. 정은채에게 무언가를 경고하려 했거나, 위협한 것이다."
+            }
+          },
+          {
+            "id": "s_han_2",
+            "text": "사건 당일 밤에는 자취방에서 논문 작성하고 있었어요. 은채한테 메시지 받았다고요? 11시 15분에? 확인 안 했어요. 알림 끄고 집중 모드로 작업 중이었거든요.",
+            "pressed": false,
+            "press_result": "교수님 특허 출원 건? ...어렴풋이 알고 있긴 했어요. 교수님이 은채 데이터로 뭔가 준비하시는 거. 하지만 이 바닥에서 교수가 학생 연구를 가져가는 건... 완전히 새로운 일은 아니거든요. 제 연구도 1저자가 교수님이셨으니까요.",
+            "press_adds": [],
+            "contradiction": null
+          },
+          {
+            "id": "s_han_3",
+            "text": "시약 보관실 열쇠는 교수님과 저 둘만 갖고 있어요. 하지만 사건 당일에는 시약을 반출한 적 없습니다. 아세톤 5리터요? 저는 아닙니다. 반출 기록 서명을 확인해보세요.",
+            "pressed": false,
+            "press_result": "교수님 필체랑 비슷하다고요? 글쎄요, 저는 교수님 서명을 모사할 능력도, 이유도 없어요. 확실한 건 제가 한 게 아니라는 거예요.",
+            "press_adds": [],
+            "contradiction": null
+          }
+        ]
+      },
+      "t_park": {
+        "witness": "park_gunwoo",
+        "witness_name": "박건우",
+        "statements": [
+          {
+            "id": "s_park_1",
+            "text": "밤새 건물 순찰했습니다. 특이사항 없었고요. 새벽 3시 넘어서 갑자기 화재 경보가 울려서 2층에 연기 나는 걸 확인하고 바로 119 신고했습니다.",
+            "pressed": false,
+            "press_result": "순찰 경로요? 1층, 2층, 3층 돌고 관제실로 복귀. 한 바퀴에 40분쯤 걸려요. 새벽 2시에 마지막 순찰 돌았는데 그때까지는 이상 없었습니다. 그 다음은 경보 울리기 직전에 나갔으니까.",
+            "press_adds": [],
+            "contradiction": {
+              "evidence_id": "e_guard_alibi",
+              "reveal": "GPS 데이터와 편의점 CCTV에 의하면 새벽 1시 30분~2시 30분 사이 건물에서 500m 떨어진 편의점에 있었다. '순찰 중이었다'는 증언은 거짓이며, 이 시간대에 범인이 건물에 출입한 것이다. 경비원의 부재가 범행을 가능하게 만들었다."
+            }
+          },
+          {
+            "id": "s_park_2",
+            "text": "새벽 2시에 출입 기록이 찍혀 있다고요? 그 시간에는... 저도 관제실에 있었는데, 모니터를 못 봤나 봅니다. 화장실 갔었을 수도 있어요.",
+            "pressed": false,
+            "press_result": "...아, 솔직히 말씀드릴게요. 편의점에 잠깐 다녀왔어요. 배가 고파서 라면 하나 사먹으러. 30분... 아니, 한 시간쯤 나갔다 왔어요. 죄송합니다. 근무 태만인 건 맞지만, 그 때문에 사람이 죽은 거 아니잖아요.",
+            "press_adds": [],
+            "contradiction": null
+          },
+          {
+            "id": "s_park_3",
+            "text": "윤진하 교수님이요? 이 건물에서 가장 늦게까지 남아 계시는 분이에요. 저녁 9시, 10시까지 계신 날도 많았고요. 근데 그날 밤에 오셨는지는... 제가 없었으니까 못 봤죠.",
+            "pressed": false,
+            "press_result": "교수님이 저한테 편의점 외출을 눈감아달라고 부탁한 적 있냐고요? 뭐... 교수님이 가끔 늦게 오시면서 '출입 기록 좀 신경 쓸 것 없다'고 하신 적은 있어요. 근데 그게 무슨 의미인지는 저도... 그냥 야근하시니까 그런 거 아닌가 했어요.",
+            "press_adds": [],
+            "contradiction": null
+          }
+        ]
+      }
+    },
+    "deductions": {
+      "d_arson_confirmed": {
+        "name": "의도적 방화 확인",
+        "required_evidence": [
+          "e_burn_pattern",
+          "e_accelerant_residue"
+        ],
+        "unlocked": false,
+        "description": "화재 감식 결과 실험 사고가 아닌 의도적 방화가 확인되었다. 가연물(아세톤·에탄올)이 실험실 바닥에 넓게 살포된 뒤 점화된 것이다. 부검 결과 피해자가 화재 이전에 이미 사망한 상태였으므로, 이 방화는 살인을 은폐하기 위한 것이었다. 누군가 정은채를 살해한 뒤, 증거를 불에 태워 사고로 위장하려 했다."
+      },
+      "d_research_theft": {
+        "name": "연구 성과 갈취",
+        "required_evidence": [
+          "e_research_notes",
+          "e_patent_draft"
+        ],
+        "unlocked": false,
+        "description": "정은채의 연구 노트에는 '데이터를 교수에게 보여주면 안 된다'는 절박한 메모가 있고, 교수 PC에서는 해당 연구를 단독 명의로 특허 출원하려는 초안이 발견되었다. 윤진하 교수는 학생의 혁신적 연구 성과를 조직적으로 가로채고 있었다. 학문의 이름으로 자행된 착취."
+      },
+      "d_financial_motive": {
+        "name": "15억의 동기",
+        "required_evidence": [
+          "e_confidential_contract",
+          "e_patent_draft"
+        ],
+        "unlocked": false,
+        "description": "특허 출원은 단순한 학문적 공명심이 아니었다. K에너지와의 기술이전 계약에 15억 원의 자문료와 로열티가 걸려 있었다. 계약의 전제 조건은 '제3자의 권리 주장이 없을 것'. 정은채가 연구윤리위원회에 이의를 제기하면 특허 출원은 무효, 계약은 파기, 교수 경력은 끝이다. 학자의 탐욕이 만들어낸 살인의 동기."
+      },
+      "d_midnight_intruder": {
+        "name": "심야 침입자의 정체",
+        "required_evidence": [
+          "e_entry_log",
+          "e_cctv_footage"
+        ],
+        "unlocked": false,
+        "description": "새벽 2시 03분, 윤진하 교수의 출입카드로 건물에 진입한 인물. 교수가 카드를 '분실했다'고 주장하나 신고 기록은 없다. CCTV에는 모자를 눌러쓴 중년 남성 체격의 인물이 찍혀 있다. 이도건이 퇴관한 뒤, 정은채가 혼자 남은 건물에 누군가가 의도적으로 찾아온 것이다."
+      },
+      "d_guard_gap": {
+        "name": "경비 공백의 의미",
+        "required_evidence": [
+          "e_guard_alibi",
+          "e_entry_log"
+        ],
+        "unlocked": false,
+        "description": "경비원 박건우가 편의점에 간 시간(01:30~02:30)과 범인이 건물에 진입한 시간(02:03)이 정확히 겹친다. 경비원의 야간 외출 습관을 알고 있는 사람이라면 이 공백을 노릴 수 있다. 윤진하 교수는 10년 이상 이 건물에서 근무하며, 야간 경비 패턴을 잘 파악하고 있었을 것이다."
+      },
+      "d_victim_knew": {
+        "name": "피해자는 알고 있었다",
+        "required_evidence": [
+          "e_eunchae_diary",
+          "e_eunchae_phone"
+        ],
+        "unlocked": false,
+        "description": "정은채는 교수의 연구 갈취를 발견하고, 연구윤리위원회 제소를 준비하고 있었다. 사건 당일 교수에게 이를 직접 통보했고, 교수는 '네 미래가 달린 문제'라며 회유 또는 위협했다. 정은채는 밤에 자료를 정리하러 실험실에 갔다. 그녀는 자신이 위험에 처해 있다는 것을 어렴풋이 느꼈으나, 충분히 대비하지 못했다."
+      },
+      "d_culprit_identified": {
+        "name": "진범 특정",
+        "required_evidence": [
+          "e_autopsy_report",
+          "e_back_door_footage",
+          "e_prof_car_log"
+        ],
+        "unlocked": false,
+        "description": "부검 결과 화재 이전의 둔기 외상이 사인이다. 후문 CCTV에 화재 직전(02:51) 건물을 빠져나가는 인물의 체격과 패딩이 윤진하 교수의 것과 일치한다. 교수의 차량 이동 기록은 심야에 자택과 대학을 왕복한 사실을 증명한다. '집에서 잠들어 있었다'는 알리바이는 물리적으로 불가능하다. 연구 성과 갈취가 들통나는 것을 막기 위해, 교수가 자신의 학생을 살해한 뒤 방화로 은폐한 것이다."
+      }
+    },
+    "suspects": [
+      {
+        "id": "yoon_jinha",
+        "name": "윤진하 (유기화학 교수)",
+        "motive": "정은채의 리튬-황 배터리 촉매 연구를 단독 특허로 출원하여 K에너지와 15억 기술이전 계약을 확보하려 했다. 정은채가 연구윤리위원회에 제소하겠다고 통보하자, 30년 학문 경력의 파멸, 형사 고발(업무상 배임), 15억 계약 파기라는 파국에 직면했다.",
+        "alibi": "자택(방배동)에서 잠들어 있었다고 주장. 출입카드가 사건 현장에서 사용되었으나 '분실'을 주장(신고 기록 없음). 차량 이동 기록이 심야 대학 왕복을 증명."
+      },
+      {
+        "id": "lee_dogeon",
+        "name": "이도건 (석박통합 대학원생)",
+        "motive": "정은채를 연모했으나 거절당함. 정은채가 교수에 대항하면 연구실 전체가 와해되어 자신의 졸업도 위태로워짐. 교수의 눈치를 보며 침묵을 선택한 소극적 방관자.",
+        "alibi": "23:47 입관, 01:15 퇴관 — CCTV에 확인됨. 실험실 문 앞에서 응답 없어 돌아갔다고 주장. 삭제된 메시지에서 교수의 심야 방문을 인지했으나 행동하지 못한 정황."
+      },
+      {
+        "id": "han_soyul",
+        "name": "한소율 (선배 박사후연구원)",
+        "motive": "정은채와 동일 연구 분야에서 경쟁. 교수의 지원이 정은채에 집중되면서 자신의 연구비가 삭감됨. 위협적 메모를 남겼으나, 실제로는 교수의 행태를 알면서도 학계에서 살아남기 위해 침묵한 공범적 방관자.",
+        "alibi": "자취방에서 논문 작성 중이었다고 주장. 증명할 사람 없음. 정은채의 메시지를 보지 못했다고 주장."
+      },
+      {
+        "id": "park_gunwoo",
+        "name": "박건우 (야간 건물 경비원)",
+        "motive": "직접적 동기 미확인. 그러나 근무 중 자리를 비운 사실을 숨기고 있으며, 교수가 가끔 '출입 기록 신경 쓸 것 없다'고 한 발언이 의미심장. 경비 공백이 범행을 가능하게 만든 조건.",
+        "alibi": "건물 내 순찰 중이었다고 주장. GPS와 편의점 CCTV에 의해 01:30~02:30 편의점 외출이 확인됨."
+      }
+    ],
+    "solution": {
+      "culprit": "yoon_jinha",
+      "method": "윤진하 교수는 사건 당일 오후 8시 정은채의 전화로 연구윤리위원회 제소 계획을 통보받았다. 회유에 실패한 교수는 저녁 9시 기기분석실에서 정은채의 시료를 마지막으로 확인한 뒤, 오후 5시에 미리 반출해둔 아세톤 5L와 에탄올 3L를 실험실 인근에 은닉했다. 새벽 1시 35분 자택을 출발하여 1시 52분 대학에 도착. 경비원이 편의점에 간 공백(01:30~02:30)을 노려 2시 03분 자신의 출입카드로 건물에 진입했다. 2층 실험실에서 야간 작업 중이던 정은채와 대면. '제소를 철회하라'는 최후의 회유가 실패하자, 실험대 위의 대형 시약병(500mL 유리병)으로 피해자의 후두부를 가격하여 살해했다. 이후 은닉해둔 유기 용매를 실험실 전체에 뿌리고 불을 질러 증거 인멸을 시도했다. 2시 51분 후문으로 빠져나와 차량으로 귀가. 귀가 후 범행 시 착용한 검은 패딩을 즉시 세탁했으나, 충전재에 미량의 탄화 입자가 잔류했다.",
+      "motive": "정은채의 리튬-황 배터리 촉매 연구는 기존 대비 340% 효율 향상을 달성한 혁신적 성과였다. 윤진하 교수는 이를 자신의 단독 연구로 특허 출원하고, K에너지에 기술이전하여 15억 원의 자문료와 로열티를 확보하려 했다. 정은채가 특허 초안에서 자신의 이름이 빠진 것을 발견하고 연구윤리위원회 제소를 통보하자, 30년 학문 경력의 파멸과 형사 처벌(업무상 배임), 15억 계약 파기라는 연쇄적 파국에 직면했다. 교수에게 학생의 연구를 가로채는 것은 수십 년간의 '관행'이었지만, 정은채는 그 관행에 순응하지 않은 최초의 학생이었다. '네 미래가 달린 문제'라는 말은 위협이 아니라 자신의 미래에 대한 절박한 고백이었으며, 결국 그 절박함이 살인으로 이어졌다.",
+      "key_evidence": [
+        "e_autopsy_report",
+        "e_patent_draft",
+        "e_entry_log",
+        "e_back_door_footage",
+        "e_prof_car_log"
+      ]
+    },
+    "unlocks": [
+      {
+        "trigger": {
+          "type": "evidence_found",
+          "id": "e_research_notes"
+        },
+        "action": {
+          "type": "unlock_room",
+          "location": "science_building",
+          "room": "professor_office"
+        }
+      },
+      {
+        "trigger": {
+          "type": "deduction_unlocked",
+          "id": "d_arson_confirmed"
+        },
+        "action": {
+          "type": "unlock_room",
+          "location": "science_building",
+          "room": "reagent_room"
+        }
+      },
+      {
+        "trigger": {
+          "type": "evidence_found",
+          "id": "e_eunchae_phone"
+        },
+        "action": {
+          "type": "unlock_location",
+          "location": "eunchae_apartment"
+        }
+      },
+      {
+        "trigger": {
+          "type": "deduction_unlocked",
+          "id": "d_research_theft"
+        },
+        "action": {
+          "type": "unlock_npc",
+          "location": "science_building",
+          "npc": "han_soyul"
+        }
+      },
+      {
+        "trigger": {
+          "type": "deduction_unlocked",
+          "id": "d_midnight_intruder"
+        },
+        "action": {
+          "type": "unlock_location",
+          "location": "professor_home"
+        }
+      },
+      {
+        "trigger": {
+          "type": "contradiction_found",
+          "id": "s_yoon_2"
+        },
+        "action": {
+          "type": "unlock_location",
+          "location": "eunchae_apartment"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,47 @@
+{
+  "panels": {
+    "size": 300,
+    "placement": {
+      "사건개요": "modal-dismissible",
+      "사건현황": "left",
+      "증거함": "right",
+      "현장지도": "modal",
+      "증언록": "modal",
+      "인물파일": "modal",
+      "의뢰함": "modal",
+      "추리보드": "modal",
+      "하율메모": "dock-right",
+      "사건기록": "modal-dismissible",
+      "사건기록열기": "left",
+      "현장정보": "right",
+      "증거품탐색": "dock-right",
+      "범인지목": "modal",
+      "사건로딩": "modal",
+      "이의제기": "dock"
+    },
+    "modalGroups": {
+      "investigation": ["현장지도", "증언록", "인물파일", "의뢰함", "추리보드", "범인지목"]
+    },
+    "dockWidth": 300,
+    "autoRefresh": {
+      "현장지도": false,
+      "추리보드": false,
+      "이의제기": false
+    }
+  },
+  "chat": {
+    "maxWidth": 680,
+    "align": "center"
+  },
+  "theme": {
+    "accent": "#c8a44e",
+    "bg": "#0a0e1a",
+    "surface": "#121829",
+    "surfaceLight": "#1a2035",
+    "userBubble": "#1a2540",
+    "assistantBubble": "#111a30",
+    "border": "#1e2a45",
+    "text": "#e0ddd4",
+    "textDim": "#7a7a8a"
+  }
+}

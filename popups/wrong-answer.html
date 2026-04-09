@@ -1,0 +1,28 @@
+<style>
+  .wrong-container {
+    text-align: center;
+    padding: 16px;
+  }
+  .wrong-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+    animation: wrongShake 0.4s ease-in-out;
+  }
+  .wrong-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: #e74c3c;
+    letter-spacing: 1px;
+  }
+  @keyframes wrongShake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+</style>
+<div class="wrong-container">
+  <div class="wrong-icon">✖</div>
+  <div class="wrong-text">그건 아닙니다...</div>
+</div>

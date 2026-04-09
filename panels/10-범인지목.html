@@ -1,0 +1,219 @@
+<panel-actions>
+[
+  {
+    "id": "accuse",
+    "label": "범인 지목",
+    "description": "용의자를 범인으로 지목한다. insight 80 이상 필요",
+    "params": { "suspect_id": "용의자 ID" },
+    "available_when": "case_phase === 'investigation' && insight >= 80",
+    "needs_ui": true
+  }
+]
+</panel-actions>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .confrontation { font-family: 'Segoe UI', sans-serif; color: #e0ddd4; min-height: 350px; }
+
+  .header {
+    text-align: center; padding-bottom: 12px; margin-bottom: 16px;
+    border-bottom: 2px solid #c8a44e;
+  }
+  .header-title {
+    font-size: 20px; font-weight: 900; color: #c8a44e;
+    letter-spacing: 3px; text-transform: uppercase;
+  }
+  .header-sub { font-size: 11px; color: #7a7a8a; margin-top: 4px; }
+
+  .insight-bar {
+    margin-bottom: 16px; padding: 8px 12px;
+    background: #0d1220; border-radius: 6px; border: 1px solid #1e2a45;
+  }
+  .insight-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
+  .insight-label .label { color: #7a7a8a; }
+  .insight-label .value { color: #c8a44e; font-weight: 700; }
+  .insight-track { height: 8px; background: #0a0e1a; border-radius: 4px; overflow: hidden; }
+  .insight-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, #c8a44e, #e8c86e);
+    transition: width 0.4s;
+  }
+  .insight-threshold {
+    font-size: 10px; color: #7a7a8a; text-align: right; margin-top: 2px;
+  }
+  .insight-ready { color: #4ecdc4; font-weight: 600; }
+
+  .section-title {
+    font-size: 11px; font-weight: 700; color: #c8a44e;
+    letter-spacing: 1px; margin-bottom: 8px;
+  }
+
+  .suspect-lineup { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .suspect-card {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: 8px;
+    background: #0d1220; border: 2px solid #1e2a45;
+    transition: all 0.3s; cursor: pointer;
+  }
+  .suspect-card:hover { border-color: #c8a44e; transform: translateX(4px); }
+  .suspect-card.selected { border-color: #e74c3c; background: #1a1015; box-shadow: 0 0 12px rgba(231,76,60,0.2); }
+  .suspect-card.disabled { opacity: 0.4; cursor: not-allowed; }
+  .suspect-avatar { font-size: 28px; }
+  .suspect-info { flex: 1; }
+  .suspect-name { font-size: 14px; font-weight: 700; }
+  .suspect-role { font-size: 11px; color: #7a7a8a; }
+  .suspect-motive { font-size: 10px; color: #b0b0b0; margin-top: 2px; font-style: italic; }
+
+  .key-evidence {
+    margin-bottom: 16px; padding: 10px;
+    background: #0d1220; border-radius: 6px; border-left: 3px solid #c8a44e;
+  }
+  .ev-chain { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ev-tag {
+    font-size: 10px; padding: 3px 8px; border-radius: 4px;
+    background: #1a2035; border: 1px solid #1e2a45;
+  }
+
+  .accuse-section { text-align: center; margin-top: 12px; }
+  .accuse-btn {
+    padding: 12px 32px; border: none; border-radius: 8px; cursor: pointer;
+    font-size: 14px; font-weight: 900; letter-spacing: 2px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: #fff; transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(231,76,60,0.3);
+  }
+  .accuse-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(231,76,60,0.4); }
+  .accuse-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+  .accuse-warning {
+    font-size: 10px; color: #e74c3c; margin-top: 6px; opacity: 0.7;
+  }
+
+  .not-ready {
+    text-align: center; padding: 40px 20px; color: #7a7a8a;
+  }
+  .not-ready .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+  .not-ready .msg { font-size: 13px; line-height: 1.6; }
+</style>
+
+<div class="confrontation">
+  <div class="header">
+    <div class="header-title">🎯 범인 지목</div>
+    <div class="header-sub">ACCUSATION</div>
+  </div>
+
+  <div class="insight-bar">
+    <div class="insight-label">
+      <span class="label">💡 통찰력</span>
+      <span class="value">{{insight}} / {{insight_max}}</span>
+    </div>
+    <div class="insight-track">
+      <div class="insight-fill" style="width:{{percentage insight insight_max}}%"></div>
+    </div>
+    {{#if (gte insight 80)}}
+    <div class="insight-threshold insight-ready">✓ 범인 지목 가능</div>
+    {{else}}
+    <div class="insight-threshold">80 이상 필요 (현재 {{insight}})</div>
+    {{/if}}
+  </div>
+
+  <div id="content"></div>
+</div>
+
+<script>
+  var d = __panelBridge.data;
+  var caseData = d['case'] || {};
+  var suspects = caseData.suspects || [];
+  var evidence = caseData.evidence || {};
+  var deductions = caseData.deductions || {};
+  var solution = caseData.solution || {};
+  var confrontation = caseData._confrontation;
+  var contentEl = shadow.getElementById('content');
+  var typeIcons = { physical: '🧪', document: '📄', digital: '💻', weapon: '🔪', testimony: '🗣️' };
+
+  var phase = d.case_phase;
+
+  if (phase === 'confrontation') {
+    // confrontation 중에는 이의제기 dock 패널에서 처리
+    contentEl.innerHTML = '<div class="not-ready"><div class="icon">⚡</div><div class="msg">논파가 진행 중입니다.<br>하단 이의제기 패널에서 증거를 제시하세요.</div></div>';
+  } else {
+    renderAccusePhase();
+  }
+
+  function renderAccusePhase() {
+    var canAccuse = d.insight >= 80;
+    var keyEvidence = solution.key_evidence || [];
+    var foundKeyCount = keyEvidence.filter(function(eid) { return evidence[eid]?.found; }).length;
+    var unlockedDedCount = Object.values(deductions).filter(function(dd) { return dd.unlocked; }).length;
+    var allConditionsMet = canAccuse && foundKeyCount >= 3 && unlockedDedCount >= 3;
+
+    if (suspects.length === 0) {
+      contentEl.innerHTML = '<div class="not-ready"><div class="icon">🔍</div><div class="msg">아직 용의자가 확인되지 않았습니다.</div></div>';
+      return;
+    }
+
+    var html = '';
+
+    // Requirements checklist
+    html += '<div class="section-title">📋 지목 조건</div>';
+    html += '<div class="key-evidence" style="margin-bottom:12px"><div class="ev-chain" style="flex-direction:column;gap:4px">';
+    html += '<span class="ev-tag" style="border-left:2px solid ' + (canAccuse ? '#4ecdc4' : '#e74c3c') + '">' + (canAccuse ? '✓' : '✗') + ' 통찰력 80+ (현재 ' + d.insight + ')</span>';
+    html += '<span class="ev-tag" style="border-left:2px solid ' + (foundKeyCount >= 3 ? '#4ecdc4' : '#e74c3c') + '">' + (foundKeyCount >= 3 ? '✓' : '✗') + ' 핵심 증거 3개+ (현재 ' + foundKeyCount + ')</span>';
+    html += '<span class="ev-tag" style="border-left:2px solid ' + (unlockedDedCount >= 3 ? '#4ecdc4' : '#e74c3c') + '">' + (unlockedDedCount >= 3 ? '✓' : '✗') + ' 추리 3개+ (현재 ' + unlockedDedCount + ')</span>';
+    html += '</div></div>';
+
+    // Suspect lineup
+    html += '<div class="section-title">👥 용의자</div><div class="suspect-lineup">';
+    suspects.forEach(function(s) {
+      var cls = 'suspect-card' + (allConditionsMet ? '' : ' disabled');
+      html += '<div class="' + cls + '" data-sid="' + s.id + '"><span class="suspect-avatar">👤</span><div class="suspect-info">';
+      html += '<div class="suspect-name">' + s.name + '</div>';
+      if (s.motive) html += '<div class="suspect-motive">' + s.motive + '</div>';
+      html += '</div></div>';
+    });
+    html += '</div>';
+
+    html += '<div class="accuse-section"><button class="accuse-btn" id="accuseBtn" disabled>🎯 범인 지목</button></div>';
+    contentEl.innerHTML = html;
+
+    var selectedSuspect = null;
+    if (allConditionsMet) {
+      shadow.querySelectorAll('.suspect-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+          shadow.querySelectorAll('.suspect-card').forEach(function(c) { c.classList.remove('selected'); });
+          card.classList.add('selected');
+          selectedSuspect = card.dataset.sid;
+          shadow.getElementById('accuseBtn').disabled = false;
+        });
+      });
+    }
+
+    shadow.getElementById('accuseBtn')?.addEventListener('click', function() {
+      if (!selectedSuspect) return;
+      __panelBridge.executeAction('accuse', { suspect_id: selectedSuspect });
+    });
+  }
+
+  // Panel action registrations
+  __panelBridge.registerAction('accuse', async function(params) {
+    var res = await __panelBridge.runTool('engine', { action: 'accuse', suspect_id: params.suspect_id });
+    if (!res.result) return;
+    if (res.result.correct) {
+      var eventStr = '[범인지목] suspect_id=' + params.suspect_id + ', correct=true, culprit=' + res.result.culprit_name + ', phase=confrontation';
+      if (res.result.current_target_name) {
+        eventStr += '\n[첫 저항] target=' + res.result.current_target_name + ', found=' + res.result.target_found + ', desc=' + res.result.current_target_desc;
+      }
+      await __panelBridge.queueEvent(eventStr);
+      __panelBridge.closeModal('범인지목');
+      __panelBridge.sendMessage('*[' + res.result.culprit_name + '을(를) 범인으로 지목한다]*');
+    } else if (res.result.correct === false) {
+      await __panelBridge.queueEvent('[범인지목] suspect_id=' + params.suspect_id + ', correct=false');
+      __panelBridge.closeModal('범인지목');
+      __panelBridge.sendMessage('*[범인을 지목했지만 빗나갔다]*');
+    } else {
+      // 조건 미충족
+      __panelBridge.showToast(res.result.message || '조건이 부족합니다');
+    }
+  });
+
+  // prove 액션은 이의제기 패널에서 처리
+</script>

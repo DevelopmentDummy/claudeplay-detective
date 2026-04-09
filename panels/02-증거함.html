@@ -1,0 +1,113 @@
+<!-- deps: {{case_phase}} -->
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .evidence-box { font-family: 'Segoe UI', sans-serif; color: #e0ddd4; }
+  .header {
+    font-size: 11px; font-weight: 700; color: #c8a44e; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 8px; padding-bottom: 6px;
+    border-bottom: 1px solid #1e2a45;
+  }
+  .empty { font-size: 12px; color: #7a7a8a; text-align: center; padding: 20px 0; }
+  .evidence-list { display: flex; flex-direction: column; gap: 2px; }
+  .ev-entry {}
+  .evidence-card {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px; border-radius: 6px; cursor: pointer;
+    background: #0a0e1a; border: 1px solid #1e2a45;
+    transition: all 0.2s;
+  }
+  .evidence-card:hover { border-color: #c8a44e; background: #121829; }
+  .evidence-card.selected { border-color: #c8a44e; background: #1a2035; }
+  .ev-icon { font-size: 16px; flex-shrink: 0; }
+  .ev-info { flex: 1; min-width: 0; }
+  .ev-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev-type { font-size: 10px; color: #7a7a8a; }
+  .ev-pin { font-size: 11px; color: #3a3a4a; transition: all 0.2s; flex-shrink: 0; }
+  .evidence-card.selected .ev-pin { color: #c8a44e; }
+  .ev-desc {
+    font-size: 11px; line-height: 1.6; color: #b0b0b0; padding: 8px 10px 8px 34px;
+    background: #0d1220; border-left: 2px solid #c8a44e;
+    margin: 2px 0 4px; border-radius: 0 0 6px 6px;
+    display: none;
+    animation: slideDown 0.15s ease-out;
+  }
+  .ev-desc.show { display: block; }
+  @keyframes slideDown {
+    from { opacity: 0; max-height: 0; }
+    to { opacity: 1; max-height: 200px; }
+  }
+  .unknown-count {
+    font-size: 11px; color: #7a7a8a; text-align: center; margin-top: 8px;
+    padding: 4px; border-top: 1px solid #1e2a45;
+  }
+</style>
+<div class="evidence-box">
+  <div class="header">증거함</div>
+  <div class="evidence-list" id="list"></div>
+  <div class="unknown-count" id="unknown"></div>
+</div>
+
+<script>
+  var list = shadow.getElementById('list');
+  var unknownEl = shadow.getElementById('unknown');
+  var typeIcons = { physical: '🧪', document: '📄', digital: '💻', weapon: '🔪', testimony: '🗣️' };
+  var currentOpen = null;
+
+  function render() {
+    var d = __panelBridge.data;
+    var caseEvidence = (d['case'] || {}).evidence || {};
+    var found = [];
+    var unfoundCount = 0;
+
+    Object.entries(caseEvidence).forEach(function(entry) {
+      var id = entry[0], ev = entry[1];
+      if (ev.found) found.push({ id: id, name: ev.name, type: ev.type, description: ev.description });
+      else unfoundCount++;
+    });
+
+    if (found.length === 0 && unfoundCount === 0) {
+      list.innerHTML = '<div class="empty">수집된 증거가 없습니다</div>';
+    } else {
+      list.innerHTML = found.map(function(ev) {
+        var icon = typeIcons[ev.type] || '❓';
+        return '<div class="ev-entry" data-id="' + ev.id + '">' +
+          '<div class="evidence-card" data-id="' + ev.id + '">' +
+            '<span class="ev-icon">' + icon + '</span>' +
+            '<div class="ev-info"><div class="ev-name">' + ev.name + '</div><div class="ev-type">' + (ev.type || '') + '</div></div>' +
+            '<span class="ev-pin">📌</span>' +
+          '</div>' +
+          '<div class="ev-desc" data-desc-id="' + ev.id + '">' + (ev.description || '상세 정보 없음') + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    if (unfoundCount > 0) {
+      unknownEl.textContent = '미발견 증거 ' + unfoundCount + '건';
+    } else {
+      unknownEl.textContent = '';
+    }
+
+    currentOpen = null;
+    shadow.querySelectorAll('.evidence-card').forEach(function(card) {
+      card.addEventListener('click', function() {
+        var id = card.dataset.id;
+        var desc = shadow.querySelector('[data-desc-id="' + id + '"]');
+
+        if (currentOpen === id) {
+          card.classList.remove('selected');
+          if (desc) desc.classList.remove('show');
+          currentOpen = null;
+        } else {
+          shadow.querySelectorAll('.evidence-card').forEach(function(c) { c.classList.remove('selected'); });
+          shadow.querySelectorAll('.ev-desc').forEach(function(d) { d.classList.remove('show'); });
+          card.classList.add('selected');
+          if (desc) desc.classList.add('show');
+          currentOpen = id;
+        }
+      });
+    });
+  }
+
+  render();
+  __panelBridge.on('turnEnd', function() { render(); });
+</script>
