@@ -92,19 +92,19 @@ const ACTIONS = {
 
   accept_case(ctx, args) {
     const { case_id } = args;
-    const seeds = ctx.data['case-seeds'];
+    const baseSeeds = Array.isArray(ctx.data['case-seeds']) ? ctx.data['case-seeds'] : [];
+    const extraSeeds = Array.isArray(ctx.data['case-seeds-extra']) ? ctx.data['case-seeds-extra'] : [];
+    const completed = new Set(Array.isArray(ctx.data['case-completed']) ? ctx.data['case-completed'] : []);
+    const allSeeds = [...baseSeeds, ...extraSeeds].filter(c => !completed.has(c.id));
 
-    if (!Array.isArray(seeds) || seeds.length === 0) {
+    if (allSeeds.length === 0) {
       return { result: { success: false, message: '수임 가능한 사건이 없습니다.' } };
     }
 
-    // Find the case by id
-    const idx = seeds.findIndex(c => c.id === case_id);
-    if (idx === -1) {
+    const caseData = allSeeds.find(c => c.id === case_id);
+    if (!caseData) {
       return { result: { success: false, message: `사건 '${case_id}'을(를) 찾을 수 없습니다.` } };
     }
-
-    const caseData = seeds[idx];
 
     // seeds에서 제거하지 않음 — case-sync가 백그라운드에서 일괄 처리
 

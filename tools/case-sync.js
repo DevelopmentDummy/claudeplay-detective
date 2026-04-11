@@ -1,21 +1,49 @@
 // tools/case-sync.js — 케이스 시드 동기화 도구
-// 새 케이스 주입 + 사용된 케이스 제거를 세션과 페르소나 양쪽에 원자적으로 처리
+// 새 케이스를 extra에 추가 + 완료한 케이스를 completed에 기록
+// case-seeds.json(원본 프리셋)은 절대 수정하지 않음
 //
-// 사용법 (AI 또는 패널에서):
+// 사용법:
 //   run_tool('case-sync', { remove_id: 'closed_canvas' })
 //
-// 동작:
-//   1. case-temp.json이 있으면 새 케이스로 읽음
-//   2. 세션 case-seeds.json에서 remove_id 제거 + 새 케이스 append
-//   3. 페르소나 원본 case-seeds.json에도 동일 처리
-//   4. case-temp.json 정리
+// 파일 구조:
+//   case-seeds.json       — 원본 프리셋 (git tracked, 수정 금지)
+//   case-seeds-extra.json — AI가 생성한 추가 케이스 (gitignored)
+//   case-completed.json   — 완료한 케이스 ID 목록 (gitignored)
+//   case-archive/         — 완료 케이스 전체 데이터 백업 (gitignored)
 
 const fs = require('fs');
 const path = require('path');
 
+function readJson(filePath, fallback) {
+  try {
+    if (fs.existsSync(filePath)) {
+      const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      return data;
+    }
+  } catch {}
+  return fallback;
+}
+
+function writeJson(filePath, data) {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+}
+
+function getPersonaDir(sessionDir) {
+  try {
+    const meta = JSON.parse(fs.readFileSync(path.join(sessionDir, 'session.json'), 'utf-8'));
+    if (meta.persona) {
+      const sessionsDir = path.dirname(sessionDir);
+      const dataDir = path.dirname(sessionsDir);
+      return path.join(dataDir, 'personas', meta.persona);
+    }
+  } catch {}
+  return null;
+}
+
 module.exports = async function(context, args) {
   const { remove_id } = args;
   const sessionDir = context.sessionDir;
+  const personaDir = getPersonaDir(sessionDir);
 
   // --- 1. 새 케이스 읽기 (case-temp.json) ---
   let newCase = null;
@@ -23,7 +51,6 @@ module.exports = async function(context, args) {
   try {
     if (fs.existsSync(tempPath)) {
       newCase = JSON.parse(fs.readFileSync(tempPath, 'utf-8'));
-      // 유효성 기본 체크
       if (!newCase.id || !newCase.title || !newCase.locations) {
         return { result: { success: false, message: 'case-temp.json이 유효한 케이스 구조가 아닙니다.' } };
       }
@@ -33,122 +60,87 @@ module.exports = async function(context, args) {
   }
 
   if (!newCase && !remove_id) {
-    return { result: { success: false, message: 'case-temp.json이 없고 remove_id도 없습니다. 할 작업이 없습니다.' } };
+    return { result: { success: false, message: '할 작업이 없습니다.' } };
   }
 
-  // --- 2. 세션 case-seeds.json 처리 ---
-  const sessionSeedsPath = path.join(sessionDir, 'case-seeds.json');
-  let sessionSeeds = [];
-  try {
-    if (fs.existsSync(sessionSeedsPath)) {
-      sessionSeeds = JSON.parse(fs.readFileSync(sessionSeedsPath, 'utf-8'));
-      if (!Array.isArray(sessionSeeds)) sessionSeeds = [];
-    }
-  } catch { sessionSeeds = []; }
+  const results = { completed: false, archived: false, added_session: false, added_persona: false };
 
-  let removedFromSession = false;
-  let removedCase = null;
+  // --- 2. 완료 케이스 기록 (case-completed.json) — 세션 + 페르소나 양쪽 ---
   if (remove_id) {
-    removedCase = sessionSeeds.find(c => c.id === remove_id) || null;
-    const before = sessionSeeds.length;
-    sessionSeeds = sessionSeeds.filter(c => c.id !== remove_id);
-    removedFromSession = sessionSeeds.length < before;
-  }
+    // 세션 completed
+    const sessionCompletedPath = path.join(sessionDir, 'case-completed.json');
+    const sessionCompleted = readJson(sessionCompletedPath, []);
+    if (!sessionCompleted.includes(remove_id)) {
+      sessionCompleted.push(remove_id);
+      writeJson(sessionCompletedPath, sessionCompleted);
+    }
 
-  // --- 플레이한 케이스 아카이브 (페르소나 원본 case-archive/ 폴더에 개별 파일로 보관) ---
-  if (removedCase) {
-    try {
-      const sessionMeta = JSON.parse(fs.readFileSync(path.join(sessionDir, 'session.json'), 'utf-8'));
-      const personaName = sessionMeta.persona;
-      if (personaName) {
-        const sessionsDir = path.dirname(sessionDir);
-        const dataDir = path.dirname(sessionsDir);
-        const archiveDir = path.join(dataDir, 'personas', personaName, 'case-archive');
+    // 페르소나 completed
+    if (personaDir) {
+      const personaCompletedPath = path.join(personaDir, 'case-completed.json');
+      const personaCompleted = readJson(personaCompletedPath, []);
+      if (!personaCompleted.includes(remove_id)) {
+        personaCompleted.push(remove_id);
+        writeJson(personaCompletedPath, personaCompleted);
+      }
+    }
+
+    results.completed = true;
+
+    // --- 3. 아카이브 (전체 데이터 백업) ---
+    // 세션의 seeds + extra에서 원본 케이스 데이터 찾기
+    const sessionSeeds = readJson(path.join(sessionDir, 'case-seeds.json'), []);
+    const sessionExtra = readJson(path.join(sessionDir, 'case-seeds-extra.json'), []);
+    const allCases = [...sessionSeeds, ...sessionExtra];
+    const removedCase = allCases.find(c => c.id === remove_id);
+
+    if (removedCase && personaDir) {
+      try {
+        const archiveDir = path.join(personaDir, 'case-archive');
         if (!fs.existsSync(archiveDir)) fs.mkdirSync(archiveDir, { recursive: true });
-
-        const archiveFile = path.join(archiveDir, removedCase.id + '.json');
+        const archiveFile = path.join(archiveDir, remove_id + '.json');
         if (!fs.existsSync(archiveFile)) {
           removedCase._played_at = new Date().toISOString();
-          fs.writeFileSync(archiveFile, JSON.stringify(removedCase, null, 2), 'utf-8');
+          writeJson(archiveFile, removedCase);
+          results.archived = true;
         }
-      }
-    } catch { /* 아카이브 실패해도 진행 */ }
-  }
-
-  let addedToSession = false;
-  if (newCase) {
-    // 중복 방지
-    if (!sessionSeeds.some(c => c.id === newCase.id)) {
-      sessionSeeds.push(newCase);
-      addedToSession = true;
+      } catch {}
     }
   }
 
-  fs.writeFileSync(sessionSeedsPath, JSON.stringify(sessionSeeds, null, 2), 'utf-8');
-
-  // --- 3. 페르소나 원본 case-seeds.json 처리 ---
-  let personaSeedsPath = null;
-  let removedFromPersona = false;
-  let addedToPersona = false;
-
-  try {
-    // session.json에서 페르소나 이름 읽기
-    const sessionMeta = JSON.parse(fs.readFileSync(path.join(sessionDir, 'session.json'), 'utf-8'));
-    const personaName = sessionMeta.persona;
-
-    if (personaName) {
-      // 세션 디렉토리 기준으로 페르소나 경로 추론
-      // sessions/{session-dir} → personas/{persona-name}
-      const sessionsDir = path.dirname(sessionDir);
-      const dataDir = path.dirname(sessionsDir);
-      personaSeedsPath = path.join(dataDir, 'personas', personaName, 'case-seeds.json');
-
-      let personaSeeds = [];
-      try {
-        if (fs.existsSync(personaSeedsPath)) {
-          personaSeeds = JSON.parse(fs.readFileSync(personaSeedsPath, 'utf-8'));
-          if (!Array.isArray(personaSeeds)) personaSeeds = [];
-        }
-      } catch { personaSeeds = []; }
-
-      if (remove_id) {
-        const before = personaSeeds.length;
-        personaSeeds = personaSeeds.filter(c => c.id !== remove_id);
-        removedFromPersona = personaSeeds.length < before;
-      }
-
-      if (newCase && !personaSeeds.some(c => c.id === newCase.id)) {
-        personaSeeds.push(newCase);
-        addedToPersona = true;
-      }
-
-      fs.writeFileSync(personaSeedsPath, JSON.stringify(personaSeeds, null, 2), 'utf-8');
-    }
-  } catch (e) {
-    // 페르소나 동기화 실패해도 세션은 이미 처리됨
-    return {
-      result: {
-        success: true,
-        warning: '페르소나 원본 동기화 실패: ' + e.message,
-        session: { removed: removedFromSession, added: addedToSession, total: sessionSeeds.length },
-        persona: { error: e.message }
-      }
-    };
-  }
-
-  // --- 4. case-temp.json 정리 ---
+  // --- 4. 새 케이스 추가 (case-seeds-extra.json) — 세션 + 페르소나 양쪽 ---
   if (newCase) {
+    // 세션 extra
+    const sessionExtraPath = path.join(sessionDir, 'case-seeds-extra.json');
+    const sessionExtra = readJson(sessionExtraPath, []);
+    if (!sessionExtra.some(c => c.id === newCase.id)) {
+      sessionExtra.push(newCase);
+      writeJson(sessionExtraPath, sessionExtra);
+      results.added_session = true;
+    }
+
+    // 페르소나 extra
+    if (personaDir) {
+      const personaExtraPath = path.join(personaDir, 'case-seeds-extra.json');
+      const personaExtra = readJson(personaExtraPath, []);
+      if (!personaExtra.some(c => c.id === newCase.id)) {
+        personaExtra.push(newCase);
+        writeJson(personaExtraPath, personaExtra);
+        results.added_persona = true;
+      }
+    }
+
+    // case-temp.json 정리
     try { fs.unlinkSync(tempPath); } catch {}
   }
 
   return {
     result: {
       success: true,
-      removed_id: remove_id || null,
+      remove_id: remove_id || null,
       new_case_id: newCase?.id || null,
       new_case_title: newCase?.title || null,
-      session: { removed: removedFromSession, added: addedToSession, total: sessionSeeds.length },
-      persona: { removed: removedFromPersona, added: addedToPersona, path: personaSeedsPath }
+      ...results
     }
   };
 };

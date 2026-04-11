@@ -13,3 +13,5 @@ GEMINI.md
 .mcp.json
 case-temp.json
 case-archive/
+case-seeds-extra.json
+case-completed.json

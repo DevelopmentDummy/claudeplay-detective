@@ -99,8 +99,13 @@
 
 <script>
   var d = __panelBridge.data;
-  var seeds = d['case-seeds'];
-  if (!Array.isArray(seeds)) seeds = [];
+  var baseSeeds = d['case-seeds'];
+  if (!Array.isArray(baseSeeds)) baseSeeds = [];
+  var extraSeeds = d['case-seeds-extra'];
+  if (!Array.isArray(extraSeeds)) extraSeeds = [];
+  var completed = new Set(d['case-completed'] || []);
+  // (seeds + extra) - completed
+  var seeds = baseSeeds.concat(extraSeeds).filter(function(c) { return !completed.has(c.id); });
   var phase = d.case_phase;
   var stackEl = shadow.getElementById('stack');
 
