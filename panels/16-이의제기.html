@@ -102,9 +102,10 @@
 
     // Round dots
     var dotsHtml = '';
+    var roundHistory = confrontation.round_history || [];
     for (var i = 0; i < maxRounds; i++) {
-      if (i < round) {
-        var wasHit = presented[i] && confrontation.required_proofs.includes(presented[i]);
+      if (i < roundHistory.length) {
+        var wasHit = roundHistory[i] === 'hit';
         dotsHtml += '<div class="dot ' + (wasHit ? 'hit' : 'miss') + '">' + (wasHit ? '✓' : '✗') + '</div>';
       } else if (i === round) {
         dotsHtml += '<div class="dot current">▶</div>';
@@ -119,10 +120,11 @@
     if (foundEvidence.length === 0) {
       gridEl.innerHTML = '<div class="empty-msg">보유한 증거가 없습니다.</div>';
     } else {
+      var hitTargets = confrontation.hit_targets || [];
       gridEl.innerHTML = foundEvidence.map(function(e) {
-        var used = presented.includes(e[0]);
+        var isHit = hitTargets.includes(e[0]);
         var icon = typeIcons[e[1].type] || '❓';
-        return '<div class="ev-chip' + (used ? ' used' : '') + '" data-eid="' + e[0] + '" data-name="' + (e[1].name || '').replace(/"/g, '&quot;') + '" data-desc="' + (e[1].description || '').replace(/"/g, '&quot;') + '">' +
+        return '<div class="ev-chip' + (isHit ? ' used' : '') + '" data-eid="' + e[0] + '" data-name="' + (e[1].name || '').replace(/"/g, '&quot;') + '" data-desc="' + (e[1].description || '').replace(/"/g, '&quot;') + '">' +
           '<span class="chip-icon">' + icon + '</span>' + e[1].name + '</div>';
       }).join('');
     }
@@ -144,7 +146,7 @@
 
         chip.style.opacity = '0.3';
         chip.style.pointerEvents = 'none';
-        await __panelBridge.executeAction('prove', { evidence_id: eid });
+        await __panelBridge.executeAction('prove', { evidence_id: eid, evidence_name: evName });
       });
     });
   }
@@ -157,7 +159,7 @@
   __panelBridge.registerAction('prove', async function(params) {
     var res = await __panelBridge.runTool('engine', { action: 'prove', evidence_id: params.evidence_id });
     if (!res.result) return;
-    var evName = res.result.evidence_name || params.evidence_id;
+    var evName = params.evidence_name || res.result.evidence_name || params.evidence_id;
 
     if (res.result.completed) {
       if (res.result.won) {

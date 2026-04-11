@@ -1,4 +1,4 @@
-<!-- deps: {{location}} {{current_room}} {{time}} {{case_phase}} {{insight}} -->
+<!-- deps: {{location}} {{current_room}} {{time}} {{case_phase}} {{insight}} {{_unlock_ver}} -->
 <panel-actions>
 [
   {
@@ -72,6 +72,11 @@
   }
   .npc-item:hover { border-color: #1e2a45; }
   .npc-item .talked { color: #4ecdc4; font-size: 9px; }
+  .npc-item .new-talk {
+    font-size: 9px; color: #c8a44e; font-weight: 700;
+    animation: talkPulse 1.5s ease-in-out infinite;
+  }
+  @keyframes talkPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
   .point-list { display: flex; flex-direction: column; gap: 2px; }
   .point-item {
@@ -177,7 +182,7 @@
     if (npcs.length > 0) {
       html += '<div class="section"><div class="section-title">👤 현장 인물</div><div class="npc-list">';
       npcs.forEach(function(n) {
-        html += '<div class="npc-item" data-npc="' + n[0] + '">👤 ' + n[1].name + (n[1].talked ? '<span class="talked">대화함</span>' : '') + '</div>';
+        html += '<div class="npc-item" data-npc="' + n[0] + '">👤 ' + n[1].name + (n[1].talked ? '<span class="talked">대화함</span>' : '<span class="new-talk">💬 대화 가능</span>') + '</div>';
       });
       html += '</div></div>';
     }
@@ -210,13 +215,12 @@
 
     // NPC click
     shadow.querySelectorAll('.npc-item').forEach(function(el) {
-      el.addEventListener('click', function() {
-        __panelBridge.runTool('engine', { action: 'talk_to', npc_id: el.dataset.npc }).then(function(res) {
-          if (res.result && res.result.success) {
-            __panelBridge.queueEvent('[대화] npc_id=' + el.dataset.npc + ', npc_name=' + res.result.npc_name);
-            __panelBridge.sendMessage(res.result.npc_name + '에게 말을 걸었다.');
-          }
-        });
+      el.addEventListener('click', async function() {
+        var res = await __panelBridge.runTool('engine', { action: 'talk_to', npc_id: el.dataset.npc });
+        if (res.result && res.result.success) {
+          await __panelBridge.queueEvent('[대화] npc_id=' + el.dataset.npc + ', npc_name=' + res.result.npc_name);
+          __panelBridge.sendMessage(res.result.npc_name + '에게 말을 걸었다.');
+        }
       });
     });
 

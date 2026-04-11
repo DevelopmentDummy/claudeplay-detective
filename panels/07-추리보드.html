@@ -13,7 +13,7 @@
 
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  .board { font-family: 'Segoe UI', sans-serif; color: #e0ddd4; min-height: 350px; }
+  .board { font-family: 'Segoe UI', sans-serif; color: #e0ddd4; height: calc(70vh - 60px); overflow-y: auto; scrollbar-color: #c8a44e transparent; }
   .board-header {
     font-size: 13px; font-weight: 700; color: #c8a44e;
     margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
@@ -40,11 +40,10 @@
   .ev-node.sel-2 { border-color: #e8915a; background: #281a0d; box-shadow: 0 0 8px rgba(232,145,90,0.2); }
 
   /* Selected pair display */
-  .sel-pair { display: none; margin: 10px 0; gap: 8px; align-items: stretch; }
-  .sel-pair.show { display: flex; }
+  .sel-pair { display: flex; margin: 10px 0; gap: 8px; align-items: stretch; }
   .sel-card {
     flex: 1; padding: 10px; border-radius: 6px; background: #0d1220;
-    border: 1px solid #1e2a45; min-height: 80px;
+    border: 1px solid #1e2a45; min-height: 200px;
   }
   .sel-card.slot-1 { border-color: #4ecdc4; }
   .sel-card.slot-2 { border-color: #e8915a; }
@@ -139,7 +138,7 @@
   }
 
   function updateSelectionUI() {
-    selPair.classList.toggle('show', selected.length > 0);
+    // selPair is always visible
     if (selected.length >= 1) {
       renderCard(selCard1, selected[0], 'slot-1');
     } else {

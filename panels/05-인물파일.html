@@ -2,45 +2,66 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   .profiles { font-family: 'Segoe UI', sans-serif; color: #e0ddd4; }
   .header { font-size: 13px; font-weight: 700; color: #c8a44e; margin-bottom: 10px; }
-  .person-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
-  .person-card {
+
+  .tab-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .tab-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 10px; border-radius: 6px;
+    background: #0d1220; border: 1px solid #1e2a45;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .tab-btn:hover { border-color: #c8a44e; }
+  .tab-btn.active { border-color: #c8a44e; background: #1a2035; }
+  .tab-name { font-size: 12px; font-weight: 600; }
+  .tab-role { font-size: 9px; color: #7a7a8a; }
+  .suspect-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #e74c3c;
+    flex-shrink: 0;
+  }
+
+  .detail-panel {
     background: #0d1220; border: 1px solid #1e2a45; border-radius: 8px;
-    padding: 10px; cursor: pointer; transition: all 0.2s;
+    padding: 14px; min-height: 80px;
   }
-  .person-card:hover { border-color: #c8a44e; transform: translateY(-1px); }
-  .person-card.expanded { border-color: #c8a44e; background: #121829; }
-  .person-header { display: flex; align-items: center; gap: 8px; }
-  .person-avatar { font-size: 24px; }
-  .person-info { flex: 1; }
-  .person-name { font-size: 13px; font-weight: 600; }
-  .person-role { font-size: 10px; color: #7a7a8a; }
-  .person-detail {
-    margin-top: 8px; padding-top: 8px; border-top: 1px solid #1e2a45;
-    font-size: 11px; line-height: 1.6; display: none;
+  .detail-panel.empty { display: flex; align-items: center; justify-content: center; }
+  .detail-empty { font-size: 11px; color: #7a7a8a; text-align: center; }
+
+  .dp-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #1e2a45; }
+  .dp-avatar { font-size: 28px; }
+  .dp-name { font-size: 15px; font-weight: 700; }
+  .dp-role { font-size: 10px; color: #7a7a8a; }
+  .dp-suspect-badge {
+    font-size: 9px; padding: 2px 8px; border-radius: 3px;
+    background: #2a1a1a; color: #e74c3c; margin-left: auto; font-weight: 700;
   }
-  .person-detail.show { display: block; }
-  .detail-row { display: flex; gap: 6px; margin-bottom: 3px; }
-  .detail-key { color: #7a7a8a; flex-shrink: 0; width: 50px; }
-  .detail-val { color: #e0ddd4; }
-  .suspect-badge {
-    font-size: 9px; padding: 1px 6px; border-radius: 3px;
-    background: #2a1a1a; color: #e74c3c; margin-left: auto;
-  }
-  .empty-msg { font-size: 12px; color: #7a7a8a; text-align: center; padding: 40px 20px; }
+
+  .dp-section { margin-bottom: 8px; }
+  .dp-section-title { font-size: 10px; color: #c8a44e; font-weight: 700; margin-bottom: 4px; letter-spacing: 0.5px; }
+  .dp-text { font-size: 11px; line-height: 1.6; color: #b0b0b0; }
+
   .accuse-btn {
-    margin-top: 6px; width: 100%; padding: 6px;
+    margin-top: 10px; width: 100%; padding: 8px;
     background: linear-gradient(135deg, #e74c3c, #c0392b);
-    border: none; border-radius: 4px; color: #fff;
+    border: none; border-radius: 6px; color: #fff;
     font-size: 11px; font-weight: 700; cursor: pointer;
     letter-spacing: 1px; transition: opacity 0.2s;
   }
   .accuse-btn:hover { opacity: 0.9; }
   .accuse-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .empty-msg { font-size: 12px; color: #7a7a8a; text-align: center; padding: 40px 20px; }
+  .insight-note {
+    font-size: 10px; color: #7a7a8a; text-align: center;
+    margin-top: 8px; padding-top: 6px; border-top: 1px solid #1e2a45;
+  }
 </style>
 
 <div class="profiles">
   <div class="header">👤 인물 파일</div>
-  <div class="person-grid" id="grid"></div>
+  <div class="tab-row" id="tabs"></div>
+  <div class="detail-panel empty" id="detail">
+    <div class="detail-empty">인물을 선택하세요</div>
+  </div>
 </div>
 
 <script>
@@ -49,9 +70,10 @@
   var suspects = caseData.suspects || [];
   var testimonies = caseData.testimonies || {};
   var locations = caseData.locations || {};
-  var gridEl = shadow.getElementById('grid');
+  var tabsEl = shadow.getElementById('tabs');
+  var detailEl = shadow.getElementById('detail');
 
-  // Collect only NPCs we've actually talked to
+  // Collect talked NPCs
   var talkedNpcs = {};
   Object.values(locations).forEach(function(loc) {
     Object.entries(loc.npcs || {}).forEach(function(n) {
@@ -60,13 +82,11 @@
   });
 
   var people = {};
-  // Only show suspects we've met
   suspects.forEach(function(s) {
     if (talkedNpcs[s.id]) {
       people[s.id] = { name: s.name, role: talkedNpcs[s.id].role || '용의자', motive: s.motive, alibi: s.alibi, isSuspect: true };
     }
   });
-  // Add non-suspect NPCs we've talked to
   Object.entries(talkedNpcs).forEach(function(e) {
     if (!people[e[0]]) {
       people[e[0]] = { name: e[1].name, role: e[1].role || '관련인물' };
@@ -75,55 +95,76 @@
 
   var entries = Object.entries(people);
   if (entries.length === 0) {
-    gridEl.innerHTML = '<div class="empty-msg">아직 확인된 인물이 없습니다</div>';
+    tabsEl.style.display = 'none';
+    detailEl.innerHTML = '<div class="empty-msg">아직 확인된 인물이 없습니다</div>';
   } else {
-    gridEl.innerHTML = entries.map(function(e) {
+    // Render tabs
+    tabsEl.innerHTML = entries.map(function(e) {
       var id = e[0], p = e[1];
-      var badge = p.isSuspect ? '<span class="suspect-badge">용의자</span>' : '';
-      var detail = '<div class="person-detail" id="detail-' + id + '">';
-      if (p.role) detail += '<div class="detail-row"><span class="detail-key">역할</span><span class="detail-val">' + p.role + '</span></div>';
-      if (p.alibi) detail += '<div class="detail-row"><span class="detail-key">알리바이</span><span class="detail-val">' + p.alibi + '</span></div>';
-      if (p.motive) detail += '<div class="detail-row"><span class="detail-key">동기</span><span class="detail-val">' + p.motive + '</span></div>';
-      if (p.isSuspect && d.insight >= 80) {
-        detail += '<button class="accuse-btn" data-accuse="' + id + '">🎯 범인으로 지목</button>';
-      }
-      detail += '</div>';
-
-      return '<div class="person-card" data-pid="' + id + '">' +
-        '<div class="person-header"><span class="person-avatar">👤</span>' +
-        '<div class="person-info"><div class="person-name">' + p.name + '</div><div class="person-role">' + p.role + '</div></div>' +
-        badge + '</div>' + detail + '</div>';
+      var dot = p.isSuspect ? '<span class="suspect-dot"></span>' : '';
+      return '<div class="tab-btn" data-pid="' + id + '">' +
+        dot + '<div><div class="tab-name">' + p.name + '</div><div class="tab-role">' + p.role + '</div></div></div>';
     }).join('');
 
-    shadow.querySelectorAll('.person-card').forEach(function(card) {
-      card.addEventListener('click', function() {
-        var detail = shadow.getElementById('detail-' + card.dataset.pid);
-        if (detail) {
-          var isShown = detail.classList.contains('show');
-          shadow.querySelectorAll('.person-detail').forEach(function(d) { d.classList.remove('show'); });
-          shadow.querySelectorAll('.person-card').forEach(function(c) { c.classList.remove('expanded'); });
-          if (!isShown) { detail.classList.add('show'); card.classList.add('expanded'); }
-        }
-      });
-    });
+    var currentId = null;
 
-    shadow.querySelectorAll('[data-accuse]').forEach(function(btn) {
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        btn.disabled = true;
-        __panelBridge.runTool('engine', { action: 'accuse', suspect_id: btn.dataset.accuse }).then(function(res) {
+    function renderDetail(id) {
+      var p = people[id];
+      if (!p) return;
+      currentId = id;
+
+      // Update tab active state
+      shadow.querySelectorAll('.tab-btn').forEach(function(t) {
+        t.classList.toggle('active', t.dataset.pid === id);
+      });
+
+      var html = '<div class="dp-header"><span class="dp-avatar">👤</span><div><div class="dp-name">' + p.name + '</div><div class="dp-role">' + p.role + '</div></div>';
+      if (p.isSuspect) html += '<span class="dp-suspect-badge">용의자</span>';
+      html += '</div>';
+
+      if (p.alibi) {
+        html += '<div class="dp-section"><div class="dp-section-title">알리바이</div><div class="dp-text">' + p.alibi + '</div></div>';
+      }
+      if (p.motive) {
+        html += '<div class="dp-section"><div class="dp-section-title">동기</div><div class="dp-text">' + p.motive + '</div></div>';
+      }
+
+      if (p.isSuspect && d.insight >= 80) {
+        html += '<button class="accuse-btn" data-accuse="' + id + '">🎯 범인으로 지목</button>';
+      }
+
+      detailEl.classList.remove('empty');
+      detailEl.innerHTML = html;
+
+      // Accuse button
+      var accuseBtn = shadow.querySelector('[data-accuse]');
+      if (accuseBtn) {
+        accuseBtn.addEventListener('click', async function() {
+          accuseBtn.disabled = true;
+          var res = await __panelBridge.runTool('engine', { action: 'accuse', suspect_id: id });
           if (res.result) {
             var tag = res.result.correct ? 'correct=true' : 'correct=false';
-            __panelBridge.queueEvent('[범인지목] suspect_id=' + btn.dataset.accuse + ', ' + tag);
+            await __panelBridge.queueEvent('[범인지목] suspect_id=' + id + ', ' + tag);
             __panelBridge.sendMessage(res.result.correct ? '범인은 당신입니다!' : '이 사람이 범인이라고 생각합니다.');
           }
         });
+      }
+    }
+
+    // Tab click
+    shadow.querySelectorAll('.tab-btn').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        renderDetail(tab.dataset.pid);
       });
     });
 
+    // Auto-select first
+    renderDetail(entries[0][0]);
+
+    // Insight note
     if (d.insight < 80) {
       var noteEl = document.createElement('div');
-      noteEl.style.cssText = 'font-size:10px;color:#7a7a8a;text-align:center;margin-top:8px;padding-top:6px;border-top:1px solid #1e2a45';
+      noteEl.className = 'insight-note';
       noteEl.textContent = '💡 통찰력 ' + d.insight + '/80 — 범인 지목에 충분한 통찰력이 필요합니다';
       shadow.querySelector('.profiles').appendChild(noteEl);
     }

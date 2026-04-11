@@ -4,6 +4,32 @@
 const ACTIONS = {
   // === 사건 관리 ===
   reset_case(ctx, args) {
+    // Archive current case to case-history
+    const caseData = ctx.data['case'] || {};
+    const caseStats = ctx.data['case-stats'] || {};
+    const history = ctx.data['case-history'] || [];
+    let newHistory = [...history];
+
+    if (caseData.id) {
+      newHistory.push({
+        id: caseData.id,
+        title: caseData.title,
+        difficulty: caseData.difficulty,
+        summary: caseData.summary,
+        evidence: caseData.evidence || {},
+        deductions: caseData.deductions || {},
+        suspects: caseData.suspects || [],
+        solution: caseData.solution || {},
+        trust: ctx.variables.trust,
+        insight: ctx.variables.insight,
+        wrong_presents: ctx.variables.wrong_presents,
+        day: ctx.variables.day,
+        time: ctx.variables.time,
+        stats: caseStats,
+        solvedAt: new Date().toISOString()
+      });
+    }
+
     // Close investigation modals
     const modals = ctx.variables.__modals || {};
     const resetModals = {};
@@ -25,6 +51,8 @@ const ACTIONS = {
       },
       data: {
         "case.json": { id: null, title: null, status: 'idle', summary: null, difficulty: null, locations: {}, evidence: {}, testimonies: {}, deductions: {}, suspects: [], solution: null, unlocks: [] },
+        "case-history.json": newHistory,
+        "case-stats.json": {},
         "hayul-notes.json": { "entries": [] }
       },
       result: { success: true, message: '사건이 초기화되었습니다.' }
@@ -352,7 +380,8 @@ const ACTIONS = {
         clues_found: newCluesFound,
         insight: Math.min(ctx.variables.insight_max, ctx.variables.insight + 5),
         __popups: [{ template: 'clue-found', duration: 3000, vars: { clueName: evidence?.name || point.name } }],
-        _time_raw: _tr
+        _time_raw: _tr,
+        ...(unlockResults.changed ? { _unlock_ver: (ctx.variables._unlock_ver || 0) + 1 } : {})
       },
       data: {
         "search-points.json": { ...searchPoints, [roomKey]: updatedRoom },
@@ -487,7 +516,8 @@ const ACTIONS = {
       return {
         variables: {
           insight: Math.min(ctx.variables.insight_max, ctx.variables.insight + 15),
-          __popups: [{ template: 'objection', duration: 3000 }]
+          __popups: [{ template: 'objection', duration: 3000 }],
+          ...(unlockResults.changed ? { _unlock_ver: (ctx.variables._unlock_ver || 0) + 1 } : {})
         },
         data: {
           "case.json": {
@@ -580,7 +610,8 @@ const ACTIONS = {
     return {
       variables: {
         insight: Math.min(ctx.variables.insight_max, ctx.variables.insight + 10),
-        __popups: [{ template: 'clue-found', duration: 3000, vars: { clueName: ded.name } }]
+        __popups: [{ template: 'clue-found', duration: 3000, vars: { clueName: ded.name } }],
+        ...(unlockResults.changed ? { _unlock_ver: (ctx.variables._unlock_ver || 0) + 1 } : {})
       },
       data: {
         "case.json": {
@@ -650,7 +681,8 @@ const ACTIONS = {
       return {
         variables: {
           case_phase: 'confrontation',
-          __modals: { '범인지목': false, '하율메모': false, '증거품탐색': false, '이의제기': true }
+          __modals: { '범인지목': false, '하율메모': false, '증거품탐색': false, '이의제기': true },
+          _phase_instruction: '[이의제기 시작] ⚠️ 범인이 반드시 저항해야 한다. 범인은 여유를 보이며 거짓말/주장을 한다.\n이 주장은 [' + (firstTargetEv?.name || firstTarget) + '] 증거로 반박 가능해야 한다.\n대상 증거: ' + (firstTargetEv?.name || firstTarget) + '\n증거 설명: ' + (firstTargetEv?.description || '') + '\n⚠️ 절대로 대상 증거의 내용을 AI가 서사에서 먼저 공개하지 마라. 범인의 거짓말만 제시하고, 그것을 깨뜨리는 것은 플레이어의 몫이다.'
         },
         data: {
           "case.json": {
@@ -667,7 +699,8 @@ const ACTIONS = {
               hits: 0,
               misses: 0,
               max_rounds: 5,
-              hits_to_win: 3
+              hits_to_win: 3,
+              round_history: []
             }
           }
         },
@@ -718,8 +751,9 @@ const ACTIONS = {
       return { result: { success: false, message: '해당 증거를 보유하고 있지 않습니다.' } };
     }
 
-    if (confrontation.presented.includes(evidence_id)) {
-      return { result: { success: false, message: '이미 제시한 증거입니다.' } };
+    // 적중한 증거만 재제시 불가 (빗나간 증거는 재사용 가능)
+    if ((confrontation.hit_targets || []).includes(evidence_id)) {
+      return { result: { success: false, message: '이미 적중한 증거입니다.' } };
     }
 
     // 현재 타겟과 비교하여 hit/miss 판정
@@ -728,6 +762,7 @@ const ACTIONS = {
     const newRound = confrontation.round + 1;
     const newHits = confrontation.hits + (isHit ? 1 : 0);
     const newMisses = confrontation.misses + (isHit ? 0 : 1);
+    const newRoundHistory = [...(confrontation.round_history || []), isHit ? 'hit' : 'miss'];
 
     // 다음 타겟 선택 (아직 hit되지 않은 핵심 증거 중 랜덤)
     const hitTargets = isHit
@@ -754,11 +789,12 @@ const ACTIONS = {
         variables: {
           case_phase: 'resolved',
           __popups: [{ template: 'case-solved', duration: 5000 }],
-          __modals: { '범인지목': false, '이의제기': false }
+          __modals: { '범인지목': false, '이의제기': false },
+          _phase_instruction: ''
         },
         data: {
           "case.json": {
-            _confrontation: { ...confrontation, presented: newPresented, round: newRound, hits: newHits, misses: newMisses, hit_targets: hitTargets, current_target: null, completed: true, result: 'win' }
+            _confrontation: { ...confrontation, presented: newPresented, round: newRound, hits: newHits, misses: newMisses, hit_targets: hitTargets, round_history: newRoundHistory, current_target: null, completed: true, result: 'win' }
           }
         },
         result: {
@@ -786,11 +822,12 @@ const ACTIONS = {
           trust: Math.max(0, ctx.variables.trust - 30),
           case_phase: 'investigation',
           __popups: [{ template: 'wrong-answer', duration: 3000 }],
-          __modals: { '범인지목': false, '이의제기': false, '하율메모': true, '증거품탐색': true }
+          __modals: { '범인지목': false, '이의제기': false, '하율메모': true, '증거품탐색': true },
+          _phase_instruction: ''
         },
         data: {
           "case.json": {
-            _confrontation: { ...confrontation, presented: newPresented, round: newRound, hits: newHits, misses: newMisses, hit_targets: hitTargets, current_target: null, completed: true, result: 'lose' }
+            _confrontation: { ...confrontation, presented: newPresented, round: newRound, hits: newHits, misses: newMisses, hit_targets: hitTargets, round_history: newRoundHistory, current_target: null, completed: true, result: 'lose' }
           }
         },
         result: {
@@ -808,10 +845,15 @@ const ACTIONS = {
     }
 
     // 진행 중 — 다음 타겟 정보 포함
+    var hitMissLabel = isHit ? '적중' : '빗나감';
+    var phaseInstr = nextTarget
+      ? '[이의제기 ' + hitMissLabel + ' → 다음 라운드] ⚠️ 범인이 반드시 저항해야 한다. 적중이었더라도 완전히 무너지지 않는다. 범인은 동요하면서도 다른 논점으로 화제를 돌리며 새로운 거짓말/주장을 한다.\n이 주장은 [' + nextTargetName + '] 증거로 반박 가능해야 한다.\n대상 증거: ' + nextTargetName + '\n증거 설명: ' + nextTargetDesc + '\n⚠️ 절대로 대상 증거의 내용을 AI가 서사에서 먼저 공개하지 마라. 범인의 거짓말만 제시하고, 그것을 깨뜨리는 것은 플레이어의 몫이다.'
+      : '';
     return {
       variables: {
         __popups: isHit ? [{ template: 'objection', duration: 2500 }] : [{ template: 'wrong-answer', duration: 2000 }],
-        ...(isHit ? {} : { trust: Math.max(0, ctx.variables.trust - 5) })
+        ...(isHit ? {} : { trust: Math.max(0, ctx.variables.trust - 5) }),
+        _phase_instruction: phaseInstr
       },
       data: {
         "case.json": {
@@ -822,6 +864,7 @@ const ACTIONS = {
             hits: newHits,
             misses: newMisses,
             hit_targets: hitTargets,
+            round_history: newRoundHistory,
             current_target: nextTarget,
             current_target_name: nextTargetName,
             current_target_desc: nextTargetDesc,
@@ -1083,7 +1126,9 @@ function checkUnlocks(caseData, trigger, currentLocations) {
 
 // === 메인 디스패처 ===
 module.exports = async function(context, args) {
-  const { action, ...params } = args;
+  const { action, params: _wrapped, ...rest } = args;
+  // Support both flat ({ action, key: val }) and wrapped ({ action, params: { key: val } }) styles
+  const params = (_wrapped && typeof _wrapped === 'object') ? _wrapped : rest;
   const handler = ACTIONS[action];
   if (!handler) {
     return { result: { success: false, message: `알 수 없는 액션: ${action}` } };
